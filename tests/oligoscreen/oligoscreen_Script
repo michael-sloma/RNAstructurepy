@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# If the oligoscreen executable doesn't exist yet, make it.
+echo '    Preparation of oligoscreen tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/oligoscreen ]]
+then
+cd ..; make oligoscreen >& /dev/null; cd tests; 
+fi
+echo '    Preparation of oligoscreen tests finished.'
+
+# Test oligoscreen_without_options.
+echo '    oligoscreen_without_options testing started...'
+../exe/oligoscreen $OLIGOLIST oligoscreen_without_options_test.rep 1>/dev/null 2>oligoscreen_without_options_errors.txt
+diff oligoscreen_without_options_test.rep oligoscreen/oligoscreen_without_options_OK.rep >& oligoscreen_without_options_diff_output.txt
+checkErrors oligoscreen_without_options oligoscreen_without_options_errors.txt oligoscreen_without_options_diff_output.txt
+echo '    oligoscreen_without_options testing finished.'
+
+# Test oligoscreen_dna_option.
+echo '    oligoscreen_dna_option testing started...'
+../exe/oligoscreen $OLIGOLIST oligoscreen_dna_option_test.rep -d 1>/dev/null 2>oligoscreen_dna_option_errors.txt
+diff oligoscreen_dna_option_test.rep oligoscreen/oligoscreen_dna_option_OK.rep >& oligoscreen_dna_option_diff_output.txt
+checkErrors oligoscreen_dna_option oligoscreen_dna_option_errors.txt oligoscreen_dna_option_diff_output.txt
+echo '    oligoscreen_dna_option testing finished.'
+
+# Test oligoscreen_temperature_option.
+echo '    oligoscreen_temperature_option testing started...'
+../exe/oligoscreen $OLIGOLIST oligoscreen_temperature_option_test.rep -t 150 1>/dev/null 2>oligoscreen_temperature_option_errors.txt
+diff oligoscreen_temperature_option_test.rep oligoscreen/oligoscreen_temperature_option_OK.rep >& oligoscreen_temperature_option_diff_output.txt
+checkErrors oligoscreen_temperature_option oligoscreen_temperature_option_errors.txt oligoscreen_temperature_option_diff_output.txt
+echo '    oligoscreen_temperature_option testing finished.'
+
+# Clean up any extra files made over the course of the oligoscreen tests.
+echo '    Cleanup of oligoscreen tests started...'
+echo '        Cleanup in progress...'
+rm -f oligoscreen_without_options*
+rm -f oligoscreen_dna_option*
+rm -f oligoscreen_temperature_option*
+echo '    Cleanup of oligoscreen tests completed.'

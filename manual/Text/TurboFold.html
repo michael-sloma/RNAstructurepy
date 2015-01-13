@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+	<head>
+		<title>RNAstructure Command Line Help: TurboFold</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<link href="Stylesheet.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+		<div class="bodydiv">
+			<table cellpadding="0" cellspacing="0" border="0" class="mainTable">
+				<tr class="headerRow">
+					<td class="headerBox"><img src="icon.jpg" alt="RNAstructure logo"></td>
+					<td class="headerLabel"><h2>RNAstructure Command Line Help<br>TurboFold</h2></td>
+					<td class="headerBox2">
+						<ul id="navigator">
+							<li><h3 class="noMarginOrPad"><a href="index.html">Contents</a></h3></li>
+							<li><h3 class="noMarginOrPad"><a href="AlphabeticalIndex.html">Index</a></h3></li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td class="mainContent" colspan="3">
+						<p>TurboFold predicts the common structure for multiple sequences (two or more), using one of three folding modes. It has two distinct executables, a serial program called TurboFold and a parallelized program called TurboFold-smp for use in shared memory environments.</p>
+
+						<a name="Usage" id="Usage"></a>
+						<h3 class="noMarginOrPad">USAGE 1: TurboFold &lt;configuration file&gt;</h3>
+						<h3 class="noMarginOrPad">USAGE 2: TurboFold-smp &lt;configuration file&gt;</h3>
+
+						<h3 class="leftHeader">Required parameters:</h3>
+						<table>
+							<tr>
+								<td class="cell">&lt;configuration file&gt;</td>
+								<td>The name of a file containing required configuration data.</td>
+							</tr>
+						</table>
+
+						<h3 class="leftHeader">Options that do not require added values:</h3>
+						<table>
+							<tr>
+								<td class="cell">-h, -H, --help</td>
+								<td>Display the usage details message.</td>
+							</tr>
+						</table>
+
+						<h3 class="leftHeader">Options which require added values:</h3>
+						<h4>NONE</h4>
+
+						<h3 class="leftHeader">Configuration file format:</h3>
+						<p>The following is a description of valid options allowed in the configuration file.</p>
+						<pre>
+################################################################
+# IMPORTANT CONFIG FILE FORMAT NOTES:
+#
+# Config file options described below are <b>not</b> case sensitive.
+#
+# Option lines may be specified by the option name followed by an equals sign and the option's desired value.
+# When specifying an option, there may be nothing else on the line.
+# &lt;option&gt; = &lt;value&gt;
+#
+# Specifying comment lines:
+# Comment lines must begin with "#" followed by a space.
+# There may not be more than one "#" in a comment line.
+# However, a comment line may be an unbroken string of "#", as in a divider between sets of options.
+#
+# Blank lines are skipped.
+################################################################
+
+################################################################
+# Input options
+################################################################
+
+# Mode specifies the resolving algorithm TurboFold uses after its initial fold.
+# A valid mode is required for TurboFold to run properly.
+# Valid modes can be one of three options:
+#       1. MEA (Maximum expected accuracy)
+#       2. ProbKnot (For pseudoknotted sequences)
+#       3. Threshold (Finding most probable pairs)
+# Modes should be specified as text strings: MEA, ProbKnot, or Threshold.
+# The default mode is MEA.
+Mode = &lt;mode specification&gt;
+
+# There are two separate ways to specify a group of input sequences:
+# 1. Place sequence file names in brackets separated by semicolons.
+#    Note that there cannot be any spaces whatsoever between the brackets.
+#    The list must hold "SequenceNumber" sequences.
+# 2. Each successive sequence &quot;n&quot; from 1 to SequenceNumber is specified as &quot;Seq&lt;n&gt;.&quot;
+#    Note that there cannot be any spaces in the file name.
+InSeq = {seq1;seq2;seq3;}
+Seq&lt;n&gt; = &lt;seq file n&gt;
+
+# There are two separate ways to specify a group of output CT files:
+# 1. Place CT file names in brackets separated by semicolons.
+#    Note that there cannot be any spaces whatsoever between the brackets.
+#    The list must hold "SequenceNumber" CT files.
+# 2. Each successive CT file &quot;n&quot; from 1 to SequenceNumber is specified as &quot;CT&lt;n&gt;.&quot;
+#    Note that there cannot be any spaces in the file name.
+OutCT = {ct1;ct2;ct3;}
+CT&lt;n&gt; = &lt;ct file n&gt;
+
+# SequenceNumber specifies the number of sequences given for calculation.
+# This is only needed if both sequences and CT files are specified individually.
+SequenceNumber = &lt;number of sequences&gt;
+
+# Note that sequence file, CT file, and sequence number options must appear in one of two valid combinations, depending if files are
+# specified singly or in a group.
+#
+# Singly:
+# Mode = &lt;mode&gt;
+# SequenceNumber = &lt;n&gt;
+# Seq1 = &lt;seq file 1&gt;
+# CT1 = &lt;ct file n&gt;
+# ... repeat single entries of Seq and CT until &lt;n&gt; is reached
+#
+# Groups:
+# Mode = &lt;mode&gt;
+# InSeq = {seq1;seq2;seq3;}
+# OutCT = {ct1;ct2;ct3;}
+
+# Save&lt;1&gt; - Save&lt;SequenceNumber&gt; specifies the partiton function save file names to be outputted for each successive sequence &quot;n&quot;
+# from 1 to SequenceNumber.
+# Note that there cannot be any spaces in the file name.
+# Save files are not required for any sequence.
+Save&lt;n&gt; = &lt;save file n&gt;
+
+# SHAPE&lt;1&gt; - SHAPE&lt;SequenceNumber&gt; specifies the SHAPE file names for each successive sequence &quot;n&quot;
+# from 1 to SequenceNumber.
+# SHAPE files are not required for any sequence.
+# Note that there cannot be any spaces in the file name.
+SHAPE&lt;n&gt; = &lt;SHAPE file n&gt;
+
+################################################################
+# TurboFold options
+################################################################
+
+# Note that TurboFold options affect output regardless of the mode specified.
+
+# Gamma specifies the TurboFold gamma value.
+# This should not be confused with MeaGamma (below).
+# Its default value is 0.3.
+Gamma = 0.3
+
+# Iterations specifies the number of iterations TurboFold goes through.
+# This should not be confused with PkIterations (below).
+# Its default value is 3.
+Iterations = 3
+
+# MaximumPairingDistance specified the maximum distance between nucleotides that can pair.
+# i.e. for nucleotide i to pair with j, [i - j| &lt; MaximumPairingDistance.
+# This applies to each sequence.
+# Its default is no limit, which is indicated by a value of zero.
+MaximumPairingDistance = 0
+
+# SHAPEintercept specifies the SHAPE intercept used by TurboFold.
+# Note that if specified, this value is only used if one or more SHAPE files is also specified.
+# Its default value is -0.6 kcal/mol.
+SHAPEintercept = -0.6
+
+# SHAPEslope specifies the SHAPE slope used by TurboFold.
+# Note that if specified, this value is only used if one or more SHAPE files is also specified.
+# Its default value is 1.8 kcal/mol.
+SHAPEslope = 1.8
+
+# Temperature specifies the temperature at which TurboFold is run, in Kelvin.
+# Its default value is 310.15 K, which is 37 degrees C.
+Temperature = 310.15
+
+# Processors specifies the number of processors TurboFold is run on.
+# Note that this flag only has an effect when TurboFold-smp, the parallel version of TurboFold, is run.
+# Its default value is 1.
+Processors = 1
+
+################################################################
+# Maximum expected accuracy (MEA) mode options
+################################################################
+
+# Note that the following options only have an effect when MEA mode is specified. 
+# If they are specified when TurboFold is in a different mode, they are ignored.
+
+# MaxPercent specifies the maximum percent energy difference.
+# Its default value is 50 (percent).
+MaxPercent = 50
+
+# MaxStructures specifies the maximum number of structures to calculate.
+# Its default value is 1000 structures.
+MaxStructures = 1000
+
+# MeaGamma specifies the MEA mode gamma value.
+# This should not be confused with Gamma (above).
+# Its default value is 1.0.
+MeaGamma = 1.0
+
+# Window specifies the window size.
+# Its default value is 5 nucleotides.
+Window = 5
+
+################################################################
+# Pseudoknot (ProbKnot) mode options
+################################################################
+
+# Note that the following options only have an effect when ProbKnot mode is specified. 
+# If they are specified when TurboFold is in a different mode, they are ignored.
+
+# MinHelixLength is the minimum helix length allowed during folding.
+# Its default value is 3 nucleotides.
+MinHelixLength = 3
+
+# Iterations specifies the number of iterations ProbKnot goes through.
+# This should not be confused with Iterations (above).
+# Its default value is 1.
+PkIterations = 1
+
+################################################################
+# Probable Pairs (Threshold) mode options
+################################################################
+
+# Note that the following options only have an effect when Threshold mode is specified. 
+# If they are specified when TurboFold is in a different mode, they are ignored.
+
+# Threshold specifies the probability threshold at which pairs are included in a structure.
+# If a threshold is explicitly specified, it should be expressed as a number &gt;= 0.5 and &lt;= 1.0.
+# Its default value is 0.
+# This signifies that structures should be generated at the following thresholds:
+#       &gt;= 0.99, &gt;= 0.97, &gt;= 0.95, &gt;= 0.90, &gt;= 0.80, &gt;= 0.70, &gt;= 0.60, &gt;= 0.50
+Threshold: 0
+						</pre>
+
+						<a name="Refs" id="Refs"></a>
+						<h3 class="leftHeader">References:</h3>
+						<ol class="noListTopMargin">
+							<li class="gapListItem">
+								Harmanci, A.O., Sharma, G., and Mathews, D.H.
+                            	<br>
+								&quot;TurboFold: Iterative Probabilistic Estimation of Secondary Structures for Multiple RNA Sequences.&quot;
+								<br>
+								<i>BMC Bioinformatics</i>, 12:108. (2011).</li>
+							<li class="gapListItem">Reuter, J.S. and Mathews, D.H.
+								<br>
+								&quot;RNAstructure: software for RNA secondary structure prediction and analysis.&quot;
+								<br>
+								<i>BMC Bioinformatics</i>, 11:129. (2010).
+							</li>
+						</ol>
+					</td>
+				</tr>
+				<tr>
+					<td class="footer" colspan="3">
+						<p>Visit <a href="http://rna.urmc.rochester.edu/RNAstructure.html">The Mathews Lab RNAstructure Page</a> for updates and latest information.</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

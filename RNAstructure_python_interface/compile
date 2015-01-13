@@ -1,0 +1,4 @@
+#!/bin/bash
+export CC=g++
+swig -python -c++ RNAstructure.i
+python setup.py build_ext --inplace --compiler=unix

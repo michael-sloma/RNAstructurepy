@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# If the stochastic executable doesn't exist yet, make it.
+# Also, make the partition function save file necessary for testing.
+echo '    Preparation of stochastic tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/partition ]]
+then
+cd ..; make partition >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/stochastic ]]
+then
+cd ..; make stochastic >& /dev/null; cd tests;
+fi
+
+if [[ ! -f $SINGLEPFS ]]
+then
+../exe/partition $SINGLESEQ $SINGLEPFS 1>/dev/null 2>stochastic_partitionFunction_prep_errors.txt
+if [[ -s stochastic_partitionFunction_prep_errors.txt ]]
+then
+cp stochastic_partitionFunction_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+echo '    Preparation of stochastic tests finished.'
+
+# Test stochastic_without_options.
+echo '    stochastic_without_options testing started...'
+../exe/stochastic $SINGLEPFS stochastic_without_options_test_output.ct 1>/dev/null 2>stochastic_without_options_errors.txt
+diff stochastic_without_options_test_output.ct stochastic/stochastic_without_options_OK.ct >& stochastic_without_options_diff_output.txt
+checkErrors stochastic_without_options stochastic_without_options_errors.txt stochastic_without_options_diff_output.txt
+echo '    stochastic_without_options testing finished.'
+
+# Test stochastic_dna_option.
+echo '    stochastic_dna_option testing started...'
+../exe/stochastic $SINGLESEQ stochastic_dna_option_test_output.ct --sequence -d 1>/dev/null 2>stochastic_dna_option_errors.txt
+diff stochastic_dna_option_test_output.ct stochastic/stochastic_dna_option_OK.ct >& stochastic_dna_option_diff_output.txt
+checkErrors stochastic_dna_option stochastic_dna_option_errors.txt stochastic_dna_option_diff_output.txt
+echo '    stochastic_dna_option testing finished.'
+
+# Test stochastic_ensemble_option.
+echo '    stochastic_ensemble_option testing started...'
+../exe/stochastic $SINGLEPFS stochastic_ensemble_option_test_output.ct -e 2 1>/dev/null 2>stochastic_ensemble_option_errors.txt
+diff stochastic_ensemble_option_test_output.ct stochastic/stochastic_ensemble_option_OK.ct >& stochastic_ensemble_option_diff_output.txt
+checkErrors stochastic_ensemble_option stochastic_ensemble_option_errors.txt stochastic_ensemble_option_diff_output.txt
+echo '    stochastic_ensemble_option testing finished.'
+
+# Test stochastic_seed_option.
+echo '    stochastic_seed_option testing started...'
+../exe/stochastic $SINGLEPFS stochastic_seed_option_test_output.ct -s 2 1>/dev/null 2>stochastic_seed_option_errors.txt
+diff stochastic_seed_option_test_output.ct stochastic/stochastic_seed_option_OK.ct >& stochastic_seed_option_diff_output.txt
+checkErrors stochastic_seed_option stochastic_seed_option_errors.txt stochastic_seed_option_diff_output.txt
+echo '    stochastic_seed_option testing finished.'
+
+# Test stochastic_sequence_option.
+echo '    stochastic_sequence_option testing started...'
+../exe/stochastic $SINGLESEQ stochastic_sequence_option_test_output.ct --sequence 1>/dev/null 2>stochastic_sequence_option_errors.txt
+diff stochastic_sequence_option_test_output.ct stochastic/stochastic_without_options_OK.ct >& stochastic_sequence_option_diff_output.txt
+checkErrors stochastic_sequence_option stochastic_sequence_option_errors.txt stochastic_sequence_option_diff_output.txt
+echo '    stochastic_sequence_option testing finished.'
+
+# Clean up any extra files made over the course of the stochastic tests.
+echo '    Cleanup of stochastic tests started...'
+echo '        Cleanup in progress...'
+rm -f stochastic_partitionFunction_prep_errors.txt
+rm -f stochastic_without_options*
+rm -f stochastic_dna_option*
+rm -f stochastic_ensemble_option*
+rm -f stochastic_seed_option*
+rm -f stochastic_sequence_option*
+rm -f $SINGLEPFS
+echo '    Cleanup of stochastic tests finished.'

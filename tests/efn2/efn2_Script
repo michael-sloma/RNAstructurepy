@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# If the efn2 executable doesn't exist yet, make it.
+# Also, make the ct structure file necessary for testing.
+echo '    Preparation of efn2 tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/Fold ]]
+then
+cd ..; make Fold >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/efn2 ]]
+then
+cd ..; make efn2 >& /dev/null; cd tests;
+fi
+
+if [[ ! -f $SINGLECT ]]
+then
+../exe/Fold $SINGLESEQ $SINGLECT 1>/dev/null 2>efn2_structureFolding_prep_errors.txt
+if [[ -s efn2_structureFolding_prep_errors.txt ]]
+then
+cp efn2_structureFolding_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+echo '    Preparation of efn2 tests finished.'
+
+# Test efn2_without_options.
+echo '    efn2_without_options testing started...'
+../exe/efn2 $SINGLECT efn2_without_options_test_output.out 1>/dev/null 2>efn2_without_options_errors.txt
+diff efn2_without_options_test_output.out efn2/efn2_without_options_OK.out >& efn2_without_options_diff_output.txt
+checkErrors efn2_without_options efn2_without_options_errors.txt efn2_without_options_diff_output.txt
+echo '    efn2_without_options testing finished.'
+
+# Test efn2_dna_option.
+echo '    efn2_dna_option testing started...'
+../exe/efn2 $SINGLECT efn2_dna_option_test_output.out -d 1>/dev/null 2>efn2_dna_option_errors.txt
+diff efn2_dna_option_test_output.out efn2/efn2_dna_option_OK.out >& efn2_dna_option_diff_output.txt
+checkErrors efn2_dna_option efn2_dna_option_errors.txt efn2_dna_option_diff_output.txt
+echo '    efn2_dna_option testing finished.'
+
+# Test efn2_print_option.
+echo '    efn2_print_option testing started...'
+../exe/efn2 $SINGLECT efn2_print_option_test_output.out -p 1>efn2_print_option_screen_test_output.txt 2>efn2_print_option_errors.txt
+diff efn2_print_option_test_output.out efn2/efn2_print_option_OK.out >& efn2_print_option_diff_output.txt
+checkErrors efn2_print_option efn2_print_option_errors.txt efn2_print_option_diff_output.txt
+echo '    efn2_print_option testing finished.'
+
+# Test efn2_print_screen.
+echo '    efn2_print_option_screen testing started...'
+diff efn2_print_option_screen_test_output.txt efn2/efn2_print_option_screen_OK.txt >& efn2_print_option_screen_diff_output.txt
+checkErrors efn2_print_option_screen efn2_print_option_screen_diff_output.txt
+echo '    efn2_print_option_screen testing finished.'
+
+# Test efn2_shape_option.
+echo '    efn2 shape_option testing started...'
+../exe/efn2 $SINGLECT efn2_shape_option_test_output.out -sh testFiles/testFile_tRNA.shape 1>/dev/null 2>efn2_shape_option_errors.txt
+diff efn2_shape_option_test_output.out efn2/efn2_shape_option_OK.out >& efn2_shape_option_diff_output.txt
+checkErrors efn2_shape_option efn2_shape_option_errors.txt efn2_shape_option_diff_output.txt
+echo '    efn2 shape_option testing finished.'
+
+# Test efn2_shape_intercept_option.
+echo '    efn2_shape_intercept_option testing started...'
+../exe/efn2 $SINGLECT efn2_shape_intercept_option_test_output.out -sh testFiles/testFile_tRNA.shape -si 0.2 1>/dev/null 2>efn2_shape_intercept_option_errors.txt
+diff efn2_shape_intercept_option_test_output.out efn2/efn2_shape_intercept_option_OK.out >& efn2_shape_intercept_option_diff_output.txt
+checkErrors efn2_shape_intercept_option efn2_shape_intercept_option_errors.txt efn2_shape_intercept_option_diff_output.txt
+echo '    efn2_shape_intercept_option testing finished.'
+
+# Test efn2_shape_slope_option.
+echo '    efn2_shape_slope_option started...'
+../exe/efn2 $SINGLECT efn2_shape_slope_option_test_output.out -sh testFiles/testFile_tRNA.shape -sm 1.2 1>/dev/null 2>efn2_shape_slope_option_errors.txt
+diff efn2_shape_slope_option_test_output.out efn2/efn2_shape_slope_option_OK.out >& efn2_shape_slope_option_diff_output.txt
+checkErrors efn2_shape_slope_option efn2_shape_slope_option_errors.txt efn2_shape_slope_option_diff_output.txt
+echo '    efn2_shape_slope_option finished.'
+
+# Test efn2_temperature_option.
+echo '    efn2_temperature_option testing started...'
+../exe/efn2 $SINGLECT efn2_temperature_option_test_output.out -t 150 1>/dev/null 2>efn2_temperature_option_errors.txt
+diff efn2_temperature_option_test_output.out efn2/efn2_temperature_option_OK.out >& efn2_temperature_option_diff_output.txt
+checkErrors efn2_temperature_option efn2_temperature_option_errors.txt efn2_temperature_option_diff_output.txt
+echo '    efn2_temperature_option testing finished.'
+
+# Test efn2_write_thermodynamic_file_option.
+echo '    efn2_write_thermodynamic_file_option testing started...'
+../exe/efn2 $SINGLECT efn2_write_thermodynamic_file_option_test_output.out -w 1>/dev/null 2>efn2_write_thermodynamic_file_option_errors.txt
+diff efn2_write_thermodynamic_file_option_test_output.out efn2/efn2_write_thermodynamic_file_option_OK.out >& efn2_write_thermodynamic_file_option_diff_output.txt
+checkErrors efn2_write_thermodynamic_file_option efn2_write_thermodynamic_file_option_errors.txt efn2_write_thermodynamic_file_option_diff_output.txt
+echo '    efn2_write_thermodynamic_file_option testing finished.'
+
+# Clean up any extra files made over the course of the efn2 tests.
+echo '    Cleanup of efn2 tests started...'
+echo '        Cleanup in progress...'
+rm -f efn2_structureFolding_prep_errors.txt
+rm -f efn2_without_options*
+rm -f efn2_dna_option*
+rm -f efn2_print_option*
+rm -f efn2_shape*
+rm -f efn2_temperature_option*
+rm -f efn2_write_thermodynamic_file_option*
+rm -f $SINGLECT
+echo '    Cleanup of efn2 tests finished.'

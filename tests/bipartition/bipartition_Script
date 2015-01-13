@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# If the bipartition executable doesn't exist yet, make it.
+# Also, make the ProbabilityPlot executable so the save files can be checked, if it
+# doesn't exist yet.
+echo '    Preparation of bipartition tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/bipartition ]]
+then
+cd ..; make bipartition >& /dev/null; cd tests; 
+fi
+
+if [[ ! -f ../exe/ProbabilityPlot ]]
+then
+cd ..; make ProbabilityPlot >& /dev/null; cd tests;
+fi
+echo '    Preparation of bipartition tests finished.'
+
+# Test bipartition_without_options.
+echo '    bipartition_without_options testing started...'
+../exe/bipartition $DOUBLESEQ bipartition_without_options_test.pfs 1>/dev/null 2>bipartition_without_options_partition_errors.txt
+../exe/ProbabilityPlot bipartition_without_options_test.pfs bipartition_without_options_plot_test.ps 1>/dev/null 2>bipartition_without_options_plot_errors.txt
+diff bipartition_without_options_plot_test.ps bipartition/bipartition_without_options_OK.ps >& bipartition_without_options_diff_output.txt
+checkErrors bipartition_without_options bipartition_without_options_errors.txt bipartition_without_options_plot_errors.txt bipartition_without_options_diff_output.txt
+echo '    bipartition_without_options testing finished.'
+
+# Test bipartition_dna_option.
+echo '    bipartition_dna_option testing started...'
+../exe/bipartition $DOUBLESEQ bipartition_dna_option_test.pfs -d 1>/dev/null 2>bipartition_dna_option_partition_errors.txt
+../exe/ProbabilityPlot bipartition_dna_option_test.pfs bipartition_dna_option_plot_test.ps 1>/dev/null 2>bipartition_dna_option_plot_errors.txt
+diff bipartition_dna_option_plot_test.ps bipartition/bipartition_dna_option_OK.ps >& bipartition_dna_option_diff_output.txt
+checkErrors bipartition_dna_option bipartition_dna_option_errors.txt bipartition_dna_option_plot_errors.txt bipartition_dna_option_diff_output.txt
+echo '    bipartition_dna_option testing finished.'
+
+# Test bipartition_temperature_option.
+echo '    bipartition_temperature_option testing started...'
+../exe/bipartition $DOUBLESEQ bipartition_temperature_option_test.pfs -t 330 1>/dev/null 2>bipartition_temperature_option_partition_errors.txt
+../exe/ProbabilityPlot bipartition_temperature_option_test.pfs bipartition_temperature_option_plot_test.ps 1>/dev/null 2>bipartition_temperature_option_plot_errors.txt
+diff bipartition_temperature_option_plot_test.ps bipartition/bipartition_temperature_option_OK.ps >& bipartition_temperature_option_diff_output.txt
+checkErrors bipartition_temperature_option bipartition_temperature_option_errors.txt bipartition_temperature_option_plot_errors.txt bipartition_temperature_option_diff_output.txt
+echo '    bipartition_temperature_option testing finished.'
+
+# Clean up any extra files made over the course of the bipartition tests.
+echo '    Cleanup of bipartition tests started...'
+echo '        Cleanup in progress...'
+rm -f bipartition_without_options*
+rm -f bipartition_dna_option*
+rm -f bipartition_temperature_option*
+echo '    Cleanup of bipartition tests completed.'

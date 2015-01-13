@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# If the dot2ct executable doesn't exist yet, make it.
+echo '    Preparation of dot2ct tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/dot2ct ]]
+then
+cd ..; make dot2ct >& /dev/null; cd tests;
+fi
+echo '    Preparation of dot2ct tests finished.'
+
+# Test dot2ct with the general self-contained example given.
+echo '    dot2ct general testing started.'
+../exe/dot2ct ct2dot2ct/ct2dot_general_OK.bracket test.ct 1> /dev/null 2>dot2ct_general_errors.txt
+diff -b test.ct ct2dot2ct/dot2ct_general_OK.ct >& dot2ct_general_diff_output.txt
+checkErrors dot2ct_general dot2ct_general_errors.txt dot2ct_general_diff_output.txt
+echo '    dot2ct general testing finished.'
+
+# Clean up any extra files made over the course of the dot2ct tests.
+echo '    Cleanup of dot2ct tests started...'
+echo '        Cleanup in progress...'
+rm -f test.ct
+rm -f dot2ct_general_diff_output.txt
+rm -f dot2ct_general_errors.txt
+echo '    Cleanup of dot2ct tests finished.'

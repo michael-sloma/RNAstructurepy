@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# If the EnergyPlot executable doesn't exist yet, make it.
+# Also, make the EnergyPlot executable and create a save file from it.
+echo "    Preparation of EnergyPlot tests started..."
+echo "        Preparation in progress..."
+if [[ ! -f ../exe/EnergyPlot ]]
+then cd ..; make EnergyPlot >& /dev/null; cd tests; fi
+
+SAVEFILE=EnergyPlot_prep.sav
+MINIMUM="-30"
+MAXIMUM="-20"
+if [[ ! -f ../exe/Fold ]]; then cd ..; make Fold >& /dev/null; cd tests; fi
+../exe/Fold testFiles/testFile_RA7680.seq EnergyPlot_prep.ct -s $SAVEFILE 1>/dev/null 2>EnergyPlot_prep_errors.txt
+if [[ -s EnergyPlot_prep_errors.txt ]]; then cp EnergyPlot_prep_errors.txt RNAstructure_error_tests/; fi
+echo "    Preparation of EnergyPlot tests finished."
+
+# Test EnergyPlot_ps_without_options.
+echo "    EnergyPlot_ps_without_options testing started..."
+../exe/EnergyPlot $SAVEFILE EnergyPlot_ps_without_options_test_output.ps 1>/dev/null 2>EnergyPlot_ps_without_options_errors.txt
+diff EnergyPlot_ps_without_options_test_output.ps EnergyPlot/EnergyPlot_ps_without_options_OK.ps >& EnergyPlot_ps_without_options_diff_output.txt
+checkErrors EnergyPlot_ps_without_options EnergyPlot_ps_without_options_errors.txt EnergyPlot_ps_without_options_diff_output.txt
+echo "    EnergyPlot_ps_without_options testing finished."
+
+# Test EnergyPlot_ps_entries_option.
+echo "    EnergyPlot_ps_entries_option testing started..."
+../exe/EnergyPlot $SAVEFILE EnergyPlot_ps_entries_option_test_output.ps -e 3 1>/dev/null 2>EnergyPlot_ps_entries_option_errors.txt
+diff EnergyPlot_ps_entries_option_test_output.ps EnergyPlot/EnergyPlot_ps_entries_option_OK.ps >& EnergyPlot_ps_entries_option_diff_output.txt
+checkErrors EnergyPlot_ps_entries_option EnergyPlot_ps_entries_option_errors.txt EnergyPlot_ps_entries_option_diff_output.txt
+echo "    EnergyPlot_ps_entries_option testing finished."
+
+# Test EnergyPlot_ps_maximum_option.
+echo "    EnergyPlot_ps_maximum_option testing started..."
+../exe/EnergyPlot $SAVEFILE EnergyPlot_ps_maximum_option_test_output.ps -max $MAXIMUM 1>/dev/null 2>EnergyPlot_ps_maximum_option_errors.txt
+diff EnergyPlot_ps_maximum_option_test_output.ps EnergyPlot/EnergyPlot_ps_maximum_option_OK.ps >& EnergyPlot_ps_maximum_option_diff_output.txt
+checkErrors EnergyPlot_ps_maximum_option EnergyPlot_ps_maximum_option_errors.txt EnergyPlot_ps_maximum_option_diff_output.txt
+echo "    EnergyPlot_ps_maximum_option testing finished."
+
+# Test EnergyPlot_ps_minimum_option.
+echo "    EnergyPlot_ps_minimum_option testing started..."
+../exe/EnergyPlot $SAVEFILE EnergyPlot_ps_minimum_option_test_output.ps -min $MINIMUM 1>/dev/null 2>EnergyPlot_ps_minimum_option_errors.txt
+diff EnergyPlot_ps_minimum_option_test_output.ps EnergyPlot/EnergyPlot_ps_minimum_option_OK.ps >& EnergyPlot_ps_minimum_option_diff_output.txt
+checkErrors EnergyPlot_ps_minimum_option EnergyPlot_ps_minimum_option_errors.txt EnergyPlot_ps_minimum_option_diff_output.txt
+echo "    EnergyPlot_ps_minimum_option testing finished."
+
+# Test EnergyPlot_svg_without_options.
+echo "    EnergyPlot_svg_without_options testing started..."
+../exe/EnergyPlot $SAVEFILE EnergyPlot_svg_without_options_test_output.svg --svg 1>/dev/null 2>EnergyPlot_svg_without_options_errors.txt
+diff EnergyPlot_svg_without_options_test_output.svg EnergyPlot/EnergyPlot_svg_without_options_OK.svg >& EnergyPlot_svg_without_options_diff_output.txt
+checkErrors EnergyPlot_svg_without_options EnergyPlot_svg_without_options_errors.txt EnergyPlot_svg_without_options_diff_output.txt
+echo "    EnergyPlot_svg_without_options testing finished."
+
+# Test EnergyPlot_svg_entries_option.
+echo "    EnergyPlot_svg_entries_option testing started..."
+../exe/EnergyPlot $SAVEFILE EnergyPlot_svg_entries_option_test_output.svg -e 3 --svg 1>/dev/null 2>EnergyPlot_svg_entries_option_errors.txt
+diff EnergyPlot_svg_entries_option_test_output.svg EnergyPlot/EnergyPlot_svg_entries_option_OK.svg >& EnergyPlot_svg_entries_option_diff_output.txt
+checkErrors EnergyPlot_svg_entries_option EnergyPlot_svg_entries_option_errors.txt EnergyPlot_svg_entries_option_diff_output.txt
+echo "    EnergyPlot_svg_entries_option testing finished."
+
+# Test EnergyPlot_svg_maximum_option.
+echo "    EnergyPlot_svg_maximum_option testing started..."
+../exe/EnergyPlot $SAVEFILE EnergyPlot_svg_maximum_option_test_output.svg -max $MAXIMUM --svg 1>/dev/null 2>EnergyPlot_svg_maximum_option_errors.txt
+diff EnergyPlot_svg_maximum_option_test_output.svg EnergyPlot/EnergyPlot_svg_maximum_option_OK.svg >& EnergyPlot_svg_maximum_option_diff_output.txt
+checkErrors EnergyPlot_svg_maximum_option EnergyPlot_svg_maximum_option_errors.txt EnergyPlot_svg_maximum_option_diff_output.txt
+echo "    EnergyPlot_svg_maximum_option testing finished."
+
+# Test EnergyPlot_svg_minimum_option.
+echo "    EnergyPlot_svg_minimum_option testing started..."
+../exe/EnergyPlot $SAVEFILE EnergyPlot_svg_minimum_option_test_output.svg -min $MINIMUM --svg 1>/dev/null 2>EnergyPlot_svg_minimum_option_errors.txt
+diff EnergyPlot_svg_minimum_option_test_output.svg EnergyPlot/EnergyPlot_svg_minimum_option_OK.svg >& EnergyPlot_svg_minimum_option_diff_output.txt
+checkErrors EnergyPlot_svg_minimum_option EnergyPlot_svg_minimum_option_errors.txt EnergyPlot_svg_minimum_option_diff_output.txt
+echo "    EnergyPlot_svg_minimum_option testing finished."
+
+# Test EnergyPlot_text_option.
+echo "    EnergyPlot_text_option testing started..."
+../exe/EnergyPlot $SAVEFILE EnergyPlot_text_option_test_output.txt --text 1>/dev/null 2>EnergyPlot_text_option_errors.txt
+diff EnergyPlot_text_option_test_output.txt EnergyPlot/EnergyPlot_text_option_OK.txt >& EnergyPlot_text_option_diff_output.txt
+checkErrors EnergyPlot_text_option EnergyPlot_text_option_errors.txt EnergyPlot_text_option_diff_output.txt
+echo "    EnergyPlot_text_option testing finished."
+
+# Clean up any extra files made over the course of the EnergyPlot tests.
+echo "    Cleanup of EnergyPlot tests started..."
+echo '        Cleanup in progress...'
+rm -f EnergyPlot_prep*
+rm -f EnergyPlot_ps*
+rm -f EnergyPlot_svg*
+rm -f EnergyPlot_text*
+echo "    Cleanup of EnergyPlot tests finished."

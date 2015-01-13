@@ -1,0 +1,11 @@
+Initializing nucleic acids...done.
+Writing free energy list file...done.
+
+Generated output file: efn2_print_option_test_output.out
+
+Structure: 1   Energy = -31.8
+Structure: 2   Energy = -32.5
+Structure: 3   Energy = -31.3
+Structure: 4   Energy = -29.2
+
+efn2 complete.

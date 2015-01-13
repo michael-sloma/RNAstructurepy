@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# If the DynalignDotPlot executable doesn't exist yet, make it.
+# Also, make the Dynalign executable and create a save file from it.
+echo "    Preparation of DynalignDotPlot tests started..."
+echo "        Preparation in progress..."
+if [[ ! -f ../exe/DynalignDotPlot ]]
+then cd ..; make DynalignDotPlot >& /dev/null; cd tests; fi
+
+SAVEFILE=../tests/DynalignDotPlot_prep.dsv
+MINIMUM="-40"
+MAXIMUM="-20"
+if [[ ! -f ../exe/dynalign ]]; then cd ..; make dynalign >& /dev/null; cd tests; fi
+echo "inseq1 = ../tests/testFiles/testFile_RD0260.seq" > DynalignDotPlot_prep.conf
+echo "inseq2 = ../tests/testFiles/testFile_RD0500.seq" >> DynalignDotPlot_prep.conf
+echo "outct = ../tests/DynalignDotPlot_prep-1.ct" >> DynalignDotPlot_prep.conf
+echo "outct2 = ../tests/DynalignDotPlot_prep-2.ct" >> DynalignDotPlot_prep.conf
+echo "aout = ../tests/DynalignDotPlot_prep.ali" >> DynalignDotPlot_prep.conf
+echo "savefile = $SAVEFILE" >> DynalignDotPlot_prep.conf
+../exe/dynalign DynalignDotPlot_prep.conf 1>/dev/null 2>DynalignDotPlot_prep_errors.txt
+if [[ -s DynalignDotPlot_prep_errors.txt ]]; then cp DynalignDotPlot_prep_errors.txt RNAstructure_error_tests/; fi
+echo "    Preparation of DynalignDotPlot tests finished."
+
+# Test DynalignDotPlot_ps_without_options.
+echo "    DynalignDotPlot_ps_without_options testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_ps_without_options_test_output.ps 1>/dev/null 2>DynalignDotPlot_ps_without_options_errors.txt
+diff DynalignDotPlot_ps_without_options_test_output.ps DynalignDotPlot/DynalignDotPlot_ps_without_options_OK.ps >& DynalignDotPlot_ps_without_options_diff_output.txt
+checkErrors DynalignDotPlot_ps_without_options DynalignDotPlot_ps_without_options_errors.txt DynalignDotPlot_ps_without_options_diff_output.txt
+echo "    DynalignDotPlot_ps_without_options testing finished."
+
+# Test DynalignDotPlot_ps_entries_option.
+echo "    DynalignDotPlot_ps_entries_option testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_ps_entries_option_test_output.ps -e 3 1>/dev/null 2>DynalignDotPlot_ps_entries_option_errors.txt
+diff DynalignDotPlot_ps_entries_option_test_output.ps DynalignDotPlot/DynalignDotPlot_ps_entries_option_OK.ps >& DynalignDotPlot_ps_entries_option_diff_output.txt
+checkErrors DynalignDotPlot_ps_entries_option DynalignDotPlot_ps_entries_option_errors.txt DynalignDotPlot_ps_entries_option_diff_output.txt
+echo "    DynalignDotPlot_ps_entries_option testing finished."
+
+# Test DynalignDotPlot_ps_maximum_option.
+echo "    DynalignDotPlot_ps_maximum_option testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_ps_maximum_option_test_output.ps -max $MAXIMUM 1>/dev/null 2>DynalignDotPlot_ps_maximum_option_errors.txt
+diff DynalignDotPlot_ps_maximum_option_test_output.ps DynalignDotPlot/DynalignDotPlot_ps_maximum_option_OK.ps >& DynalignDotPlot_ps_maximum_option_diff_output.txt
+checkErrors DynalignDotPlot_ps_maximum_option DynalignDotPlot_ps_maximum_option_errors.txt DynalignDotPlot_ps_maximum_option_diff_output.txt
+echo "    DynalignDotPlot_ps_maximum_option testing finished."
+
+# Test DynalignDotPlot_ps_minimum_option.
+echo "    DynalignDotPlot_ps_minimum_option testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_ps_minimum_option_test_output.ps -min $MINIMUM 1>/dev/null 2>DynalignDotPlot_ps_minimum_option_errors.txt
+diff DynalignDotPlot_ps_minimum_option_test_output.ps DynalignDotPlot/DynalignDotPlot_ps_minimum_option_OK.ps >& DynalignDotPlot_ps_minimum_option_diff_output.txt
+checkErrors DynalignDotPlot_ps_minimum_option DynalignDotPlot_ps_minimum_option_errors.txt DynalignDotPlot_ps_minimum_option_diff_output.txt
+echo "    DynalignDotPlot_ps_minimum_option testing finished."
+
+# Test DynalignDotPlot_ps_sequence2_option.
+echo "    DynalignDotPlot_ps_sequence2_option testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_ps_sequence2_option_test_output.ps --sequence2 1>/dev/null 2>DynalignDotPlot_ps_sequence2_option_errors.txt
+diff DynalignDotPlot_ps_sequence2_option_test_output.ps DynalignDotPlot/DynalignDotPlot_ps_sequence2_option_OK.ps >& DynalignDotPlot_ps_sequence2_option_diff_output.txt
+checkErrors DynalignDotPlot_ps_sequence2_option DynalignDotPlot_ps_sequence2_option_errors.txt DynalignDotPlot_ps_sequence2_option_diff_output.txt
+echo "    DynalignDotPlot_ps_sequence2_option testing finished."
+
+# Test DynalignDotPlot_svg_without_options.
+echo "    DynalignDotPlot_svg_without_options testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_svg_without_options_test_output.svg --svg 1>/dev/null 2>DynalignDotPlot_svg_without_options_errors.txt
+diff DynalignDotPlot_svg_without_options_test_output.svg DynalignDotPlot/DynalignDotPlot_svg_without_options_OK.svg >& DynalignDotPlot_svg_without_options_diff_output.txt
+checkErrors DynalignDotPlot_svg_without_options DynalignDotPlot_svg_without_options_errors.txt DynalignDotPlot_svg_without_options_diff_output.txt
+echo "    DynalignDotPlot_svg_without_options testing finished."
+
+# Test DynalignDotPlot_svg_entries_option.
+echo "    DynalignDotPlot_svg_entries_option testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_svg_entries_option_test_output.svg -e 3 --svg 1>/dev/null 2>DynalignDotPlot_svg_entries_option_errors.txt
+diff DynalignDotPlot_svg_entries_option_test_output.svg DynalignDotPlot/DynalignDotPlot_svg_entries_option_OK.svg >& DynalignDotPlot_svg_entries_option_diff_output.txt
+checkErrors DynalignDotPlot_svg_entries_option DynalignDotPlot_svg_entries_option_errors.txt DynalignDotPlot_svg_entries_option_diff_output.txt
+echo "    DynalignDotPlot_svg_entries_option testing finished."
+
+# Test DynalignDotPlot_svg_maximum_option.
+echo "    DynalignDotPlot_svg_maximum_option testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_svg_maximum_option_test_output.svg -max $MAXIMUM --svg 1>/dev/null 2>DynalignDotPlot_svg_maximum_option_errors.txt
+diff DynalignDotPlot_svg_maximum_option_test_output.svg DynalignDotPlot/DynalignDotPlot_svg_maximum_option_OK.svg >& DynalignDotPlot_svg_maximum_option_diff_output.txt
+checkErrors DynalignDotPlot_svg_maximum_option DynalignDotPlot_svg_maximum_option_errors.txt DynalignDotPlot_svg_maximum_option_diff_output.txt
+echo "    DynalignDotPlot_svg_maximum_option testing finished."
+
+# Test DynalignDotPlot_svg_minimum_option.
+echo "    DynalignDotPlot_svg_minimum_option testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_svg_minimum_option_test_output.svg -min $MINIMUM --svg 1>/dev/null 2>DynalignDotPlot_svg_minimum_option_errors.txt
+diff DynalignDotPlot_svg_minimum_option_test_output.svg DynalignDotPlot/DynalignDotPlot_svg_minimum_option_OK.svg >& DynalignDotPlot_svg_minimum_option_diff_output.txt
+checkErrors DynalignDotPlot_svg_minimum_option DynalignDotPlot_svg_minimum_option_errors.txt DynalignDotPlot_svg_minimum_option_diff_output.txt
+echo "    DynalignDotPlot_svg_minimum_option testing finished."
+
+# Test DynalignDotPlot_svg_sequence2_option.
+echo "    DynalignDotPlot_svg_sequence2_option testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_svg_sequence2_option_test_output.svg --sequence2 --svg 1>/dev/null 2>DynalignDotPlot_svg_sequence2_option_errors.txt
+diff DynalignDotPlot_svg_sequence2_option_test_output.svg DynalignDotPlot/DynalignDotPlot_svg_sequence2_option_OK.svg >& DynalignDotPlot_svg_sequence2_option_diff_output.txt
+checkErrors DynalignDotPlot_svg_sequence2_option DynalignDotPlot_svg_sequence2_option_errors.txt DynalignDotPlot_svg_sequence2_option_diff_output.txt
+echo "    DynalignDotPlot_svg_sequence2_option testing finished."
+
+# Test DynalignDotPlot_text_option.
+echo "    DynalignDotPlot_text_option testing started..."
+../exe/DynalignDotPlot $SAVEFILE DynalignDotPlot_text_option_test_output.txt --text 1>/dev/null 2>DynalignDotPlot_text_option_errors.txt
+diff DynalignDotPlot_text_option_test_output.txt DynalignDotPlot/DynalignDotPlot_text_option_OK.txt >& DynalignDotPlot_text_option_diff_output.txt
+checkErrors DynalignDotPlot_text_option DynalignDotPlot_text_option_errors.txt DynalignDotPlot_text_option_diff_output.txt
+echo "    DynalignDotPlot_text_option testing finished."
+
+# Clean up any extra files made over the course of the DynalignDotPlot tests.
+echo "    Cleanup of DynalignDotPlot tests started..."
+echo '        Cleanup in progress...'
+rm -f DynalignDotPlot_prep*
+rm -f DynalignDotPlot_ps*
+rm -f DynalignDotPlot_svg*
+rm -f DynalignDotPlot_text*
+echo "    Cleanup of DynalignDotPlot tests finished."

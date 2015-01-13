@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# If the DuplexFold executable doesn't exist yet, make it.
+echo '    Preparation of DuplexFold tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/DuplexFold ]]
+then
+cd ..; make DuplexFold >& /dev/null; cd tests;
+fi
+echo '    Preparation of DuplexFold tests finished.'
+
+# Test DuplexFold_without_options.
+echo '    DuplexFold_without_options testing started...'
+../exe/DuplexFold $DOUBLESEQ DuplexFold_without_options_test_output.ct 1>/dev/null 2>DuplexFold_without_options_errors.txt
+diff DuplexFold_without_options_test_output.ct DuplexFold/DuplexFold_without_options_OK.ct >& DuplexFold_without_options_diff_output.txt
+checkErrors DuplexFold_without_options DuplexFold_without_options_errors.txt DuplexFold_without_options_diff_output.txt
+echo '    DuplexFold_without_options testing finished.'
+
+# Test DuplexFold_dna_option.
+echo '    DuplexFold_dna_option testing started...'
+../exe/DuplexFold $DOUBLESEQ DuplexFold_dna_option_test_output.ct -d 1>/dev/null 2>DuplexFold_dna_option_errors.txt
+diff DuplexFold_dna_option_test_output.ct DuplexFold/DuplexFold_dna_option_OK.ct >& DuplexFold_dna_option_diff_output.txt
+checkErrors DuplexFold_dna_option DuplexFold_dna_option_errors.txt DuplexFold_dna_option_diff_output.txt
+echo '    DuplexFold_dna_option testing finished.'
+
+# Test DuplexFold_loop_option.
+echo '    DuplexFold_loop_option testing started...'
+../exe/DuplexFold $DOUBLESEQ DuplexFold_loop_option_test_output.ct -l 10 1>/dev/null 2>DuplexFold_loop_option_errors.txt
+diff DuplexFold_loop_option_test_output.ct DuplexFold/DuplexFold_loop_option_OK.ct >& DuplexFold_loop_option_diff_output.txt
+checkErrors DuplexFold_loop_option DuplexFold_loop_option_errors.txt DuplexFold_loop_option_diff_output.txt
+echo '    DuplexFold_loop_option testing finished.'
+
+# Test DuplexFold_max_structures_option.
+echo '    DuplexFold_max_structures_option testing started...'
+../exe/DuplexFold $DOUBLESEQ DuplexFold_max_structures_option_test_output.ct -m 5 1>/dev/null 2>DuplexFold_max_structures_option_errors.txt
+diff DuplexFold_max_structures_option_test_output.ct DuplexFold/DuplexFold_max_structures_option_OK.ct >& DuplexFold_max_structures_option_diff_output.txt
+checkErrors DuplexFold_max_structures_option DuplexFold_max_structures_option_errors.txt DuplexFold_max_structures_option_diff_output.txt
+echo '    DuplexFold_max_structures_option testing finished.'
+
+# Test DuplexFold_percent_difference_option.
+echo '    DuplexFold_percent_difference_option testing started...'
+../exe/DuplexFold $DOUBLESEQ DuplexFold_percent_difference_option_test_output.ct -p 1 1>/dev/null 2>DuplexFold_percent_difference_option_errors.txt
+diff DuplexFold_percent_difference_option_test_output.ct DuplexFold/DuplexFold_percent_difference_option_OK.ct >& DuplexFold_percent_difference_option_diff_output.txt
+checkErrors DuplexFold_percent_difference_option DuplexFold_percent_difference_option_errors.txt DuplexFold_percent_difference_option_diff_output.txt
+echo '    DuplexFold_percent_difference_option testing finished.'
+
+# Test DuplexFold_temperature_option.
+echo '    DuplexFold_temperature_option testing started...'
+../exe/DuplexFold $DOUBLESEQ DuplexFold_temperature_option_test_output.ct -t 150 1>/dev/null 2>DuplexFold_temperature_option_errors.txt
+diff DuplexFold_temperature_option_test_output.ct DuplexFold/DuplexFold_temperature_option_OK.ct >& DuplexFold_temperature_option_diff_output.txt
+checkErrors DuplexFold_temperature_option DuplexFold_temperature_option_errors.txt DuplexFold_temperature_option_diff_output.txt
+echo '    DuplexFold_temperature_option testing finished.'
+
+# Test DuplexFold_window_size_option.
+echo '    DuplexFold_window_size_option testing started...'
+../exe/DuplexFold $DOUBLESEQ DuplexFold_window_size_option_test_output.ct -w 5 1>/dev/null 2>DuplexFold_window_size_option_errors.txt
+diff DuplexFold_window_size_option_test_output.ct DuplexFold/DuplexFold_window_size_option_OK.ct >& DuplexFold_window_size_option_diff_output.txt
+checkErrors DuplexFold_window_size_option DuplexFold_window_size_option_errors.txt DuplexFold_window_size_option_diff_output.txt
+echo '    DuplexFold_window_size_option_testing finished.'
+
+# Clean up any extra files made over the course of the DuplexFold tests.
+echo '    Cleanup of DuplexFold tests started...'
+echo '        Cleanup in progress...'
+rm -f DuplexFold_without_options*
+rm -f DuplexFold_dna_option*
+rm -f DuplexFold_loop_option*
+rm -f DuplexFold_max_structures_option*
+rm -f DuplexFold_percent_difference_option*
+rm -f DuplexFold_temperature_option*
+rm -f DuplexFold_window_size_option*
+echo '    Cleanup of DuplexFold tests finished.'

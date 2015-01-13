@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# If the scorer executable doesn't exist yet, make it.
+echo '    Preparation of scorer tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/scorer ]]
+then
+cd ..; make scorer >& /dev/null; cd tests;
+fi
+echo '    Preparation of scorer tests finished.'
+
+# Test scorer without_options.
+echo '    scorer without_options testing started...'
+../exe/scorer $DOUBLECT2 scorer_without_options_test_output.txt 1>/dev/null 2>scorer_without_options_errors.txt
+diff scorer_without_options_test_output.txt scorer/scorer_without_options_OK.txt >& scorer_without_options_diff_output.txt
+checkErrors scorer_without_options scorer_without_options_errors.txt scorer_without_options_diff_output.txt
+echo '    scorer without_options testing finished.'
+
+# Test scorer exact_option.
+echo '    scorer exact_option testing started...'
+../exe/scorer $DOUBLECT2 scorer_exact_option_test_output.txt -e 1>/dev/null 2>scorer_exact_option_errors.txt
+diff scorer_exact_option_test_output.txt scorer/scorer_exact_option_OK.txt >& scorer_exact_option_diff_output.txt
+checkErrors scorer_exact_option scorer_exact_option_errors.txt scorer_exact_option_diff_output.txt
+echo '    scorer exact_option testing finished.'
+
+# Test scorer_multiple_cts.
+echo '    scorer_multiple_cts testing started...'
+../exe/scorer testFiles/testFile_CircleCompare_predicted.ct testFiles/testFile_knotted.ct scorer_multiple_cts_test_output.txt 1>/dev/null 2>scorer_multiple_cts_errors.txt
+diff scorer_multiple_cts_test_output.txt scorer/scorer_multiple_cts_OK.txt >& scorer_multiple_cts_diff_output.txt
+checkErrors scorer_multiple_cts scorer_multiple_cts_errors.txt scorer_multiple_cts_diff_output.txt
+echo '    scorer_multiple_cts testing finished.'
+
+# Test scorer_print_option.
+echo '    scorer_print_option testing started...'
+../exe/scorer $DOUBLECT2 scorer_print_option_test_output.txt -p 1>scorer_print_option_screen_test_output.txt 2>scorer_print_option_errors.txt
+diff scorer_print_option_test_output.txt scorer/scorer_without_options_OK.txt >& scorer_print_option_diff_output.txt
+checkErrors scorer_print_option scorer_print_option_errors.txt scorer_print_option_diff_output.txt
+echo '    scorer_print_option testing finished.'
+
+# Test scorer print_option_screen.
+echo '    scorer_print_option_screen testing started...'
+diff scorer_print_option_screen_test_output.txt scorer/scorer_print_option_screen_OK.txt >& scorer_print_option_screen_diff_output.txt
+checkErrors scorer_print_option_screen scorer_print_option_screen_diff_output.txt
+echo '    scorer_print_option_screen testing finished.'
+
+# Test scorer_specific_structure_option.
+echo '    scorer_specific_structure_option testing started...'
+../exe/scorer $DOUBLECT scorer_specific_structure_option_test_output.txt -n 2 1>/dev/null 2>scorer_specific_structure_option_errors.txt
+diff scorer_specific_structure_option_test_output.txt scorer/scorer_specific_structure_option_OK.txt >& scorer_specific_structure_option_diff_output.txt
+checkErrors scorer_specific_structure_option scorer_specific_structure_option_errors.txt scorer_specific_structure_option_diff_output.txt
+echo '    scorer_specific_structure_option testing finished.'
+
+# Clean up any extra files made over the course of the scorer tests.
+echo '    Cleanup of scorer tests started...'
+echo '        Cleanup in progress...'
+rm -f scorer_without_options*
+rm -f scorer_exact_option*
+rm -f scorer_multiple_cts*
+rm -f scorer_print_option*
+rm -f scorer_specific_structure_option*
+echo '    Cleanup of scorer tests finished.'

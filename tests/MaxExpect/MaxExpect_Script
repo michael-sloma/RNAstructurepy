@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# If the MaxExpect executable doesn't exist yet, make it.
+# Also, make the partition function save file necessary for testing.
+echo '    Preparation of MaxExpect tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/partition ]]
+then
+cd ..; make partition >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/MaxExpect ]]
+then
+cd ..; make MaxExpect >& /dev/null; cd tests;
+fi
+
+if [[ ! -f $SINGLEPFS4 ]]
+then
+../exe/partition $SINGLESEQ4 $SINGLEPFS4 1>/dev/null 2>MaxExpect_partitionFunction_prep_errors.txt
+if [[ -s MaxExpect_partitionFunction_prep_errors.txt ]]
+then
+cp MaxExpect_partitionFunction_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+echo '    Preparation of MaxExpect tests finished.'
+
+# Test MaxExpect_without_options.
+echo '    MaxExpect_without_options testing started...'
+../exe/MaxExpect $SINGLEPFS4 MaxExpect_without_options_test_output.ct 1>/dev/null 2>MaxExpect_without_options_errors.txt
+diff MaxExpect_without_options_test_output.ct MaxExpect/MaxExpect_without_options_OK.ct >& MaxExpect_without_options_diff_output.txt
+checkErrors MaxExpect_without_options MaxExpect_without_options_errors.txt MaxExpect_without_options_diff_output.txt
+echo '    MaxExpect_without_options testing finished.'
+
+# Test MaxExpect_dna_option.
+echo '    MaxExpect_dna_option testing started...'
+../exe/MaxExpect $SINGLESEQ4 MaxExpect_dna_option_test_output.ct --sequence -d 1>/dev/null 2>MaxExpect_dna_option_errors.txt
+diff MaxExpect_dna_option_test_output.ct MaxExpect/MaxExpect_dna_option_OK.ct >& MaxExpect_dna_option_diff_output.txt
+checkErrors MaxExpect_dna_option MaxExpect_dna_option_errors.txt MaxExpect_dna_option_diff_output.txt
+echo '    MaxExpect_dna_option testing finished.'
+
+# Test MaxExpect_gamma_option.
+echo '    MaxExpect_gamma_option testing started...'
+../exe/MaxExpect $SINGLEPFS4 MaxExpect_gamma_option_test_output.ct -g 2 1>/dev/null 2>MaxExpect_gamma_option_errors.txt
+diff MaxExpect_gamma_option_test_output.ct MaxExpect/MaxExpect_gamma_option_OK.ct >& MaxExpect_gamma_option_diff_output.txt
+checkErrors MaxExpect_gamma_option MaxExpect_gamma_option_errors.txt MaxExpect_gamma_option_diff_output.txt
+echo '    MaxExpect_gamma_option_testing finished.'
+
+# Test MaxExpect_max_structures_option.
+echo '    MaxExpect_max_structures_option testing started...'
+../exe/MaxExpect $SINGLEPFS4 MaxExpect_max_structures_option_test_output.ct -w 0 -s 3 1>/dev/null 2>MaxExpect_max_structures_option_errors.txt
+diff MaxExpect_max_structures_option_test_output.ct MaxExpect/MaxExpect_max_structures_option_OK.ct >& MaxExpect_max_structures_option_diff_output.txt
+checkErrors MaxExpect_max_structures_option MaxExpect_max_structures_option_errors.txt MaxExpect_max_structures_option_diff_output.txt
+echo '    MaxExpect_max_structures_option testing finished.'
+
+# Test MaxExpect_percent_difference_option.
+echo '    MaxExpect_percent_difference_option testing started...'
+../exe/MaxExpect $SINGLEPFS4 MaxExpect_percent_difference_option_test_output.ct -w 0 -p 2 1>/dev/null 2>MaxExpect_percent_difference_option_errors.txt
+diff MaxExpect_percent_difference_option_test_output.ct MaxExpect/MaxExpect_percent_difference_option_OK.ct >& MaxExpect_percent_difference_option_diff_output.txt
+checkErrors MaxExpect_percent_difference_option MaxExpect_percent_difference_option_errors.txt MaxExpect_percent_difference_option_diff_output.txt
+echo '    MaxExpect_percent_difference_option testing finished.'
+
+# Test MaxExpect_sequence_option.
+echo '    MaxExpect_sequence_option testing started...'
+../exe/MaxExpect $SINGLESEQ4 MaxExpect_sequence_option_test_output.ct --sequence 1>/dev/null 2>MaxExpect_sequence_option_errors.txt
+diff MaxExpect_sequence_option_test_output.ct MaxExpect/MaxExpect_without_options_OK.ct >& MaxExpect_sequence_option_diff_output.txt
+checkErrors MaxExpect_sequence_option MaxExpect_sequence_option_errors.txt MaxExpect_sequence_option_diff_output.txt
+echo '    MaxExpect_sequence_option testing finished.'
+
+# Test MaxExpect_window_size_option.
+echo '    MaxExpect_window_size_option testing started...'
+../exe/MaxExpect $SINGLEPFS4 MaxExpect_window_size_option_test_output.ct -w 0 1>/dev/null 2>MaxExpect_window_size_option_errors.txt
+diff MaxExpect_window_size_option_test_output.ct MaxExpect/MaxExpect_window_size_option_OK.ct >& MaxExpect_window_size_option_diff_output.txt
+checkErrors MaxExpect_window_size_option MaxExpect_window_size_option_errors.txt MaxExpect_window_size_option_diff_output.txt
+echo '    MaxExpect_window_size_option_testing finished.'
+
+# Clean up any extra files made over the course of the MaxExpect tests.
+echo '    Cleanup of MaxExpect tests started...'
+echo '        Cleanup in progress...'
+rm -f MaxExpect_partitionFunction_prep_errors.txt
+rm -f MaxExpect_without_options*
+rm -f MaxExpect_dna_option*
+rm -f MaxExpect_gamma_option*
+rm -f MaxExpect_max_structures_option*
+rm -f MaxExpect_percent_difference_option*
+rm -f MaxExpect_sequence_option*
+rm -f MaxExpect_window_size_option*
+rm -f $SINGLEPFS4
+echo '    Cleanup of MaxExpect tests finished.'

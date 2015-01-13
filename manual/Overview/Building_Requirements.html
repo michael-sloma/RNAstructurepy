@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+	<head>
+		<title>RNAstructure Installation and Overview: Building Requirements</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<link href="Stylesheet.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+		<div class="bodydiv">
+			<table cellpadding="0" cellspacing="0" border="0" class="mainTable">
+				<tr class="headerRow">
+					<td class="headerBox"><img src="icon.jpg" alt="RNAstructure logo"></td>
+					<td class="headerLabel"><h2>RNAstructure Installation and Overview<br>Building Requirements</h2></td>
+					<td class="headerBox2">
+						<ul id="navigator">
+							<li><h3 class="noMarginOrPad"><a href="index.html">Contents</a></h3></li>
+							<li><h3 class="noMarginOrPad"><a href="AlphabeticalIndex.html">Index</a></h3></li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td class="mainContent" colspan="3">
+						<a name="Compilers"></a>
+						<h3>Compilers</h3>
+						<p>Installation of the RNAstructure repository for Unix, Linux, or Mac OS X requires a current C++ compiler. By default, RNAstructure assumes a GNU g++ compiler, but there are alternative options that may be specified in RNAstructure/compiler.h.</p>
+						<hr>
+
+						<a name="CompilerFlags"></a>
+						<h3>Compiler Flags</h3>
+						<p>To compile the RNAstructure repository programs properly, a group of compiler variables must be selected in RNAstructure/compiler.h that is appropriate to the operating system. By default, RNAstructure assumes a Linux system. To change variable types to a different operating system, place a pound (#) sign next to each of the Linux variables, and remove the pound signs from the variables in the operating system section of your choice.</p>
+						<hr>
+
+						<a name="DataPath"></a>
+						<h3>DATAPATH Variable</h3>
+						<p>In order to successfully use the data tables in the RNAstructure repository during calculations, an environment variable called DATAPATH must be set to the location of the data tables folder on the current machine.</p>
+						<p>
+							For example, in BASH, this is accomplished with:<br>
+							export DATAPATH=[directory in which RNAstructure resides]/RNAstructure/data_tables/
+						</p>
+						<hr>
+
+						<a name="GUIsoftware"></a>
+						<h3>RNAstructure Java GUI: Software</h3>
+						<p>To build the JAVA interface, the Sun JAVA JVM (Java Virtual Machine) version 1.6 or later, is required. The version of the JVM that comes from the JDK (Java Development Kit) is essential, because the headers in the &quot;include&quot; directory are necessary for successful integration of the interface with the back end. <em>Note that using other JVMs than the Sun JVM may cause aberrant program behavior and/or crashes.</em></p>
+						<hr>
+
+						<a name="GUIvariables"></a>
+						<div>
+							<h3>RNAstructure Java GUI: Variables</h3>
+							<p>The JAVA interface requires that two variables, INCLUDEPATH1 and INCLUDEPATH2, be set in compiler.h. These flags are required to find proper linking headers for the RNAstructure JAVA interface. On all systems, these paths point to the required native headers needed to interface JAVA with C++ code for the JAVA interface. These flags must be changed manually to coincide with the current machine before the JAVA interface can be run correctly, and are used in the RNAstructure_java_interface Makefile.</p>
+
+							<p>
+								INCLUDEPATH1 must hold the directory which contains &quot;jni.h.&quot;<br>
+								INCLUDEPATH2 must hold the directory which contains &quot;jni_md.h.&quot;<br>
+								Absolute paths must be used for both.
+							</p>
+
+							<pre>
+For Fedora Linux, these two paths are normally similar to:
+    INCLUDEPATH1 = /usr/java/jdk1.x.x_x/include
+    INCLUDEPATH2 = /usr/java/jdk1.x.x_x/include/linux
+For Ubuntu Linux, these two paths are normally similar to:
+    INCLUDEPATH1 = /usr/lib/jvm/java-6-sun-1.x.x.x/include
+    INCLUDEPATH2 = /usr/lib/jvm/java-6-sun-1.x.x.x/include/linux
+For Mac, these two paths are usually the same, and similar to:
+    INCLUDEPATH1 = /System/Library/Frameworks/JavaVM.framework/Headers
+    For Mac, INCLUDEPATH2 should be defined as &quot;&quot;, since it's not used.
+For Windows (Cygwin build), these two paths are normally similar to:
+    INCLUDEPATH1 = &quot;C:\Program Files\Java\jdk1.x.x_x\include&quot;
+    INCLUDEPATH2 = &quot;C:\Program Files\Java\jdk1.x.x_x\include\win32&quot;
+    For Windows, quotes may be needed if paths contain spaces.
+							</pre>
+
+							<p style="margin-top: -15px;">Note that the example paths given above are only meant to be a general guide to the paths' forms on different systems; the actual paths on any given system may differ from these.</p>
+						</div>
+						<hr>
+
+						<a name="Building Multifind"></a>
+						<h3>Building Multifind</h3>
+						<p>To build Multifind, <a href="http://www.csie.ntu.edu.tw/~cjlin/libsvm/">LIBSVM</a> version 3.0 or later is required. Building Multifind also requires the variable INCLUDESVM to be set in compiler.h. It is the LIBSVM directory that contains svm.o and svm.h.</p>
+						<hr>
+
+						<a name="Windows"></a>
+						<h3>Windows GUI or Text Interfaces</h3>
+						<p>Building the Windows programs requires Microsoft Visual Studio, version 2012 or later, and the Intel C++ compiler, integrated into Visual Studio. The GUI solution for Visual Studio is found in the RNAstructure_windows_interface directory. Building the GUI requires Visual Studio Professional because of the use of MFC for building the Windows components. The text (command line) interface solution is found in the RNAstructure_windows_text_interfaces directory. Each command line interface also has its own Visual Studio solution in the same directory as the interface.</p>
+                      <hr>
+                      <h3><a name="CUDA"></a></h3>
+                      <h3>CUDA-enabled Software</h3>
+					<p>Building partition-cuda requires a CUDA compiler, availble from NVIDIA:</p>
+					<p><a href="https://developer.nvidia.com/cuda-downloads">https://developer.nvidia.com/cuda-downloads</a></p>
+					<p>&nbsp;</p></td>
+				</tr>
+				<tr>
+					<td class="footer" colspan="3">
+						<p>Visit <a href="http://rna.urmc.rochester.edu/RNAstructure.html">The Mathews Lab RNAstructure Page</a> for updates and latest information.</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

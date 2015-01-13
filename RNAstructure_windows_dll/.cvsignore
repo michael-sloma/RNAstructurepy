@@ -1,0 +1,8 @@
+Debug
+*.sdf
+*.suo
+*.o
+*.obj
+*.exe
+*.user
+.ignored

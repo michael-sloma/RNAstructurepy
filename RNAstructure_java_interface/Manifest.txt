@@ -1,0 +1,5 @@
+Manifest-Version: 3.0
+Created-By: University of Rochester Medical Center, Mathews Lab
+Main-Class: RNAstructure_java_interface.source.startup.RNAstructure
+SplashScreen-Image: RNAstructure_java_interface/images/Splash.gif
+

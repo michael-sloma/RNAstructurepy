@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# If the EnsembleEnergy executable doesn't exist yet, make it.
+# Also, make the partition function save file necessary for testing.
+echo '    Preparation of EnsembleEnergy tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/partition ]]
+then
+cd ..; make partition >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/EnsembleEnergy ]]
+then
+cd ..; make EnsembleEnergy >& /dev/null; cd tests;
+fi
+
+if [[ ! -f $SINGLEPFS ]]
+then
+../exe/partition $SINGLESEQ $SINGLEPFS 1>/dev/null 2>EnsembleEnergy_partitionFunction_prep_errors.txt
+if [[ -s EnsembleEnergy_partitionFunction_prep_errors.txt ]]
+then
+cp EnsembleEnergy_partitionFunction_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+echo '    Preparation of EnsembleEnergy tests finished.'
+
+# Test EnsembleEnergy_without_options.
+echo '    EnsembleEnergy_without_options testing started...'
+../exe/EnsembleEnergy $SINGLEPFS 1>EnsembleEnergy_without_options_test_output.out 2>EnsembleEnergy_without_options_errors.txt
+diff EnsembleEnergy_without_options_test_output.out EnsembleEnergy/EnsembleEnergy_without_options_OK.out >& EnsembleEnergy_without_options_diff_output.txt
+checkErrors EnsembleEnergy_without_options EnsembleEnergy_without_options_errors.txt EnsembleEnergy_without_options_diff_output.txt
+echo '    EnsembleEnergy_without_options testing finished.'
+
+# Test EnsembleEnergy_dna_option.
+echo '    EnsembleEnergy_dna_option testing started...'
+../exe/EnsembleEnergy $SINGLESEQ --sequence -d 1>EnsembleEnergy_dna_option_test_output.out 2>EnsembleEnergy_dna_option_errors.txt
+diff EnsembleEnergy_dna_option_test_output.out EnsembleEnergy/EnsembleEnergy_dna_option_OK.out >& EnsembleEnergy_dna_option_diff_output.txt
+checkErrors EnsembleEnergy_dna_option EnsembleEnergy_dna_option_errors.txt EnsembleEnergy_dna_option_diff_output.txt
+echo '    EnsembleEnergy_dna_option testing finished.'
+
+# Test EnsembleEnergy_sequence_option.
+echo '    EnsembleEnergy_sequence_option testing started...'
+../exe/EnsembleEnergy $SINGLESEQ --sequence 1>EnsembleEnergy_sequence_option_test_output.out 2>EnsembleEnergy_sequence_option_errors.txt
+diff EnsembleEnergy_sequence_option_test_output.out EnsembleEnergy/EnsembleEnergy_sequence_option_OK.out >& EnsembleEnergy_sequence_option_diff_output.txt
+checkErrors EnsembleEnergy_sequence_option EnsembleEnergy_sequence_option_errors.txt EnsembleEnergy_sequence_option_diff_output.txt
+
+# Test EnsembleEnergy_silent_option.
+echo '    EnsembleEnergy_silent_option testing started...'
+../exe/EnsembleEnergy $SINGLEPFS --silent 1>EnsembleEnergy_silent_option_test_output.out 2>EnsembleEnergy_silent_option_errors.txt
+diff EnsembleEnergy_silent_option_test_output.out EnsembleEnergy/EnsembleEnergy_silent_option_OK.out >& EnsembleEnergy_silent_option_diff_output.txt
+checkErrors EnsembleEnergy_silent_option EnsembleEnergy_silent_option_errors.txt EnsembleEnergy_silent_option_diff_output.txt
+
+# Clean up any extra files made over the course of the EnsembleEnergy tests.
+echo '    Cleanup of EnsembleEnergy tests started...'
+echo '        Cleanup in progress...'
+rm -f EnsembleEnergy_partitionFunction_prep_errors.txt
+rm -f EnsembleEnergy_without_options*
+rm -f EnsembleEnergy_dna_option*
+rm -f EnsembleEnergy_sequence_option*
+rm -f EnsembleEnergy_silent_option*
+rm -f $SINGLEPFS
+echo '    Cleanup of EnsembleEnergy tests finished.'

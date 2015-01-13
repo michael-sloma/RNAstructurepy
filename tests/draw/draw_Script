@@ -1,0 +1,245 @@
+#!/bin/bash
+
+# If the draw executable doesn't exist yet, make it.
+# Also, make the partition function save file and the ct structure file necessary for testing.
+echo '    Preparation of draw tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/partition ]]
+then
+cd ..; make partition >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/ProbabilityPlot ]]
+then
+cd ..; make ProbabilityPlot >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/bifold ]]
+then
+cd ..; make bifold >& /dev/null; cd tests;
+fi
+
+../exe/bifold $DOUBLESEQ $BIMOLCT --intramolecular 1>/dev/null 2>draw_bimolecularFold_prep_errors.txt
+if [[ -s draw_bimolecularFold_prep_errors.txt ]]
+then
+cp draw_bimolecularFold_prep_errors.txt RNAstructure_error_tests/
+fi
+
+if [[ ! -f ../exe/Fold ]]
+then
+cd ..; make Fold >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/draw ]]
+then
+cd ..; make draw >& /dev/null; cd tests;
+fi
+
+if [[ ! -f $SINGLEPFS ]]
+then
+../exe/partition $SINGLESEQ $SINGLEPFS 1>/dev/null 2>draw_partitionFunction_prep_errors.txt
+if [[ -s draw_partitionFunction_prep_errors.txt ]]
+then
+cp draw_partitionFunction_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+
+if [[ ! -f $SINGLEPFS.txt ]]
+then
+../exe/ProbabilityPlot $SINGLEPFS $SINGLEPFS.txt --text 1>/dev/null 2>draw_text_plot_prep_errors.txt
+if [[ -s draw_text_plot_prep_errors ]]
+then
+cp draw_text_plot_prep_errors RNAstructure_error_tests/
+fi
+fi
+
+if [[ ! -f $SINGLECT ]]
+then
+../exe/Fold $SINGLESEQ $SINGLECT 1>/dev/null 2>draw_structureFolding_prep_errors.txt
+if [[ -s draw_structureFolding_prep_errors.txt ]]
+then
+cp draw_structureFolding_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+echo '    Preparation of draw tests finished.'
+
+# Test draw_ps_without_options.
+echo '    draw_ps_without_options testing started...'
+../exe/draw $SINGLECT draw_ps_without_options_test_output.ps 1>/dev/null 2>draw_ps_without_options_errors.txt
+diff draw_ps_without_options_test_output.ps draw/draw_ps_without_options_OK.ps >& draw_ps_without_options_diff_output.txt
+checkErrors draw_ps_without_options draw_ps_without_options_errors.txt draw_ps_without_options_diff_output.txt
+echo '    draw_ps_without_options testing finished.'
+
+# Test draw_ps_bimolecular_option.
+echo '    draw_ps_bimolecular_option testing started...'
+../exe/draw $BIMOLCT draw_ps_bimolecular_option_test_output.ps 1>/dev/null 2>draw_ps_bimolecular_option_errors.txt
+diff draw_ps_bimolecular_option_test_output.ps draw/draw_ps_bimolecular_option_OK.ps >& draw_ps_bimolecular_option_diff_output.txt
+checkErrors draw_ps_bimolecular_option draw_ps_bimolecular_option_errors.txt draw_ps_bimolecular_option_diff_output.txt
+echo '    draw_ps_bimolecular_option testing finished.'
+
+# Test draw_ps_bimolecular_circular_option.
+echo '    draw_ps_bimolecular_circular_option testing started...'
+../exe/draw $BIMOLCT draw_ps_bimolecular_circular_option_test_output.ps -c 1>/dev/null 2>draw_ps_bimolecular_circular_option_errors.txt
+diff draw_ps_bimolecular_circular_option_test_output.ps draw/draw_ps_bimolecular_circular_option_OK.ps >& draw_ps_bimolecular_circular_option_diff_output.txt
+checkErrors draw_ps_bimolecular_circular_option draw_ps_bimolecular_circular_option_errors.txt draw_ps_bimolecular_circular_option_diff_output.txt
+echo '    draw_ps_bimolecular_circular_option testing finished.'
+
+# Test draw_ps_circular_option.
+echo '    draw_ps_circular_option testing started...'
+../exe/draw $SINGLECT draw_ps_circular_option_test_output.ps -c 1>/dev/null 2>draw_ps_circular_option_errors.txt
+diff draw_ps_circular_option_test_output.ps draw/draw_ps_circular_option_OK.ps >& draw_ps_circular_option_diff_output.txt
+checkErrors draw_ps_circular_option draw_ps_circular_option_errors.txt draw_ps_circular_option_diff_output.txt
+echo '    draw_ps_circular_option testing finished.'
+
+# Test draw_ps_circular_not_specified option.                                                                                                                                                    
+echo '    draw_ps_circular_not_specified_option testing started...'
+../exe/draw $KNOTSCT draw_ps_circular_not_specified_option_test_output.ps -c 1>/dev/null 2>draw_ps_circular_not_specified_option_errors.txt
+diff draw_ps_circular_not_specified_option_test_output.ps draw/draw_ps_circular_not_specified_option_OK.ps >& draw_ps_circular_not_specified_option_diff_output.txt
+checkErrors draw_ps_circular_not_specified_option draw_ps_circular_not_specified_option_errors.txt draw_ps_circular_not_specified_option_diff_output.txt
+echo '    draw_ps_circular_not_specified_option testing finished.'
+
+# Test draw_ps_flat_option.
+echo '    draw_ps_flat_option testing started...'
+../exe/draw $SINGLECT draw_ps_flat_option_test_output.ps -f 1>/dev/null 2>draw_ps_flat_option_errors.txt
+diff draw_ps_flat_option_test_output.ps draw/draw_ps_flat_option_OK.ps >& draw_ps_flat_option_diff_output.txt
+checkErrors draw_ps_flat_option draw_ps_flat_option_errors.txt draw_ps_flat_option_diff_output.txt
+echo '    draw_ps_flat_option testing finished.'
+
+# Test draw_ps_levorotatory_option.
+echo '    draw_ps_levorotatory_option testing started...'
+../exe/draw $SINGLECT draw_ps_levorotatory_option_test_output.ps -L 1>/dev/null 2>draw_ps_levorotatory_option_errors.txt
+diff draw_ps_levorotatory_option_test_output.ps draw/draw_ps_levorotatory_option_OK.ps >& draw_ps_levorotatory_option_diff_output.txt
+checkErrors draw_ps_levorotatory_option draw_ps_levorotatory_option_errors.txt draw_ps_levorotatory_option_diff_output.txt
+echo '    draw_ps_levorotatory_option testing finished.'
+
+# Test draw_ps_probability_option.
+echo '    draw_ps_probability_option testing started...'
+../exe/draw $SINGLECT draw_ps_probability_option_test_output.ps -p $SINGLEPFS 1>/dev/null 2>draw_ps_probability_option_errors.txt
+diff draw_ps_probability_option_test_output.ps draw/draw_ps_probability_option_OK.ps >& draw_ps_probability_option_diff_output.txt
+checkErrors draw_ps_probability_option draw_ps_probability_option_errors.txt draw_ps_probability_option_diff_output.txt
+echo '    draw_ps_probability_option testing finished.'
+
+# Test draw_ps_probability_text_option.
+echo '    draw_ps_probability_text_option testing started...'
+../exe/draw $SINGLECT draw_ps_probability_text_option_test_output.ps -t $SINGLEPFS.txt -n 4 1>/dev/null 2>draw_ps_probability_text_option_errors.txt
+diff draw_ps_probability_text_option_test_output.ps draw/draw_ps_probability_text_option_OK.ps >& draw_ps_probability_text_option_diff_output.txt
+checkErrors draw_ps_probability_text_option draw_ps_probability_text_option_errors.txt draw_ps_probability_text_option_diff_output.txt
+echo '    draw_ps_probability_text_option testing finished.'
+
+# Test draw_ps_shape_option.
+echo '    draw_ps_shape_option testing started...'
+../exe/draw $SINGLECT draw_ps_shape_option_test_output.ps -s testFiles/testFile_tRNA.shape 1>/dev/null 2>draw_ps_shape_option_errors.txt
+diff draw_ps_shape_option_test_output.ps draw/draw_ps_shape_option_OK.ps >& draw_ps_shape_option_diff_output.txt
+checkErrors draw_ps_shape_option draw_ps_shape_option_errors.txt draw_ps_shape_option_diff_output.txt
+echo '    draw_ps_shape_option testing finished.'
+
+# Test draw_ps_specific_structure_option.
+# Note that other tests require this option; so this is just a sanity check to make sure other specific structures can be selected.
+echo '    draw_ps_specific_structure_option testing started...'
+../exe/draw $SINGLECT draw_ps_specific_structure_option_test_output.ps -n 3 1>/dev/null 2>draw_ps_specific_structure_option_errors.txt
+diff draw_ps_specific_structure_option_test_output.ps draw/draw_ps_specific_structure_option_OK.ps >& draw_ps_specific_structure_option_diff_output.txt
+checkErrors draw_ps_specific_structure_option draw_ps_specific_structure_option_errors.txt draw_ps_specific_structure_option_diff_output.txt
+echo '    draw_ps_specific_structure_option testing finished.'
+
+# Test draw_ps_uncircled_option.
+echo '    draw_ps_uncircled_option testing started...'
+../exe/draw $SINGLECT draw_ps_uncircled_option_test_output.ps -u 1>/dev/null 2>draw_ps_uncircled_option_errors.txt
+diff draw_ps_uncircled_option_test_output.ps draw/draw_ps_uncircled_option_OK.ps >& draw_ps_uncircled_option_diff_output.txt
+checkErrors draw_ps_uncircled_option draw_ps_uncircled_option_errors.txt draw_ps_uncircled_option_diff_output.txt
+echo '    draw_ps_uncircled_option testing finished.'
+
+# Test draw_svg_without_options.
+echo '    draw_svg_without_options testing started...'
+../exe/draw $SINGLECT draw_svg_without_options_test_output.svg -n 4 --svg 1>/dev/null 2>draw_svg_without_options_errors.txt
+diff draw_svg_without_options_test_output.svg draw/draw_svg_without_options_OK.svg >& draw_svg_without_options_diff_output.txt
+checkErrors draw_svg_without_options draw_svg_without_options_errors.txt draw_svg_without_options_diff_output.txt
+echo '    draw_svg_without_options testing finished.'
+
+# Test draw_svg_bimolecular_option.
+echo '    draw_svg_bimolecular_option testing started...'
+../exe/draw $BIMOLCT draw_svg_bimolecular_option_test_output.svg -n 4 --svg 1>/dev/null 2>draw_svg_bimolecular_option_errors.txt
+diff draw_svg_bimolecular_option_test_output.svg draw/draw_svg_bimolecular_option_OK.svg >& draw_svg_bimolecular_option_diff_output.txt
+checkErrors draw_svg_bimolecular_option draw_svg_bimolecular_option_errors.txt draw_svg_bimolecular_option_diff_output.txt
+echo '    draw_svg_bimolecular_option testing finished.'
+
+# Test draw_svg_bimolecular_circular_option.
+echo '    draw_svg_bimolecular_circular_option testing started...'
+../exe/draw $BIMOLCT draw_svg_bimolecular_circular_option_test_output.svg -c -n 4 --svg 1>/dev/null 2>draw_svg_bimolecular_circular_option_errors.txt
+diff draw_svg_bimolecular_circular_option_test_output.svg draw/draw_svg_bimolecular_circular_option_OK.svg >& draw_svg_bimolecular_circular_option_diff_output.txt
+checkErrors draw_svg_bimolecular_circular_option draw_svg_bimolecular_circular_option_errors.txt draw_svg_bimolecular_circular_option_diff_output.txt
+echo '    draw_svg_bimolecular_circular_option testing finished.'
+
+# Test draw_svg_circular_option.
+echo '    draw_svg_circular_option testing started...'
+../exe/draw $SINGLECT draw_svg_circular_option_test_output.svg -c -n 4 --svg 1>/dev/null 2>draw_svg_circular_option_errors.txt
+diff draw_svg_circular_option_test_output.svg draw/draw_svg_circular_option_OK.svg >& draw_svg_circular_option_diff_output.txt
+checkErrors draw_svg_circular_option draw_svg_circular_option_errors.txt draw_svg_circular_option_diff_output.txt
+echo '    draw_svg_circular_option testing finished.'
+
+# Test draw_svg_circular_not_specified option.                                                                                                                                                    
+echo '    draw_svg_circular_not_specified_option testing started...'
+../exe/draw $KNOTSCT draw_svg_circular_not_specified_option_test_output.svg -c -n 1 --svg 1>/dev/null 2>draw_svg_circular_not_specified_option_errors.txt
+diff draw_svg_circular_not_specified_option_test_output.svg draw/draw_svg_circular_not_specified_option_OK.svg >& draw_svg_circular_not_specified_option_diff_output.txt
+checkErrors draw_svg_circular_not_specified_option draw_svg_circular_not_specified_option_errors.txt draw_svg_circular_not_specified_option_diff_output.txt
+echo '    draw_svg_circular_not_specified_option testing finished.'
+
+# Test draw_svg_flat_option.
+echo '    draw_svg_flat_option testing started...'
+../exe/draw $SINGLECT draw_svg_flat_option_test_output.svg -f -n 4 --svg 1>/dev/null 2>draw_svg_flat_option_errors.txt
+diff draw_svg_flat_option_test_output.svg draw/draw_svg_flat_option_OK.svg >& draw_svg_flat_option_diff_output.txt
+checkErrors draw_svg_flat_option draw_svg_flat_option_errors.txt draw_svg_flat_option_diff_output.txt
+echo '    draw_svg_flat_option testing finished.'
+
+# Test draw_svg_levorotatory_option.
+echo '    draw_svg_levorotatory_option testing started...'
+../exe/draw $SINGLECT draw_svg_levorotatory_option_test_output.svg -L -n 4 --svg 1>/dev/null 2>draw_svg_levorotatory_option_errors.txt
+diff draw_svg_levorotatory_option_test_output.svg draw/draw_svg_levorotatory_option_OK.svg >& draw_svg_levorotatory_option_diff_output.txt
+checkErrors draw_svg_levorotatory_option draw_svg_levorotatory_option_errors.txt draw_svg_levorotatory_option_diff_output.txt
+echo '    draw_svg_levorotatory_option testing finished.'
+
+# Test draw_svg_probability_option.
+echo '    draw_svg_probability_option testing started...'
+../exe/draw $SINGLECT draw_svg_probability_option_test_output.svg -p $SINGLEPFS -n 4 --svg 1>/dev/null 2>draw_svg_probability_option_errors.txt
+diff draw_svg_probability_option_test_output.svg draw/draw_svg_probability_option_OK.svg >& draw_svg_probability_option_diff_output.txt
+checkErrors draw_svg_probability_option draw_svg_probability_option_errors.txt draw_svg_probability_option_diff_output.txt
+echo '    draw_svg_probability_option testing finished.'
+
+# Test draw_svg_probability_text_option.
+echo '    draw_svg_probability_text_option testing started...'
+../exe/draw $SINGLECT draw_svg_probability_text_option_test_output.svg -t $SINGLEPFS.txt -n 4 --svg 1>/dev/null 2>draw_svg_probability_text_option_errors.txt
+diff draw_svg_probability_text_option_test_output.svg draw/draw_svg_probability_text_option_OK.svg >& draw_svg_probability_text_option_diff_output.txt
+checkErrors draw_svg_probability_text_option draw_svg_probability_text_option_errors.txt draw_svg_probability_text_option_diff_output.txt
+echo '    draw_svg_probability_text_option testing finished.'
+
+# Test draw_svg_shape_option.
+echo '    draw_svg_shape_option testing started...'
+../exe/draw $SINGLECT draw_svg_shape_option_test_output.svg -s testFiles/testFile_tRNA.shape -n 4 --svg 1>/dev/null 2>draw_svg_shape_option_errors.txt
+diff draw_svg_shape_option_test_output.svg draw/draw_svg_shape_option_OK.svg >& draw_svg_shape_option_diff_output.txt
+checkErrors draw_svg_shape_option draw_svg_shape_option_errors.txt draw_svg_shape_option_diff_output.txt
+echo '    draw_svg_shape_option testing finished.'
+
+# Test draw_svg_specific_structure_option.
+# Note that other tests require this option; so this is just a sanity check to make sure other specific structures can be selected.
+echo '    draw_svg_specific_structure_option testing started...'
+../exe/draw $SINGLECT draw_svg_specific_structure_option_test_output.svg -n 3 --svg 1>/dev/null 2>draw_svg_specific_structure_option_errors.txt
+diff draw_svg_specific_structure_option_test_output.svg draw/draw_svg_specific_structure_option_OK.svg >& draw_svg_specific_structure_option_diff_output.txt
+checkErrors draw_svg_specific_structure_option draw_svg_specific_structure_option_errors.txt draw_svg_specific_structure_option_diff_output.txt
+echo '    draw_svg_specific_structure_option testing finished.'
+
+# Test draw_svg_uncircled_option.
+echo '    draw_svg_uncircled_option testing started...'
+../exe/draw $SINGLECT draw_svg_uncircled_option_test_output.svg -u -n 4 --svg 1>/dev/null 2>draw_svg_uncircled_option_errors.txt
+diff draw_svg_uncircled_option_test_output.svg draw/draw_svg_uncircled_option_OK.svg >& draw_svg_uncircled_option_diff_output.txt
+checkErrors draw_svg_uncircled_option draw_svg_uncircled_option_errors.txt draw_svg_uncircled_option_diff_output.txt
+echo '    draw_svg_uncircled_option testing finished.'
+
+# Clean up any extra files made over the course of the draw tests.
+echo '    Cleanup of draw tests started...'
+echo '        Cleanup in progress...'
+rm -f draw_ps*
+rm -f draw_svg*
+rm -f draw_*
+rm -f ${SINGLEPFS}*
+rm -f $SINGLECT
+rm -f $BIMOLCT
+echo '    Cleanup of draw tests finished.'

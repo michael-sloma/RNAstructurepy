@@ -1,0 +1,231 @@
+#!/bin/bash
+
+# If the CircleCompare executable doesn't exist yet, make it.
+# Also, make the partition function save file necessary for part of
+# the annotation testing.
+echo '    Preparation of CircleCompare tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/partition ]]
+then
+cd ..; make partition >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/CircleCompare ]]
+then
+cd ..; make CircleCompare >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/ProbabilityPlot ]]
+then
+cd ..; make ProbabilityPlot >& /dev/null; cd tests;
+fi
+
+if [[ ! -f $SINGLEPFS3 ]]
+then
+../exe/partition $SINGLESEQ3 $SINGLEPFS3 1>/dev/null 2>CircleCompare_partitionFunction_prep_errors.txt
+if [[ -s CircleCompare_partitionFunction_prep_errors.txt ]]
+then
+cp CircleCompare_partitionFunction_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+
+if [[ ! -f $SINGLEPFS3.txt ]]
+then
+../exe/ProbabilityPlot $SINGLEPFS3 $SINGLEPFS3.txt --text 1>/dev/null 2>CircleCompare_text_plot_prep_errors.txt
+if [[ -s CircleCompare_text_plot_prep_errors.txt ]]
+then
+cp CircleCompare_text_plot_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+
+if [[ ! -f ../exe/bifold ]]
+then
+cd ..; make bifold >& /dev/null; cd tests;
+fi
+
+../exe/bifold $DOUBLESEQ $BIMOLCT --intramolecular 1>/dev/null 2>CircleCompare_bimolecularFold_prep_errors.txt
+if [[ -s CircleCompare_bimolecularFold_prep_errors.txt ]]
+then
+cp CircleCompare_bimolecularFold_prep_errors.txt RNAstructure_error_tests/
+fi
+echo '    Preparation of CircleCompare tests finished.'
+
+# Test CircleCompare_ps_without_options.
+echo '    CircleCompare_ps_without_options testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_without_options_test_output.ps 1>/dev/null 2>CircleCompare_ps_without_options_errors.txt
+diff CircleCompare_ps_without_options_test_output.ps CircleCompare/CircleCompare_ps_without_options_OK.ps >& CircleCompare_ps_without_options_diff_output.txt
+checkErrors CircleCompare_ps_without_options CircleCompare_ps_without_options_errors.txt CircleCompare_ps_without_options_diff_output.txt
+echo '    CircleCompare_ps_without_options testing finished.'
+
+# Test CircleCompare_ps_alternative_option.
+echo '    CircleCompare_ps_alternative_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_alternative_option_test_output.ps -a 1>/dev/null 2>CircleCompare_ps_alternative_option_errors.txt
+diff CircleCompare_ps_alternative_option_test_output.ps CircleCompare/CircleCompare_ps_alternative_option_OK.ps >& CircleCompare_ps_alternative_option_diff_output.txt
+checkErrors CircleCompare_ps_alternative_option CircleCompare_ps_alternative_option_errors.txt CircleCompare_ps_alternative_option_diff_output.txt
+echo '    CircleCompare_ps_alternative_option testing finished.'
+
+# Test CircleCompare_ps_bimolecular_option.
+echo '    CircleCompare_ps_bimolecular_option testing started...'
+../exe/CircleCompare $BIMOLCT testFiles/testFile_CircleCompare_accepted_bimolecular.ct CircleCompare_ps_bimolecular_option_test_output.ps -n 2 1>/dev/null 2>CircleCompare_ps_bimolecular_option_errors.txt
+diff CircleCompare_ps_bimolecular_option_test_output.ps CircleCompare/CircleCompare_ps_bimolecular_option_OK.ps >& CircleCompare_ps_bimolecular_option_diff_output.txt
+checkErrors CircleCompare_ps_bimolecular_option CircleCompare_ps_bimolecular_option_errors.txt CircleCompare_ps_bimolecular_option_diff_output.txt
+echo '    CircleCompare_ps_bimolecular_option testing finished.'
+
+# Test CircleCompare_ps_exact_option.
+echo '    CircleCompare_ps_exact_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_exact_option_test_output.ps -e 1>/dev/null 2>CircleCompare_ps_exact_option_errors.txt
+diff CircleCompare_ps_exact_option_test_output.ps CircleCompare/CircleCompare_ps_exact_option_OK.ps >& CircleCompare_ps_exact_option_diff_output.txt
+checkErrors CircleCompare_ps_exact_option CircleCompare_ps_exact_option_errors.txt CircleCompare_ps_exact_option_diff_output.txt
+echo '    CircleCompare_ps_exact_option testing finished.'
+
+# Test CircleCompare_ps_file_option.
+echo '    CircleCompare_ps_file_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_file_option_test_output.ps -f 1>/dev/null 2>CircleCompare_ps_file_option_errors.txt
+diff CircleCompare_ps_file_option_test_output.ps CircleCompare/CircleCompare_ps_file_option_OK.ps >& CircleCompare_ps_file_option_diff_output.txt
+checkErrors CircleCompare_ps_file_option CircleCompare_ps_file_option_errors.txt CircleCompare_ps_file_option_diff_output.txt
+echo '    CircleCompare_ps_file_option testing finished.'
+
+# Test CircleCompare_ps_levorotatory_option.
+echo '    CircleCompare_ps_levorotatory_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_levorotatory_option_test_output.ps -L 1>/dev/null 2>CircleCompare_ps_levorotatory_option_errors.txt
+diff CircleCompare_ps_levorotatory_option_test_output.ps CircleCompare/CircleCompare_ps_levorotatory_option_OK.ps >& CircleCompare_ps_levorotatory_option_diff_output.txt
+checkErrors CircleCompare_ps_levorotatory_option CircleCompare_ps_levorotatory_option_errors.txt CircleCompare_ps_levorotatory_option_diff_output.txt
+echo '    CircleCompare_ps_levorotatory_option testing finished.'
+
+# Test CircleCompare_ps_probability_option.
+echo '    CircleCompare_ps_probability_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_probability_option_test_output.ps -p $SINGLEPFS3 1>/dev/null 2>CircleCompare_ps_probability_option_errors.txt
+diff CircleCompare_ps_probability_option_test_output.ps CircleCompare/CircleCompare_ps_probability_option_OK.ps >& CircleCompare_ps_probability_option_diff_output.txt
+checkErrors CircleCompare_ps_probability_option CircleCompare_ps_probability_option_errors.txt CircleCompare_ps_probability_option_diff_output.txt
+echo '    CircleCompare_ps_probability_option testing finished.'
+
+# Test CircleCompare_ps_probability_accepted_option.
+echo '    CircleCompare_ps_probability_accepted_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_probability_accepted_option_test_output.ps -p2 $SINGLEPFS3 1>/dev/null 2>CircleCompare_ps_probability_accepted_option_errors.txt
+diff CircleCompare_ps_probability_accepted_option_test_output.ps CircleCompare/CircleCompare_ps_probability_accepted_option_OK.ps >& CircleCompare_ps_probability_accepted_option_diff_output.txt
+checkErrors CircleCompare_ps_probability_accepted_option CircleCompare_ps_probability_accepted_option_errors.txt CircleCompare_ps_probability_accepted_option_diff_output.txt
+echo '    CircleCompare_ps_probability_accepted_option testing finished.'
+
+# Test CircleCompare_ps_probability_text_option.
+echo '    CircleCompare_ps_probability_text_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_probability_text_option_test_output.ps -n 3 -t $SINGLEPFS3.txt 1>/dev/null 2>CircleCompare_ps_probability_text_option_errors.txt
+diff CircleCompare_ps_probability_text_option_test_output.ps CircleCompare/CircleCompare_ps_probability_text_option_OK.ps >& CircleCompare_ps_probability_text_option_diff_output.txt
+checkErrors CircleCompare_ps_probability_text_option CircleCompare_ps_probability_text_option_errors.txt CircleCompare_ps_probability_text_option_diff_output.txt
+echo '    CircleCompare_ps_probability_text_option testing finished.'
+
+# Test CircleCompare_ps_shape_option.
+echo '    CircleCompare_ps_shape_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_shape_option_test_output.ps -s testFiles/testFile_ivslsu_dummy.shape 1>/dev/null 2>CircleCompare_ps_shape_option_errors.txt
+diff CircleCompare_ps_shape_option_test_output.ps CircleCompare/CircleCompare_ps_shape_option_OK.ps >& CircleCompare_ps_shape_option_diff_output.txt
+checkErrors CircleCompare_ps_shape_option CircleCompare_ps_shape_option_errors.txt CircleCompare_ps_shape_option_diff_output.txt
+echo '    CircleCompare_ps_shape_option testing finished.'
+
+# Test CircleCompare_ps_specific_structure_option.
+# Note that other tests require this option; so this is just a sanity check to make sure other specific structures can be selected.
+echo '    CircleCompare_ps_specific_structure_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_specific_structure_option_test_output.ps -n 2 1>/dev/null 2>CircleCompare_ps_specific_structure_option_errors.txt
+diff CircleCompare_ps_specific_structure_option_test_output.ps CircleCompare/CircleCompare_ps_specific_structure_option_OK.ps >& CircleCompare_ps_specific_structure_option_diff_output.txt
+checkErrors CircleCompare_ps_specific_structure_option CircleCompare_ps_specific_structure_option_errors.txt CircleCompare_ps_specific_structure_option_diff_output.txt
+echo '    CircleCompare_ps_specific_structure_option testing finished.'
+
+# Test CircleCompare_ps_uncircled_option.
+echo '    CircleCompare_ps_uncircled_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_ps_uncircled_option_test_output.ps -u 1>/dev/null 2>CircleCompare_ps_uncircled_option_errors.txt
+diff CircleCompare_ps_uncircled_option_test_output.ps CircleCompare/CircleCompare_ps_uncircled_option_OK.ps >& CircleCompare_ps_uncircled_option_diff_output.txt
+checkErrors CircleCompare_ps_uncircled_option CircleCompare_ps_uncircled_option_errors.txt CircleCompare_ps_uncircled_option_diff_output.txt
+echo '    CircleCompare_ps_uncircled_option testing finished.'
+
+# Test CircleCompare_svg_without_options.
+echo '    CircleCompare_svg_without_options testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_without_options_test_output.svg -n 3 --svg 1>/dev/null 2>CircleCompare_svg_without_options_errors.txt
+diff CircleCompare_svg_without_options_test_output.svg CircleCompare/CircleCompare_svg_without_options_OK.svg >& CircleCompare_svg_without_options_diff_output.txt
+checkErrors CircleCompare_svg_without_options CircleCompare_svg_without_options_errors.txt CircleCompare_svg_without_options_diff_output.txt
+echo '    CircleCompare_svg_without_options testing finished.'
+
+# Test CircleCompare_svg_alternative_option.
+echo '    CircleCompare_svg_alternative_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_alternative_option_test_output.svg -a -n 3 --svg 1>/dev/null 2>CircleCompare_svg_alternative_option_errors.txt
+diff CircleCompare_svg_alternative_option_test_output.svg CircleCompare/CircleCompare_svg_alternative_option_OK.svg >& CircleCompare_svg_alternative_option_diff_output.txt
+checkErrors CircleCompare_svg_alternative_option CircleCompare_svg_alternative_option_errors.txt CircleCompare_svg_alternative_option_diff_output.txt
+echo '    CircleCompare_svg_alternative_option testing finished.'
+
+# Test CircleCompare_svg_bimolecular_option.
+echo '    CircleCompare_svg_bimolecular_option testing started...'
+../exe/CircleCompare $BIMOLCT testFiles/testFile_CircleCompare_accepted_bimolecular.ct CircleCompare_svg_bimolecular_option_test_output.svg -n 2 --svg 1>/dev/null 2>CircleCompare_svg_bimolecular_option_errors.txt
+diff CircleCompare_svg_bimolecular_option_test_output.svg CircleCompare/CircleCompare_svg_bimolecular_option_OK.svg >& CircleCompare_svg_bimolecular_option_diff_output.txt
+checkErrors CircleCompare_svg_bimolecular_option CircleCompare_svg_bimolecular_option_errors.txt CircleCompare_svg_bimolecular_option_diff_output.txt
+echo '    CircleCompare_svg_bimolecular_option testing finished.'
+
+# Test CircleCompare_svg_exact_option.
+echo '    CircleCompare_svg_exact_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_exact_option_test_output.svg -e -n 3 --svg 1>/dev/null 2>CircleCompare_svg_exact_option_errors.txt
+diff CircleCompare_svg_exact_option_test_output.svg CircleCompare/CircleCompare_svg_exact_option_OK.svg >& CircleCompare_svg_exact_option_diff_output.txt
+checkErrors CircleCompare_svg_exact_option CircleCompare_svg_exact_option_errors.txt CircleCompare_svg_exact_option_diff_output.txt
+echo '    CircleCompare_svg_exact_option testing finished.'
+
+# Test CircleCompare_svg_file_option.
+echo '    CircleCompare_svg_file_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_file_option_test_output.svg -f -n 3 --svg 1>/dev/null 2>CircleCompare_svg_file_option_errors.txt
+diff CircleCompare_svg_file_option_test_output.svg CircleCompare/CircleCompare_svg_file_option_OK.svg >& CircleCompare_svg_file_option_diff_output.txt
+checkErrors CircleCompare_svg_file_option CircleCompare_svg_file_option_errors.txt CircleCompare_svg_file_option_diff_output.txt
+echo '    CircleCompare_svg_file_option testing finished.'
+
+# Test CircleCompare_svg_levorotatory_option.
+echo '    CircleCompare_svg_levorotatory_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_levorotatory_option_test_output.svg -L -n 3 --svg 1>/dev/null 2>CircleCompare_svg_levorotatory_option_errors.txt
+diff CircleCompare_svg_levorotatory_option_test_output.svg CircleCompare/CircleCompare_svg_levorotatory_option_OK.svg >& CircleCompare_svg_levorotatory_option_diff_output.txt
+checkErrors CircleCompare_svg_levorotatory_option CircleCompare_svg_levorotatory_option_errors.txt CircleCompare_svg_levorotatory_option_diff_output.txt
+echo '    CircleCompare_svg_levorotatory_option testing finished.'
+
+# Test CircleCompare_svg_probability_option.
+echo '    CircleCompare_svg_probability_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_probability_option_test_output.svg -p $SINGLEPFS3 -n 3 --svg 1>/dev/null 2>CircleCompare_svg_probability_option_errors.txt
+diff CircleCompare_svg_probability_option_test_output.svg CircleCompare/CircleCompare_svg_probability_option_OK.svg >& CircleCompare_svg_probability_option_diff_output.txt
+checkErrors CircleCompare_svg_probability_option CircleCompare_svg_probability_option_errors.txt CircleCompare_svg_probability_option_diff_output.txt
+echo '    CircleCompare_svg_probability_option testing finished.'
+
+# Test CircleCompare_svg_probability_accepted_option.
+echo '    CircleCompare_svg_probability_accepted_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_probability_accepted_option_test_output.svg -p2 $SINGLEPFS3 -n 3 --svg 1>/dev/null 2>CircleCompare_svg_probability_accepted_option_errors.txt
+diff CircleCompare_svg_probability_accepted_option_test_output.svg CircleCompare/CircleCompare_svg_probability_accepted_option_OK.svg >& CircleCompare_svg_probability_accepted_option_diff_output.txt
+checkErrors CircleCompare_svg_probability_accepted_option CircleCompare_svg_probability_accepted_option_errors.txt CircleCompare_svg_probability_accepted_option_diff_output.txt
+echo '    CircleCompare_svg_probability_accepted_option testing finished.'
+
+# Test CircleCompare_svg_probability_text_option.
+echo '    CircleCompare_svg_probability_text_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_probability_text_option_test_output.svg -t $SINGLEPFS3.txt -n 3 --svg 1>/dev/null 2>CircleCompare_svg_probability_text_option_errors.txt
+diff CircleCompare_svg_probability_text_option_test_output.svg CircleCompare/CircleCompare_svg_probability_text_option_OK.svg >& CircleCompare_svg_probability_text_option_diff_output.txt
+checkErrors CircleCompare_svg_probability_text_option CircleCompare_svg_probability_text_option_errors.txt CircleCompare_svg_probability_text_option_diff_output.txt
+echo '    CircleCompare_svg_probability_text_option testing finished.'
+
+# Test CircleCompare_svg_shape_option.
+echo '    CircleCompare_svg_shape_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_shape_option_test_output.svg -s testFiles/testFile_ivslsu_dummy.shape -n 3 --svg 1>/dev/null 2>CircleCompare_svg_shape_option_errors.txt
+diff CircleCompare_svg_shape_option_test_output.svg CircleCompare/CircleCompare_svg_shape_option_OK.svg >& CircleCompare_svg_shape_option_diff_output.txt
+checkErrors CircleCompare_svg_shape_option CircleCompare_svg_shape_option_errors.txt CircleCompare_svg_shape_option_diff_output.txt
+echo '    CircleCompare_svg_shape_option testing finished.'
+
+# Test CircleCompare_svg_specific_structure_option.
+# Note that other tests require this option; so this is just a sanity check to make sure other specific structures can be selected.
+echo '    CircleCompare_svg_specific_structure_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_specific_structure_option_test_output.svg -n 2 --svg 1>/dev/null 2>CircleCompare_svg_specific_structure_option_errors.txt
+diff CircleCompare_svg_specific_structure_option_test_output.svg CircleCompare/CircleCompare_svg_specific_structure_option_OK.svg >& CircleCompare_svg_specific_structure_option_diff_output.txt
+checkErrors CircleCompare_svg_specific_structure_option CircleCompare_svg_specific_structure_option_errors.txt CircleCompare_svg_specific_structure_option_diff_output.txt
+echo '    CircleCompare_svg_specific_structure_option testing finished.'
+
+# Test CircleCompare_svg_uncircled_option.
+echo '    CircleCompare_svg_uncircled_option testing started...'
+../exe/CircleCompare $DOUBLECT CircleCompare_svg_uncircled_option_test_output.svg -u -n 3 --svg 1>/dev/null 2>CircleCompare_svg_uncircled_option_errors.txt
+diff CircleCompare_svg_uncircled_option_test_output.svg CircleCompare/CircleCompare_svg_uncircled_option_OK.svg >& CircleCompare_svg_uncircled_option_diff_output.txt
+checkErrors CircleCompare_svg_uncircled_option CircleCompare_svg_uncircled_option_errors.txt CircleCompare_svg_uncircled_option_diff_output.txt
+echo '    CircleCompare_svg_uncircled_option testing finished.'
+
+# Clean up any extra files made over the course of the CircleCompare tests.
+echo '    Cleanup of CircleCompare tests started...'
+echo '        Cleanup in progress...'
+rm -f CircleCompare_ps*
+rm -f CircleCompare_svg*
+rm -f CircleCompare_*
+rm -f ${SINGLEPFS3}*
+rm -f $BIMOLCT
+echo '    Cleanup of CircleCompare tests finished.'

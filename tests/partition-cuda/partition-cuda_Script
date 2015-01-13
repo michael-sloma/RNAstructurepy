@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# If the partition executable doesn't exist yet, make it.
+# Also, make the ProbabilityPlot executable so the save files can be checked, if it
+# doesn't exist yet.
+echo '    Preparation of partition-cuda tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/partition ]]
+then
+cd ..; make partition-cuda >& /dev/null; cd tests; 
+fi
+echo '    Preparation of partition tests finished.'
+
+# Test partition-cuda_without_options.
+echo '    partition-cuda_without_options testing started...'
+../exe/partition-cuda time/ivslsu.seq 1> partition-cuda_without_options_test_output.txt 2> /dev/null
+diff partition-cuda_without_options_test_output.txt partition-cuda/partition-cuda_without_options_OK >& partition-cuda_without_options_diff_output.txt
+checkErrors partition-cuda_without_options partition-cuda_without_options_diff_output.txt
+echo '    partition-cuda_without_options testing finished.'
+
+
+# Clean up any extra files made over the course of the partition tests.
+echo '    Cleanup of partition-cuda tests started...'
+echo '        Cleanup in progress...'
+rm -f partition-cuda_without_options*
+echo '    Cleanup of partition-cuda tests finished.'

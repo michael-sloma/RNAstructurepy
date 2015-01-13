@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# If the PARTS executable doesn't exist yet, make it.
+echo '    Preparation of PARTS tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/PARTS ]]
+then
+cd ..; make PARTS >& /dev/null; cd tests;
+fi
+echo '    Preparation of PARTS tests finished.'
+
+# Test PARTS in MAP mode.
+echo '    PARTS_MAP testing started...'
+echo "seq1 ../tests/testFiles/testFile_RD0260.seq" > PARTS_MAP.conf
+echo "seq2 ../tests/testFiles/testFile_RD0500.seq" >> PARTS_MAP.conf
+echo "mode map" >> PARTS_MAP.conf
+echo "seq1_map_ct_op ../tests/PARTS_map_seq1_test_output.ct" >> PARTS_MAP.conf
+echo "seq2_map_ct_op ../tests/PARTS_map_seq2_test_output.ct" >> PARTS_MAP.conf
+echo "map_aln_op ../tests/PARTS_map_alignment_test_output.ali" >> PARTS_MAP.conf
+../exe/PARTS PARTS_MAP.conf 1>/dev/null 2>PARTS_map_general_errors.txt
+diff PARTS_map_seq1_test_output.ct PARTS/PARTS_map_seq1_OK.ct >& PARTS_map_seq1_diff_output.txt
+diff PARTS_map_seq2_test_output.ct PARTS/PARTS_map_seq2_OK.ct >& PARTS_map_seq2_diff_output.txt
+diff PARTS_map_alignment_test_output.ali PARTS/PARTS_map_alignment_OK.ali >& PARTS_map_alignment_diff_output.txt
+checkErrors PARTS_MAP PARTS_map_general_errors.txt PARTS_map_seq1_diff_output.txt PARTS_map_seq2_diff_output.txt PARTS_map_alignment_diff_output.txt
+echo '    PARTS_MAP testing finished.'
+
+# Test PARTS in probability mode.
+echo '    PARTS_probability testing started...'
+echo "seq1 ../tests/testFiles/testFile_RD0260.seq" > PARTS_PP.conf
+echo "seq2 ../tests/testFiles/testFile_RD0500.seq" >> PARTS_PP.conf
+echo "mode pp" >> PARTS_PP.conf
+echo "seq1_pp_op ../tests/PARTS_pp_seq1_test_output.txt" >> PARTS_PP.conf
+echo "seq2_pp_op ../tests/PARTS_pp_seq2_test_output.txt" >> PARTS_PP.conf
+../exe/PARTS PARTS_PP.conf 1>/dev/null 2>PARTS_pp_general_errors.txt
+diff PARTS_pp_seq1_test_output.txt PARTS/PARTS_pp_seq1_OK.txt >& PARTS_pp_seq1_diff_output.txt
+diff PARTS_pp_seq2_test_output.txt PARTS/PARTS_pp_seq2_OK.txt >& PARTS_pp_seq2_diff_output.txt
+checkErrors PARTS_probability PARTS_pp_general_errors.txt PARTS_pp_seq1_diff_output.txt PARTS_pp_seq2_diff_output.txt
+echo '    PARTS_probability testing finished.'
+
+# Test PARTS in stochastic mode.
+echo '    PARTS_stochastic testing started...'
+echo "seq1 ../tests/testFiles/testFile_RD0260.seq" > PARTS_STOCHSAMPLE.conf
+echo "seq2 ../tests/testFiles/testFile_RD0500.seq" >> PARTS_STOCHSAMPLE.conf
+echo "mode stochsample" >> PARTS_STOCHSAMPLE.conf
+echo "seq1_sample_ct_op ../tests/PARTS_stochastic_seq1_test_output.ct" >> PARTS_STOCHSAMPLE.conf
+echo "seq2_sample_ct_op ../tests/PARTS_stochastic_seq2_test_output.ct" >> PARTS_STOCHSAMPLE.conf
+echo "sample_aln_op ../tests/PARTS_stochastic_alignment_test_output.ali" >> PARTS_STOCHSAMPLE.conf
+echo "nsamp 250" >> PARTS_STOCHSAMPLE.conf
+echo "seed 24" >> PARTS_STOCHSAMPLE.conf
+../exe/PARTS PARTS_STOCHSAMPLE.conf 1>/dev/null 2>PARTS_stochastic_general_errors.txt
+diff PARTS_stochastic_seq1_test_output.ct PARTS/PARTS_stochastic_seq1_OK.ct >& PARTS_stochastic_seq1_diff_output.txt
+diff PARTS_stochastic_seq2_test_output.ct PARTS/PARTS_stochastic_seq2_OK.ct >& PARTS_stochastic_seq2_diff_output.txt
+diff PARTS_stochastic_alignment_test_output.ali PARTS/PARTS_stochastic_alignment_OK.ali >& PARTS_stochastic_alignment_diff_output.txt
+checkErrors PARTS_stochastic PARTS_stochastic_general_errors.txt PARTS_stochastic_seq1_diff_output.txt PARTS_stochastic_seq2_diff_output.txt PARTS_stochastic_alignment_diff_output.txt
+echo '    PARTS_stochastic testing finished.'
+
+# Clean up any extra files made over the course of the PARTS tests.
+echo '    Cleanup of PARTS tests started...'
+echo '        Cleanup in progress...'
+rm -f PARTS_*.*
+echo '    Cleanup of PARTS tests finished.'

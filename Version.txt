@@ -1,0 +1,1 @@
+This is version 5.7 of RNAstructure.  Release date is December 5, 2014.

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# If the partition executable doesn't exist yet, make it.
+# Also, make the ProbabilityPlot executable so the save files can be checked, if it
+# doesn't exist yet.
+echo '    Preparation of fold-cuda tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/fold-cuda ]]
+then
+cd ..; make fold-cuda >& /dev/null; cd tests; 
+fi
+echo '    Preparation of partition tests finished.'
+
+# Test fold-cuda_without_options.
+echo '    fold-cuda_without_options testing started...'
+../exe/fold-cuda time/ivslsu.seq 1> /dev/null 2> /dev/null
+diff cuda.out fold-cuda/fold-cuda_without_options_OK >& fold-cuda_without_options_diff_output.txt
+checkErrors fold-cuda_without_options fold-cuda_without_options_diff_output.txt
+echo '    fold-cuda_without_options testing finished.'
+
+
+# Clean up any extra files made over the course of the partition tests.
+echo '    Cleanup of fold-cuda tests started...'
+echo '        Cleanup in progress...'
+rm -f fold-cuda_without_options*
+rm -f cuda.out 
+echo '    Cleanup of fold-cuda tests finished.'

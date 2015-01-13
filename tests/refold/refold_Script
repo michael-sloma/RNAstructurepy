@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# If the refold executable doesn't exist yet, make it.
+# Also, make the Fold executable so the save file can be created,
+# if it doesn't exist yet.
+echo '    Preparation of refold tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/refold ]]
+then
+cd ..; make refold >& /dev/null; cd tests; 
+fi
+
+if [[ ! -f ../exe/Fold ]]
+then
+cd ..; make Fold >& /dev/null; cd tests;
+fi
+
+if [[ ! -f $SINGLESAV ]]
+then
+../exe/Fold $SINGLESEQ blah.ct -s $SINGLESAV 1>/dev/null 2>refold_structureFolding_prep_errors.txt
+if [[ -s refold_structureFolding_prep_errors.txt ]]
+then
+cp refold_structureFolding_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+echo '    Preparation of refold tests finished.'
+
+# Test refold_without_options.
+echo '    refold_without_options testing started...'
+../exe/refold $SINGLESAV refold_without_options_test_output.ct 1>/dev/null 2>refold_without_options_errors.txt
+diff refold_without_options_test_output.ct refold/refold_without_options_OK.ct >& refold_without_options_diff_output.txt
+checkErrors refold_without_options refold_without_options_errors.txt refold_without_options_diff_output.txt
+echo '    refold_without_options testing finished.'
+
+# Test refold_max_structures_option.
+echo '    refold_max_structures_option testing started...'
+../exe/refold $SINGLESAV refold_max_structures_option_test_output.ct -m 3 1>/dev/null 2>refold_max_structures_option_errors.txt
+diff refold_max_structures_option_test_output.ct refold/refold_max_structures_option_OK.ct >& refold_max_structures_option_diff_output.txt
+checkErrors refold_max_structures_option refold_max_structures_option_errors.txt refold_max_structures_option_diff_output.txt
+echo '    refold_max_structures_option testing finished.'
+
+# Test refold_percent_difference_option.
+echo '    refold_percent_difference_option testing started...'
+../exe/refold $SINGLESAV refold_percent_difference_option_test_output.ct -p 5 1>/dev/null 2>refold_percent_difference_option_errors.txt
+diff refold_percent_difference_option_test_output.ct refold/refold_percent_difference_option_OK.ct >& refold_percent_difference_option_diff_output.txt
+checkErrors refold_percent_difference_option refold_percent_difference_option_errors.txt refold_percent_difference_option_diff_output.txt
+echo '    refold_percent_difference_option testing finished.'
+
+# Test refold_window_size_option.
+echo '    refold_window_size_option testing started...'
+../exe/refold $SINGLESAV refold_window_size_option_test_output.ct -w 20 1>/dev/null 2>refold_window_size_option_errors.txt
+diff refold_window_size_option_test_output.ct refold/refold_window_size_option_OK.ct >& refold_window_size_option_diff_output.txt
+checkErrors refold_window_size_option refold_window_size_option_errors.txt refold_window_size_option_diff_output.txt
+echo '    refold_window_size_option_testing finished.'
+
+# Clean up any extra files made over the course of the refold tests.
+echo '    Cleanup of refold tests started...'
+echo '        Cleanup in progress...'
+rm -f refold_structureFolding_prep_errors.txt
+rm -f blah.ct
+rm -f refold_without_options*
+rm -f refold_max_structures_option*
+rm -f refold_percent_difference_option*
+rm -f refold_window_size_option*
+rm -f $SINGLESAV
+echo '    Cleanup of refold tests completed.'

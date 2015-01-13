@@ -1,0 +1,464 @@
+#!/bin/bash
+
+# If the dynalign executable doesn't exist yet, make it.
+echo "    Preparation of $1 tests started..."
+echo '        Preparation in progress...'
+
+# If the Multilign executable hasn't been built yet, build it.
+if [[ ! -f ../exe/$1 ]]
+then
+cd ..; make $1 >& /dev/null; cd tests;
+fi
+
+# If the Dynalign dot plot executable hasn't been built yet, build it.
+if [[ ! -f ../exe/DynalignDotPlot ]]
+then
+cd ..; make DynalignDotPlot >& /dev/null; cd tests;
+fi
+
+echo "    Preparation of $1 tests finished."
+
+# Test multilign_without_options_singly.
+echo "    $1_without_options_singly testing started..."
+echo "Seq1 = ../tests/testFiles/testFile_RD0260.seq" > "$1_without_options_singly.conf"
+echo "Seq2 = ../tests/testFiles/testFile_RD0500.seq" >> "$1_without_options_singly.conf"
+echo "Seq3 = ../tests/testFiles/testFile_RA7680.seq" >> "$1_without_options_singly.conf"
+echo "CT1 = ../tests/$1_without_options_singly_seq1_test_output.ct" >> "$1_without_options_singly.conf"
+echo "CT2 = ../tests/$1_without_options_singly_seq2_test_output.ct" >> "$1_without_options_singly.conf"
+echo "CT3 = ../tests/$1_without_options_singly_seq3_test_output.ct" >> "$1_without_options_singly.conf"
+echo "SequenceNumber = 3" >> "$1_without_options_singly.conf"
+echo "Alignment = $1_without_options_singly_alignment_test_output.ali" >> "$1_without_options_singly.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_without_options_singly.conf"; fi;
+../exe/$1 "$1_without_options_singly.conf" 1>/dev/null 2>"$1_without_options_singly_errors.txt"
+diff $1_without_options_singly_seq1_test_output.ct multilign/multilign_without_options_seq1_OK.ct >& "$1_without_options_singly_seq1_diff_output.txt"
+diff $1_without_options_singly_seq2_test_output.ct multilign/multilign_without_options_seq2_OK.ct >& "$1_without_options_singly_seq2_diff_output.txt"
+diff $1_without_options_singly_seq3_test_output.ct multilign/multilign_without_options_seq3_OK.ct >& "$1_without_options_singly_seq3_diff_output.txt"
+diff $1_without_options_singly_alignment_test_output.ali multilign/multilign_without_options_alignment_OK.ali >& "$1_without_options_singly_alignment_diff_output.txt"
+checkErrors "$1_without_options_singly" "$1_without_options_singly_errors.txt" "$1_without_options_singly_seq1_diff_output.txt" "$1_without_options_singly_seq2_diff_output.txt" "$1_without_options_singly_seq3_diff_output.txt" "$1_without_options_singly_alignment_diff_output.txt"
+echo "    $1_without_options_singly testing finished."
+
+# Test multilign_without_options_groups.
+echo "    $1_without_options_groups testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_without_options_groups.conf"
+echo "OutCT = {../tests/$1_without_options_groups_seq1_test_output.ct;../tests/$1_without_options_groups_seq2_test_output.ct;../tests/$1_without_options_groups_seq3_test_output.ct;}" >> "$1_without_options_groups.conf"
+echo "Alignment = $1_without_options_groups_alignment_test_output.ali" >> "$1_without_options_groups.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_without_options_groups.conf"; fi;
+../exe/$1 "$1_without_options_groups.conf" 1>/dev/null 2>"$1_without_options_groups_errors.txt"
+diff $1_without_options_groups_seq1_test_output.ct multilign/multilign_without_options_seq1_OK.ct >& "$1_without_options_groups_seq1_diff_output.txt"
+diff $1_without_options_groups_seq2_test_output.ct multilign/multilign_without_options_seq2_OK.ct >& "$1_without_options_groups_seq2_diff_output.txt"
+diff $1_without_options_groups_seq3_test_output.ct multilign/multilign_without_options_seq3_OK.ct >& "$1_without_options_groups_seq3_diff_output.txt"
+diff $1_without_options_groups_alignment_test_output.ali multilign/multilign_without_options_alignment_OK.ali >& "$1_without_options_groups_alignment_diff_output.txt"
+checkErrors "$1_without_options_groups" "$1_without_options_groups_errors.txt" "$1_without_options_groups_seq1_diff_output.txt" "$1_without_options_groups_seq2_diff_output.txt" "$1_without_options_groups_seq3_diff_output.txt" "$1_without_options_groups_alignment_diff_output.txt"
+echo "    $1_without_options_groups testing finished."
+
+# Test multilign_constraint_first_option.
+echo "    $1_constraint_first_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_constraint_first_option.conf"
+echo "OutCT = {../tests/$1_constraint_first_option_seq1_test_output.ct;../tests/$1_constraint_first_option_seq2_test_output.ct;../tests/$1_constraint_first_option_seq3_test_output.ct;}" >> "$1_constraint_first_option.conf"
+echo "Alignment = $1_constraint_first_option_alignment_test_output.ali" >> "$1_constraint_first_option.conf"
+echo "Constraint1 = ../tests/testFiles/testFile_folding1.con" >> "$1_constraint_first_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_constraint_first_option.conf"; fi;
+../exe/$1 "$1_constraint_first_option.conf" 1>/dev/null 2>"$1_constraint_first_option_errors.txt"
+diff $1_constraint_first_option_seq1_test_output.ct multilign/multilign_constraint_first_option_seq1_OK.ct >& "$1_constraint_first_option_seq1_diff_output.txt"
+diff $1_constraint_first_option_seq2_test_output.ct multilign/multilign_constraint_first_option_seq2_OK.ct >& "$1_constraint_first_option_seq2_diff_output.txt"
+diff $1_constraint_first_option_seq3_test_output.ct multilign/multilign_constraint_first_option_seq3_OK.ct >& "$1_constraint_first_option_seq3_diff_output.txt"
+diff $1_constraint_first_option_alignment_test_output.ali multilign/multilign_constraint_first_option_alignment_OK.ali >& "$1_constraint_first_option_alignment_diff_output.txt"
+checkErrors "$1_constraint_first_option" "$1_constraint_first_option_errors.txt" "$1_constraint_first_option_seq1_diff_output.txt" "$1_constraint_first_option_seq2_diff_output.txt" "$1_constraint_first_option_seq3_diff_output.txt" "$1_constraint_first_option_alignment_diff_output.txt"
+echo "    $1_constraint_first_option testing finished."
+
+# Test multilign_constraint_all_option.
+echo "    $1_constraint_all_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_constraint_all_option.conf"
+echo "OutCT = {../tests/$1_constraint_all_option_seq1_test_output.ct;../tests/$1_constraint_all_option_seq2_test_output.ct;../tests/$1_constraint_all_option_seq3_test_output.ct;}" >> "$1_constraint_all_option.conf"
+echo "Alignment = $1_constraint_all_option_alignment_test_output.ali" >> "$1_constraint_all_option.conf"
+echo "Constraint1 = ../tests/testFiles/testFile_folding4.con" >> "$1_constraint_all_option.conf"
+echo "Constraint2 = ../tests/testFiles/testFile_folding4.con" >> "$1_constraint_all_option.conf"
+echo "Constraint3 = ../tests/testFiles/testFile_folding4.con" >> "$1_constraint_all_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_constraint_all_option.conf"; fi;
+../exe/$1 "$1_constraint_all_option.conf" 1>/dev/null 2>"$1_constraint_all_option_errors.txt"
+diff $1_constraint_all_option_seq1_test_output.ct multilign/multilign_constraint_all_option_seq1_OK.ct >& "$1_constraint_all_option_seq1_diff_output.txt"
+diff $1_constraint_all_option_seq2_test_output.ct multilign/multilign_constraint_all_option_seq2_OK.ct >& "$1_constraint_all_option_seq2_diff_output.txt"
+diff $1_constraint_all_option_seq3_test_output.ct multilign/multilign_constraint_all_option_seq3_OK.ct >& "$1_constraint_all_option_seq3_diff_output.txt"
+diff $1_constraint_all_option_alignment_test_output.ali multilign/multilign_constraint_all_option_alignment_OK.ali >& "$1_constraint_all_option_alignment_diff_output.txt"
+checkErrors "$1_constraint_all_option" "$1_constraint_all_option_errors.txt" "$1_constraint_all_option_seq1_diff_output.txt" "$1_constraint_all_option_seq2_diff_output.txt" "$1_constraint_all_option_seq3_diff_output.txt" "$1_constraint_all_option_alignment_diff_output.txt"
+echo "    $1_constraint_all_option testing finished."
+
+# Test multilign_dna_option.
+echo "    $1_dna_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_dna_option.conf"
+echo "OutCT = {../tests/$1_dna_option_seq1_test_output.ct;../tests/$1_dna_option_seq2_test_output.ct;../tests/$1_dna_option_seq3_test_output.ct;}" >> "$1_dna_option.conf"
+echo "Alignment = $1_dna_option_alignment_test_output.ali" >> "$1_dna_option.conf"
+echo "DNA = 1" >> "$1_dna_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_dna_option.conf"; fi;
+../exe/$1 "$1_dna_option.conf" 1>/dev/null 2>"$1_dna_option_errors.txt"
+diff $1_dna_option_seq1_test_output.ct multilign/multilign_dna_option_seq1_OK.ct >& "$1_dna_option_seq1_diff_output.txt"
+diff $1_dna_option_seq2_test_output.ct multilign/multilign_dna_option_seq2_OK.ct >& "$1_dna_option_seq2_diff_output.txt"
+diff $1_dna_option_seq3_test_output.ct multilign/multilign_dna_option_seq3_OK.ct >& "$1_dna_option_seq3_diff_output.txt"
+diff $1_dna_option_alignment_test_output.ali multilign/multilign_dna_option_alignment_OK.ali >& "$1_dna_option_alignment_diff_output.txt"
+checkErrors "$1_dna_option" "$1_dna_option_errors.txt" "$1_dna_option_seq1_diff_output.txt" "$1_dna_option_seq2_diff_output.txt" "$1_dna_option_seq3_diff_output.txt" "$1_dna_option_alignment_diff_output.txt"
+echo "    $1_dna_option testing finished."
+
+# Test multilign_gap_option.
+echo "    $1_gap_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_gap_option.conf"
+echo "OutCT = {../tests/$1_gap_option_seq1_test_output.ct;../tests/$1_gap_option_seq2_test_output.ct;../tests/$1_gap_option_seq3_test_output.ct;}" >> "$1_gap_option.conf"
+echo "Alignment = $1_gap_option_alignment_test_output.ali" >> "$1_gap_option.conf"
+echo "Gap = 1.2" >> "$1_gap_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_gap_option.conf"; fi;
+../exe/$1 "$1_gap_option.conf" 1>/dev/null 2>"$1_gap_option_errors.txt"
+diff $1_gap_option_seq1_test_output.ct multilign/multilign_gap_option_seq1_OK.ct >& "$1_gap_option_seq1_diff_output.txt"
+diff $1_gap_option_seq2_test_output.ct multilign/multilign_gap_option_seq2_OK.ct >& "$1_gap_option_seq2_diff_output.txt"
+diff $1_gap_option_seq3_test_output.ct multilign/multilign_gap_option_seq3_OK.ct >& "$1_gap_option_seq3_diff_output.txt"
+diff $1_gap_option_alignment_test_output.ali multilign/multilign_gap_option_alignment_OK.ali >& "$1_gap_option_alignment_diff_output.txt"
+checkErrors "$1_gap_option" "$1_gap_option_errors.txt" "$1_gap_option_seq1_diff_output.txt" "$1_gap_option_seq2_diff_output.txt" "$1_gap_option_seq3_diff_output.txt" "$1_gap_option_alignment_diff_output.txt"
+echo "    $1_gap_option testing finished."
+
+# Test multilign_index_sequence_option.
+echo "    $1_index_sequence_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_index_sequence_option.conf"
+echo "OutCT = {../tests/$1_index_sequence_option_seq1_test_output.ct;../tests/$1_index_sequence_option_seq2_test_output.ct;../tests/$1_index_sequence_option_seq3_test_output.ct;}" >> "$1_index_sequence_option.conf"
+echo "Alignment = $1_index_sequence_option_alignment_test_output.ali" >> "$1_index_sequence_option.conf"
+echo "IndexSeq = 2" >> "$1_index_sequence_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_index_sequence_option.conf"; fi;
+../exe/$1 "$1_index_sequence_option.conf" 1>/dev/null 2>"$1_index_sequence_option_errors.txt"
+diff $1_index_sequence_option_seq1_test_output.ct multilign/multilign_index_sequence_option_seq1_OK.ct >& "$1_index_sequence_option_seq1_diff_output.txt"
+diff $1_index_sequence_option_seq2_test_output.ct multilign/multilign_index_sequence_option_seq2_OK.ct >& "$1_index_sequence_option_seq2_diff_output.txt"
+diff $1_index_sequence_option_seq3_test_output.ct multilign/multilign_index_sequence_option_seq3_OK.ct >& "$1_index_sequence_option_seq3_diff_output.txt"
+diff $1_index_sequence_option_alignment_test_output.ali multilign/multilign_index_sequence_option_alignment_OK.ali >& "$1_index_sequence_option_alignment_diff_output.txt"
+checkErrors "$1_index_sequence_option" "$1_index_sequence_option_errors.txt" "$1_index_sequence_option_seq1_diff_output.txt" "$1_index_sequence_option_seq2_diff_output.txt" "$1_index_sequence_option_seq3_diff_output.txt" "$1_index_sequence_option_alignment_diff_output.txt"
+echo "    $1_index_sequence_option testing finished."
+
+# Test multilign_inserts_deselected_option.
+echo "    $1_inserts_deselected_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_inserts_deselected_option.conf"
+echo "OutCT = {../tests/$1_inserts_deselected_option_seq1_test_output.ct;../tests/$1_inserts_deselected_option_seq2_test_output.ct;../tests/$1_inserts_deselected_option_seq3_test_output.ct;}" >> "$1_inserts_deselected_option.conf"
+echo "Alignment = $1_inserts_deselected_option_alignment_test_output.ali" >> "$1_inserts_deselected_option.conf"
+echo "Insert = 0" >> "$1_inserts_deselected_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_inserts_deselected_option.conf"; fi;
+../exe/$1 "$1_inserts_deselected_option.conf" 1>/dev/null 2>"$1_inserts_deselected_option_errors.txt"
+diff $1_inserts_deselected_option_seq1_test_output.ct multilign/multilign_inserts_deselected_option_seq1_OK.ct >& "$1_inserts_deselected_option_seq1_diff_output.txt"
+diff $1_inserts_deselected_option_seq2_test_output.ct multilign/multilign_inserts_deselected_option_seq2_OK.ct >& "$1_inserts_deselected_option_seq2_diff_output.txt"
+diff $1_inserts_deselected_option_seq3_test_output.ct multilign/multilign_inserts_deselected_option_seq3_OK.ct >& "$1_inserts_deselected_option_seq3_diff_output.txt"
+diff $1_inserts_deselected_option_alignment_test_output.ali multilign/multilign_inserts_deselected_option_alignment_OK.ali >& "$1_inserts_deselected_option_alignment_diff_output.txt"
+checkErrors "$1_inserts_deselected_option" "$1_inserts_deselected_option_errors.txt" "$1_inserts_deselected_option_seq1_diff_output.txt" "$1_inserts_deselected_option_seq2_diff_output.txt" "$1_inserts_deselected_option_seq3_diff_output.txt" "$1_inserts_deselected_option_alignment_diff_output.txt"
+echo "    $1_inserts_deselected_option testing finished."
+
+# Test multilign_iterations_option.
+echo "    $1_iterations_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_iterations_option.conf"
+echo "OutCT = {../tests/$1_iterations_option_seq1_test_output.ct;../tests/$1_iterations_option_seq2_test_output.ct;../tests/$1_iterations_option_seq3_test_output.ct;}" >> "$1_iterations_option.conf"
+echo "Alignment = $1_iterations_option_alignment_test_output.ali" >> "$1_iterations_option.conf"
+echo "Iterations = 1" >> "$1_iterations_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_iterations_option.conf"; fi;
+../exe/$1 "$1_iterations_option.conf" 1>/dev/null 2>"$1_iterations_option_errors.txt"
+diff $1_iterations_option_seq1_test_output.ct multilign/multilign_iterations_option_seq1_OK.ct >& "$1_iterations_option_seq1_diff_output.txt"
+diff $1_iterations_option_seq2_test_output.ct multilign/multilign_iterations_option_seq2_OK.ct >& "$1_iterations_option_seq2_diff_output.txt"
+diff $1_iterations_option_seq3_test_output.ct multilign/multilign_iterations_option_seq3_OK.ct >& "$1_iterations_option_seq3_diff_output.txt"
+diff $1_iterations_option_alignment_test_output.ali multilign/multilign_iterations_option_alignment_OK.ali >& "$1_iterations_option_alignment_diff_output.txt"
+checkErrors "$1_iterations_option" "$1_iterations_option_errors.txt" "$1_iterations_option_seq1_diff_output.txt" "$1_iterations_option_seq2_diff_output.txt" "$1_iterations_option_seq3_diff_output.txt" "$1_iterations_option_alignment_diff_output.txt"
+echo "    $1_iterations_option testing finished."
+
+# Test multilign_keep_intermediate_option.
+echo "    $1_keep_intermediate_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_keep_intermediate_option.conf"
+echo "OutCT = {../tests/$1_keep_intermediate_option_seq1_test_output.ct;../tests/$1_keep_intermediate_option_seq2_test_output.ct;../tests/$1_keep_intermediate_option_seq3_test_output.ct;}" >> "$1_keep_intermediate_option.conf"
+echo "Alignment = $1_keep_intermediate_option_alignment_test_output.ali" >> "$1_keep_intermediate_option.conf"
+echo "KeepIntermediate = 1" >> "$1_keep_intermediate_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_keep_intermediate_option.conf"; fi;
+../exe/$1 "$1_keep_intermediate_option.conf" 1>/dev/null 2>>"$1_keep_intermediate_option_errors.txt"
+../exe/DynalignDotPlot 1.1_testFile_RD0260_testFile_RD0500.dsv $1_keep_intermediate_option_1-1_seq1_test_output.ps 1>/dev/null 2>"$1_keep_intermediate_option_1-1_seq1_plot_errors.txt"
+../exe/DynalignDotPlot 1.1_testFile_RD0260_testFile_RD0500.dsv $1_keep_intermediate_option_1-1_seq2_test_output.ps --sequence2 1>/dev/null 2>"$1_keep_intermediate_option_1-1_seq2_plot_errors.txt"
+../exe/DynalignDotPlot 1.2_testFile_RD0260_testFile_RA7680.dsv $1_keep_intermediate_option_1-2_seq1_test_output.ps 1>/dev/null 2>"$1_keep_intermediate_option_1-2_seq1_plot_errors.txt"
+../exe/DynalignDotPlot 1.2_testFile_RD0260_testFile_RA7680.dsv $1_keep_intermediate_option_1-2_seq2_test_output.ps --sequence2 1>/dev/null 2>"$1_keep_intermediate_option_1-2_seq2_plot_errors.txt"
+../exe/DynalignDotPlot 2.1_testFile_RD0260_testFile_RD0500.dsv $1_keep_intermediate_option_2-1_seq1_test_output.ps 1>/dev/null 2>"$1_keep_intermediate_option_2-1_seq1_plot_errors.txt"
+../exe/DynalignDotPlot 2.1_testFile_RD0260_testFile_RD0500.dsv $1_keep_intermediate_option_2-1_seq2_test_output.ps --sequence2 1>/dev/null 2>"$1_keep_intermediate_option_2-1_seq2_plot_errors.txt"
+../exe/DynalignDotPlot 2.2_testFile_RD0260_testFile_RA7680.dsv $1_keep_intermediate_option_2-2_seq1_test_output.ps 1>/dev/null 2>"$1_keep_intermediate_option_2-2_seq1_plot_errors.txt"
+../exe/DynalignDotPlot 2.2_testFile_RD0260_testFile_RA7680.dsv $1_keep_intermediate_option_2-2_seq2_test_output.ps --sequence2 1>/dev/null 2>"$1_keep_intermediate_option_2-2_seq2_plot_errors.txt"
+diff $1_keep_intermediate_option_1-1_seq1_test_output.ps multilign/multilign_keep_intermediate_option_1-1_seq1_OK.ps >& "$1_keep_intermediate_option_1-1_seq1_diff_output.txt"
+diff $1_keep_intermediate_option_1-1_seq2_test_output.ps multilign/multilign_keep_intermediate_option_1-1_seq2_OK.ps >& "$1_keep_intermediate_option_1-1_seq2_diff_output.txt"
+diff $1_keep_intermediate_option_1-2_seq1_test_output.ps multilign/multilign_keep_intermediate_option_1-2_seq1_OK.ps >& "$1_keep_intermediate_option_1-2_seq1_diff_output.txt"
+diff $1_keep_intermediate_option_1-2_seq2_test_output.ps multilign/multilign_keep_intermediate_option_1-2_seq2_OK.ps >& "$1_keep_intermediate_option_1-2_seq2_diff_output.txt"
+diff $1_keep_intermediate_option_2-1_seq1_test_output.ps multilign/multilign_keep_intermediate_option_2-1_seq1_OK.ps >& "$1_keep_intermediate_option_2-1_seq1_diff_output.txt"
+diff $1_keep_intermediate_option_2-1_seq2_test_output.ps multilign/multilign_keep_intermediate_option_2-1_seq2_OK.ps >& "$1_keep_intermediate_option_2-1_seq2_diff_output.txt"
+diff $1_keep_intermediate_option_2-2_seq1_test_output.ps multilign/multilign_keep_intermediate_option_2-2_seq1_OK.ps >& "$1_keep_intermediate_option_2-2_seq1_diff_output.txt"
+diff $1_keep_intermediate_option_2-2_seq2_test_output.ps multilign/multilign_keep_intermediate_option_2-2_seq2_OK.ps >& "$1_keep_intermediate_option_2-2_seq2_diff_output.txt"
+diff $1_keep_intermediate_option_seq1_test_output.ct multilign/multilign_without_options_seq1_OK.ct >& "$1_keep_intermediate_option_seq1_diff_output.txt"
+diff $1_keep_intermediate_option_seq2_test_output.ct multilign/multilign_without_options_seq2_OK.ct >& "$1_keep_intermediate_option_seq2_diff_output.txt"
+diff $1_keep_intermediate_option_seq3_test_output.ct multilign/multilign_without_options_seq3_OK.ct >& "$1_keep_intermediate_option_seq3_diff_output.txt"
+diff $1_keep_intermediate_option_alignment_test_output.ali multilign/multilign_without_options_alignment_OK.ali >& "$1_keep_intermediate_option_alignment_diff_output.txt"
+diff 1.1_testFile_RD0260_testFile_RD0500.aout multilign/multilign_keep_intermediate_option_1-1_OK.ali >& "$1_keep_intermediate_option_alignment_1-1_diff_output.txt"
+diff 1.2_testFile_RD0260_testFile_RA7680.aout multilign/multilign_keep_intermediate_option_1-2_OK.ali >& "$1_keep_intermediate_option_alignment_1-2_diff_output.txt"
+diff 2.1_testFile_RD0260_testFile_RD0500.aout multilign/multilign_keep_intermediate_option_2-1_OK.ali >& "$1_keep_intermediate_option_alignment_2-1_diff_output.txt"
+diff 2.2_testFile_RD0260_testFile_RA7680.aout multilign/multilign_keep_intermediate_option_2-2_OK.ali >& "$1_keep_intermediate_option_alignment_2-2_diff_output.txt"
+checkErrors "$1_keep_intermediate_option" "$1_keep_intermediate_option_errors.txt" "$1_keep_intermediate_option_1-1_seq1_plot_errors.txt" "$1_keep_intermediate_option_1-1_seq2_plot_errors.txt" "$1_keep_intermediate_option_1-2_seq1_plot_errors.txt" "$1_keep_intermediate_option_1-2_seq2_plot_errors.txt" "$1_keep_intermediate_option_2-1_seq1_plot_errors.txt" "$1_keep_intermediate_option_2-1_seq2_plot_errors.txt" "$1_keep_intermediate_option_2-2_seq1_plot_errors.txt" "$1_keep_intermediate_option_2-2_seq2_plot_errors.txt" "$1_keep_intermediate_option_1-1_seq1_diff_output.txt" "$1_keep_intermediate_option_1-1_seq2_diff_output.txt" "$1_keep_intermediate_option_1-2_seq1_diff_output.txt" "$1_keep_intermediate_option_1-2_seq2_diff_output.txt" "$1_keep_intermediate_option_2-1_seq1_diff_output.txt" "$1_keep_intermediate_option_2-1_seq2_diff_output.txt" "$1_keep_intermediate_option_2-2_seq1_diff_output.txt" "$1_keep_intermediate_option_2-2_seq2_diff_output.txt" "$1_keep_intermediate_option_seq1_diff_output.txt" "$1_keep_intermediate_option_seq2_diff_output.txt" "$1_keep_intermediate_option_seq3_diff_output.txt" "$1_keep_intermediate_option_alignment_diff_output.txt" "$1_keep_intermediate_option_alignment_1-1_diff_output.txt" "$1_keep_intermediate_option_alignment_1-2_diff_output.txt" "$1_keep_intermediate_option_alignment_2-1_diff_output.txt" "$1_keep_intermediate_option_alignment_2-2_diff_output.txt"
+echo "    $1_keep_intermediate_option testing finished."
+
+# Test multilign_local_folding_option.
+echo "    $1_local_folding_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_local_folding_option.conf"
+echo "OutCT = {../tests/$1_local_folding_option_seq1_test_output.ct;../tests/$1_local_folding_option_seq2_test_output.ct;../tests/$1_local_folding_option_seq3_test_output.ct;}" >> "$1_local_folding_option.conf"
+echo "Alignment = $1_local_folding_option_alignment_test_output.ali" >> "$1_local_folding_option.conf"
+echo "Local = 1" >> "$1_local_folding_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_local_folding_option.conf"; fi;
+../exe/$1 "$1_local_folding_option.conf" 1>/dev/null 2>"$1_local_folding_option_errors.txt"
+diff $1_local_folding_option_seq1_test_output.ct multilign/multilign_local_folding_option_seq1_OK.ct >& "$1_local_folding_option_seq1_diff_output.txt"
+diff $1_local_folding_option_seq2_test_output.ct multilign/multilign_local_folding_option_seq2_OK.ct >& "$1_local_folding_option_seq2_diff_output.txt"
+diff $1_local_folding_option_seq3_test_output.ct multilign/multilign_local_folding_option_seq3_OK.ct >& "$1_local_folding_option_seq3_diff_output.txt"
+diff $1_local_folding_option_alignment_test_output.ali multilign/multilign_local_folding_option_alignment_OK.ali >& "$1_local_folding_option_alignment_diff_output.txt"
+checkErrors "$1_local_folding_option" "$1_local_folding_option_errors.txt" "$1_local_folding_option_seq1_diff_output.txt" "$1_local_folding_option_seq2_diff_output.txt" "$1_local_folding_option_seq3_diff_output.txt" "$1_local_folding_option_alignment_diff_output.txt"
+echo "    $1_local_folding_option testing finished."
+
+# Test multilign_max_dsv_change_option.
+echo "    $1_max_dsv_change_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_max_dsv_change_option.conf"
+echo "OutCT = {../tests/$1_max_dsv_change_option_seq1_test_output.ct;../tests/$1_max_dsv_change_option_seq2_test_output.ct;../tests/$1_max_dsv_change_option_seq3_test_output.ct;}" >> "$1_max_dsv_change_option.conf"
+echo "Alignment = $1_max_dsv_change_option_alignment_test_output.ali" >> "$1_max_dsv_change_option.conf"
+echo "MaxDsvChange = 10" >> "$1_max_dsv_change_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_max_dsv_change_option.conf"; fi;
+../exe/$1 "$1_max_dsv_change_option.conf" 1>/dev/null 2>"$1_max_dsv_change_option_errors.txt"
+diff $1_max_dsv_change_option_seq1_test_output.ct multilign/multilign_max_dsv_change_option_seq1_OK.ct >& "$1_max_dsv_change_option_seq1_diff_output.txt"
+diff $1_max_dsv_change_option_seq2_test_output.ct multilign/multilign_max_dsv_change_option_seq2_OK.ct >& "$1_max_dsv_change_option_seq2_diff_output.txt"
+diff $1_max_dsv_change_option_seq3_test_output.ct multilign/multilign_max_dsv_change_option_seq3_OK.ct >& "$1_max_dsv_change_option_seq3_diff_output.txt"
+diff $1_max_dsv_change_option_alignment_test_output.ali multilign/multilign_max_dsv_change_option_alignment_OK.ali >& "$1_max_dsv_change_option_alignment_diff_output.txt"
+checkErrors "$1_max_dsv_change_option" "$1_max_dsv_change_option_errors.txt" "$1_max_dsv_change_option_seq1_diff_output.txt" "$1_max_dsv_change_option_seq2_diff_output.txt" "$1_max_dsv_change_option_seq3_diff_output.txt" "$1_max_dsv_change_option_alignment_diff_output.txt"
+echo "    $1_max_dsv_change_option testing finished."
+
+# Test multilign_max_pairs_option.
+echo "    $1_max_pairs_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_max_pairs_option.conf"
+echo "OutCT = {../tests/$1_max_pairs_option_seq1_test_output.ct;../tests/$1_max_pairs_option_seq2_test_output.ct;../tests/$1_max_pairs_option_seq3_test_output.ct;}" >> "$1_max_pairs_option.conf"
+echo "Alignment = $1_max_pairs_option_alignment_test_output.ali" >> "$1_max_pairs_option.conf"
+echo "MaxPairs = 500" >> "$1_max_pairs_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_max_pairs_option.conf"; fi;
+../exe/$1 "$1_max_pairs_option.conf" 1>/dev/null 2>"$1_max_pairs_option_errors.txt"
+diff $1_max_pairs_option_seq1_test_output.ct multilign/multilign_max_pairs_option_seq1_OK.ct >& "$1_max_pairs_option_seq1_diff_output.txt"
+diff $1_max_pairs_option_seq2_test_output.ct multilign/multilign_max_pairs_option_seq2_OK.ct >& "$1_max_pairs_option_seq2_diff_output.txt"
+diff $1_max_pairs_option_seq3_test_output.ct multilign/multilign_max_pairs_option_seq3_OK.ct >& "$1_max_pairs_option_seq3_diff_output.txt"
+diff $1_max_pairs_option_alignment_test_output.ali multilign/multilign_max_pairs_option_alignment_OK.ali >& "$1_max_pairs_option_alignment_diff_output.txt"
+checkErrors "$1_max_pairs_option" "$1_max_pairs_option_errors.txt" "$1_max_pairs_option_seq1_diff_output.txt" "$1_max_pairs_option_seq2_diff_output.txt" "$1_max_pairs_option_seq3_diff_output.txt" "$1_max_pairs_option_alignment_diff_output.txt"
+echo "    $1_max_pairs_option testing finished."
+
+# Test multilign_max_structures_option.
+echo "    $1_max_structures_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_max_structures_option.conf"
+echo "OutCT = {../tests/$1_max_structures_option_seq1_test_output.ct;../tests/$1_max_structures_option_seq2_test_output.ct;../tests/$1_max_structures_option_seq3_test_output.ct;}" >> "$1_max_structures_option.conf"
+echo "Alignment = $1_max_structures_option_alignment_test_output.ali" >> "$1_max_structures_option.conf"
+echo "MaxStructures = 2" >> "$1_max_structures_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_max_structures_option.conf"; fi;
+../exe/$1 "$1_max_structures_option.conf" 1>/dev/null 2>"$1_max_structures_option_errors.txt"
+diff $1_max_structures_option_seq1_test_output.ct multilign/multilign_max_structures_option_seq1_OK.ct >& "$1_max_structures_option_seq1_diff_output.txt"
+diff $1_max_structures_option_seq2_test_output.ct multilign/multilign_max_structures_option_seq2_OK.ct >& "$1_max_structures_option_seq2_diff_output.txt"
+diff $1_max_structures_option_seq3_test_output.ct multilign/multilign_max_structures_option_seq3_OK.ct >& "$1_max_structures_option_seq3_diff_output.txt"
+diff $1_max_structures_option_alignment_test_output.ali multilign/multilign_max_structures_option_alignment_OK.ali >& "$1_max_structures_option_alignment_diff_output.txt"
+checkErrors "$1_max_structures_option" "$1_max_structures_option_errors.txt" "$1_max_structures_option_seq1_diff_output.txt" "$1_max_structures_option_seq2_diff_output.txt" "$1_max_structures_option_seq3_diff_output.txt" "$1_max_structures_option_alignment_diff_output.txt"
+echo "    $1_max_structures_option testing finished."
+
+# Test multilign_percent_difference_option.
+echo "    $1_percent_difference_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_percent_difference_option.conf"
+echo "OutCT = {../tests/$1_percent_difference_option_seq1_test_output.ct;../tests/$1_percent_difference_option_seq2_test_output.ct;../tests/$1_percent_difference_option_seq3_test_output.ct;}" >> "$1_percent_difference_option.conf"
+echo "Alignment = $1_percent_difference_option_alignment_test_output.ali" >> "$1_percent_difference_option.conf"
+echo "MaxPercent = 1" >> "$1_percent_difference_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_percent_difference_option.conf"; fi;
+../exe/$1 "$1_percent_difference_option.conf" 1>/dev/null 2>"$1_percent_difference_option_errors.txt"
+diff $1_percent_difference_option_seq1_test_output.ct multilign/multilign_percent_difference_option_seq1_OK.ct >& "$1_percent_difference_option_seq1_diff_output.txt"
+diff $1_percent_difference_option_seq2_test_output.ct multilign/multilign_percent_difference_option_seq2_OK.ct >& "$1_percent_difference_option_seq2_diff_output.txt"
+diff $1_percent_difference_option_seq3_test_output.ct multilign/multilign_percent_difference_option_seq3_OK.ct >& "$1_percent_difference_option_seq3_diff_output.txt"
+diff $1_percent_difference_option_alignment_test_output.ali multilign/multilign_percent_difference_option_alignment_OK.ali >& "$1_percent_difference_option_alignment_diff_output.txt"
+checkErrors "$1_percent_difference_option" "$1_percent_difference_option_errors.txt" "$1_percent_difference_option_seq1_diff_output.txt" "$1_percent_difference_option_seq2_diff_output.txt" "$1_percent_difference_option_seq3_diff_output.txt" "$1_percent_difference_option_alignment_diff_output.txt"
+echo "    $1_percent_difference_option testing finished."
+
+# Test multilign_percent_difference_single_fold_option.
+echo "    $1_percent_difference_single_fold_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_percent_difference_single_fold_option.conf"
+echo "OutCT = {../tests/$1_percent_difference_single_fold_option_seq1_test_output.ct;../tests/$1_percent_difference_single_fold_option_seq2_test_output.ct;../tests/$1_percent_difference_single_fold_option_seq3_test_output.ct;}" >> "$1_percent_difference_single_fold_option.conf"
+echo "Alignment = $1_percent_difference_single_fold_option_alignment_test_output.ali" >> "$1_percent_difference_single_fold_option.conf"
+echo "MaxPercentSingle = 1" >> "$1_percent_difference_single_fold_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_percent_difference_single_fold_option.conf"; fi;
+../exe/$1 "$1_percent_difference_single_fold_option.conf" 1>/dev/null 2>"$1_percent_difference_single_fold_option_errors.txt"
+diff $1_percent_difference_single_fold_option_seq1_test_output.ct multilign/multilign_percent_difference_single_fold_option_seq1_OK.ct >& "$1_percent_difference_single_fold_option_seq1_diff_output.txt"
+diff $1_percent_difference_single_fold_option_seq2_test_output.ct multilign/multilign_percent_difference_single_fold_option_seq2_OK.ct >& "$1_percent_difference_single_fold_option_seq2_diff_output.txt"
+diff $1_percent_difference_single_fold_option_seq3_test_output.ct multilign/multilign_percent_difference_single_fold_option_seq3_OK.ct >& "$1_percent_difference_single_fold_option_seq3_diff_output.txt"
+diff $1_percent_difference_single_fold_option_alignment_test_output.ali multilign/multilign_percent_difference_single_fold_option_alignment_OK.ali >& "$1_percent_difference_single_fold_option_alignment_diff_output.txt"
+checkErrors "$1_percent_difference_single_fold_option" "$1_percent_difference_single_fold_option_errors.txt" "$1_percent_difference_single_fold_option_seq1_diff_output.txt" "$1_percent_difference_single_fold_option_seq2_diff_output.txt" "$1_percent_difference_single_fold_option_seq3_diff_output.txt" "$1_percent_difference_single_fold_option_alignment_diff_output.txt"
+echo "    $1_percent_difference_single_fold_option testing finished."
+
+# If the executable is SMP, test multilign-smp_processors_option.
+if [[ $1 = multilign-smp ]]; then
+echo "    multilign-smp_processors_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "multilign-smp_processors_option.conf"
+echo "OutCT = {../tests/multilign-smp_processors_option_seq1_test_output.ct;../tests/multilign-smp_processors_option_seq2_test_output.ct;../tests/multilign-smp_processors_option_seq3_test_output.ct;}" >> "multilign-smp_processors_option.conf"
+echo "Alignment = multilign-smp_processors_option_alignment_test_output.ali" >> "multilign-smp_processors_option.conf"
+echo "Processors = 3" >> "multilign-smp_processors_option.conf"
+../exe/$1 "multilign-smp_processors_option.conf" 1>/dev/null 2>"multilign-smp_processors_option_errors.txt"
+diff multilign-smp_processors_option_seq1_test_output.ct multilign/multilign_without_options_seq1_OK.ct >& "multilign-smp_processors_option_seq1_diff_output.txt"
+diff multilign-smp_processors_option_seq2_test_output.ct multilign/multilign_without_options_seq2_OK.ct >& "multilign-smp_processors_option_seq2_diff_output.txt"
+diff multilign-smp_processors_option_seq3_test_output.ct multilign/multilign_without_options_seq3_OK.ct >& "multilign-smp_processors_option_seq3_diff_output.txt"
+diff multilign-smp_processors_option_alignment_test_output.ali multilign/multilign_without_options_alignment_OK.ali >& "multilign-smp_processors_option_alignment_diff_output.txt"
+checkErrors "multilign-smp_processors_option" "multilign-smp_processors_option_errors.txt" "multilign-smp_processors_option_seq1_diff_output.txt" "multilign-smp_processors_option_seq2_diff_output.txt" "multilign-smp_processors_option_seq3_diff_output.txt" "multilign-smp_processors_option_alignment_diff_output.txt"
+echo "    multilign-smp_processors_option testing finished."
+fi
+
+# Test multilign_random_option.
+echo "    $1_random_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_random_option.conf"
+echo "OutCT = {../tests/$1_random_option_seq1_test_output.ct;../tests/$1_random_option_seq2_test_output.ct;../tests/$1_random_option_seq3_test_output.ct;}" >> "$1_random_option.conf"
+echo "Alignment = $1_random_option_alignment_test_output.ali" >> "$1_random_option.conf"
+echo "Random = 1" >> "$1_random_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_random_option.conf"; fi;
+../exe/$1 "$1_random_option.conf" 1>/dev/null 2>"$1_random_option_errors.txt"
+diff $1_random_option_seq1_test_output.ct multilign/multilign_random_option_seq1_OK.ct >& "$1_random_option_seq1_diff_output.txt"
+diff $1_random_option_seq2_test_output.ct multilign/multilign_random_option_seq2_OK.ct >& "$1_random_option_seq2_diff_output.txt"
+diff $1_random_option_seq3_test_output.ct multilign/multilign_random_option_seq3_OK.ct >& "$1_random_option_seq3_diff_output.txt"
+diff $1_random_option_alignment_test_output.ali multilign/multilign_random_option_alignment_OK.ali >& "$1_random_option_alignment_diff_output.txt"
+checkErrors "$1_random_option" "$1_random_option_errors.txt" "$1_random_option_seq1_diff_output.txt" "$1_random_option_seq2_diff_output.txt" "$1_random_option_seq3_diff_output.txt" "$1_random_option_alignment_diff_output.txt"
+echo "    $1_random_option testing finished."
+
+# Test multilign_separation_option.
+echo "    $1_separation_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_separation_option.conf"
+echo "OutCT = {../tests/$1_separation_option_seq1_test_output.ct;../tests/$1_separation_option_seq2_test_output.ct;../tests/$1_separation_option_seq3_test_output.ct;}" >> "$1_separation_option.conf"
+echo "Alignment = $1_separation_option_alignment_test_output.ali" >> "$1_separation_option.conf"
+echo "Separation = 6" >> "$1_separation_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_separation_option.conf"; fi;
+../exe/$1 "$1_separation_option.conf" 1>/dev/null 2>>"$1_separation_option_errors.txt"
+diff $1_separation_option_seq1_test_output.ct multilign/multilign_separation_option_seq1_OK.ct >& "$1_separation_option_seq1_diff_output.txt"
+diff $1_separation_option_seq2_test_output.ct multilign/multilign_separation_option_seq2_OK.ct >& "$1_separation_option_seq2_diff_output.txt"
+diff $1_separation_option_seq3_test_output.ct multilign/multilign_separation_option_seq3_OK.ct >& "$1_separation_option_seq3_diff_output.txt"
+diff $1_separation_option_alignment_test_output.ali multilign/multilign_separation_option_alignment_OK.ali >& "$1_separation_option_alignment_diff_output.txt"
+checkErrors "$1_separation_option" "$1_separation_option_errors.txt" "$1_separation_option_seq1_diff_output.txt" "$1_separation_option_seq2_diff_output.txt" "$1_separation_option_seq3_diff_output.txt" "$1_separation_option_alignment_diff_output.txt"
+echo "    $1_separation_option testing finished."
+
+# Test multilign_shape_first_option.
+echo "    $1_shape_first_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_shape_first_option.conf"
+echo "OutCT = {../tests/$1_shape_first_option_seq1_test_output.ct;../tests/$1_shape_first_option_seq2_test_output.ct;../tests/$1_shape_first_option_seq3_test_output.ct;}" >> "$1_shape_first_option.conf"
+echo "Alignment = $1_shape_first_option_alignment_test_output.ali" >> "$1_shape_first_option.conf"
+echo "SHAPE1 = ../tests/testFiles/testFile_tRNA_dummy.shape" >> "$1_shape_first_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_shape_first_option.conf"; fi;
+../exe/$1 "$1_shape_first_option.conf" 1>/dev/null 2>"$1_shape_first_option_errors.txt"
+diff $1_shape_first_option_seq1_test_output.ct multilign/multilign_shape_first_option_seq1_OK.ct >& "$1_shape_first_option_seq1_diff_output.txt"
+diff $1_shape_first_option_seq2_test_output.ct multilign/multilign_shape_first_option_seq2_OK.ct >& "$1_shape_first_option_seq2_diff_output.txt"
+diff $1_shape_first_option_seq3_test_output.ct multilign/multilign_shape_first_option_seq3_OK.ct >& "$1_shape_first_option_seq3_diff_output.txt"
+diff $1_shape_first_option_alignment_test_output.ali multilign/multilign_shape_first_option_alignment_OK.ali >& "$1_shape_first_option_alignment_diff_output.txt"
+checkErrors "$1_shape_first_option" "$1_shape_first_option_errors.txt" "$1_shape_first_option_seq1_diff_output.txt" "$1_shape_first_option_seq2_diff_output.txt" "$1_shape_first_option_seq3_diff_output.txt" "$1_shape_first_option_alignment_diff_output.txt"
+echo "    $1_shape_first_option testing finished."
+
+# Test multilign_shape_all_option.
+echo "    $1_shape_all_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_shape_all_option.conf"
+echo "OutCT = {../tests/$1_shape_all_option_seq1_test_output.ct;../tests/$1_shape_all_option_seq2_test_output.ct;../tests/$1_shape_all_option_seq3_test_output.ct;}" >> "$1_shape_all_option.conf"
+echo "Alignment = $1_shape_all_option_alignment_test_output.ali" >> "$1_shape_all_option.conf"
+echo "SHAPE1 = ../tests/testFiles/testFile_tRNA_dummy.shape" >> "$1_shape_all_option.conf"
+echo "SHAPE2 = ../tests/testFiles/testFile_tRNA_dummy.shape" >> "$1_shape_all_option.conf"
+echo "SHAPE3 = ../tests/testFiles/testFile_tRNA_dummy.shape" >> "$1_shape_all_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_shape_all_option.conf"; fi;
+../exe/$1 "$1_shape_all_option.conf" 1>/dev/null 2>"$1_shape_all_option_errors.txt"
+diff $1_shape_all_option_seq1_test_output.ct multilign/multilign_shape_all_option_seq1_OK.ct >& "$1_shape_all_option_seq1_diff_output.txt"
+diff $1_shape_all_option_seq2_test_output.ct multilign/multilign_shape_all_option_seq2_OK.ct >& "$1_shape_all_option_seq2_diff_output.txt"
+diff $1_shape_all_option_seq3_test_output.ct multilign/multilign_shape_all_option_seq3_OK.ct >& "$1_shape_all_option_seq3_diff_output.txt"
+diff $1_shape_all_option_alignment_test_output.ali multilign/multilign_shape_all_option_alignment_OK.ali >& "$1_shape_all_option_alignment_diff_output.txt"
+checkErrors "$1_shape_all_option" "$1_shape_all_option_errors.txt" "$1_shape_all_option_seq1_diff_output.txt" "$1_shape_all_option_seq2_diff_output.txt" "$1_shape_all_option_seq3_diff_output.txt" "$1_shape_all_option_alignment_diff_output.txt"
+echo "    $1_shape_all_option testing finished."
+
+# Test multilign_shape_intercept_option.
+echo "    $1_shape_intercept_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_shape_intercept_option.conf"
+echo "OutCT = {../tests/$1_shape_intercept_option_seq1_test_output.ct;../tests/$1_shape_intercept_option_seq2_test_output.ct;../tests/$1_shape_intercept_option_seq3_test_output.ct;}" >> "$1_shape_intercept_option.conf"
+echo "Alignment = $1_shape_intercept_option_alignment_test_output.ali" >> "$1_shape_intercept_option.conf"
+echo "SHAPE1 = ../tests/testFiles/testFile_tRNA_dummy.shape" >> "$1_shape_intercept_option.conf"
+echo "SHAPEintercept = -0.5" >> "$1_shape_intercept_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_shape_intercept_option.conf"; fi;
+../exe/$1 "$1_shape_intercept_option.conf" 1>/dev/null 2>"$1_shape_intercept_option_errors.txt"
+diff $1_shape_intercept_option_seq1_test_output.ct multilign/multilign_shape_intercept_option_seq1_OK.ct >& "$1_shape_intercept_option_seq1_diff_output.txt"
+diff $1_shape_intercept_option_seq2_test_output.ct multilign/multilign_shape_intercept_option_seq2_OK.ct >& "$1_shape_intercept_option_seq2_diff_output.txt"
+diff $1_shape_intercept_option_seq3_test_output.ct multilign/multilign_shape_intercept_option_seq3_OK.ct >& "$1_shape_intercept_option_seq3_diff_output.txt"
+diff $1_shape_intercept_option_alignment_test_output.ali multilign/multilign_shape_intercept_option_alignment_OK.ali >& "$1_shape_intercept_option_alignment_diff_output.txt"
+checkErrors "$1_shape_intercept_option" "$1_shape_intercept_option_errors.txt" "$1_shape_intercept_option_seq1_diff_output.txt" "$1_shape_intercept_option_seq2_diff_output.txt" "$1_shape_intercept_option_seq3_diff_output.txt" "$1_shape_intercept_option_alignment_diff_output.txt"
+echo "    $1_shape_intercept_option testing finished."
+
+# Test multilign_shape_slope_option.
+echo "    $1_shape_slope_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_shape_slope_option.conf"
+echo "OutCT = {../tests/$1_shape_slope_option_seq1_test_output.ct;../tests/$1_shape_slope_option_seq2_test_output.ct;../tests/$1_shape_slope_option_seq3_test_output.ct;}" >> "$1_shape_slope_option.conf"
+echo "Alignment = $1_shape_slope_option_alignment_test_output.ali" >> "$1_shape_slope_option.conf"
+echo "SHAPE1 = ../tests/testFiles/testFile_tRNA_dummy.shape" >> "$1_shape_slope_option.conf"
+echo "SHAPEslope = 2.0" >> "$1_shape_slope_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_shape_slope_option.conf"; fi;
+../exe/$1 "$1_shape_slope_option.conf" 1>/dev/null 2>"$1_shape_slope_option_errors.txt"
+diff $1_shape_slope_option_seq1_test_output.ct multilign/multilign_shape_slope_option_seq1_OK.ct >& "$1_shape_slope_option_seq1_diff_output.txt"
+diff $1_shape_slope_option_seq2_test_output.ct multilign/multilign_shape_slope_option_seq2_OK.ct >& "$1_shape_slope_option_seq2_diff_output.txt"
+diff $1_shape_slope_option_seq3_test_output.ct multilign/multilign_shape_slope_option_seq3_OK.ct >& "$1_shape_slope_option_seq3_diff_output.txt"
+diff $1_shape_slope_option_alignment_test_output.ali multilign/multilign_shape_slope_option_alignment_OK.ali >& "$1_shape_slope_option_alignment_diff_output.txt"
+checkErrors "$1_shape_slope_option" "$1_shape_slope_option_errors.txt" "$1_shape_slope_option_seq1_diff_output.txt" "$1_shape_slope_option_seq2_diff_output.txt" "$1_shape_slope_option_seq3_diff_output.txt" "$1_shape_slope_option_alignment_diff_output.txt"
+echo "    $1_shape_slope_option testing finished."
+
+# Test multilign_temperature_option.
+echo "    $1_temperature_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_temperature_option.conf"
+echo "OutCT = {../tests/$1_temperature_option_seq1_test_output.ct;../tests/$1_temperature_option_seq2_test_output.ct;../tests/$1_temperature_option_seq3_test_output.ct;}" >> "$1_temperature_option.conf"
+echo "Alignment = $1_temperature_option_alignment_test_output.ali" >> "$1_temperature_option.conf"
+echo "Temperature = 200" >> "$1_temperature_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_temperature_option.conf"; fi;
+../exe/$1 "$1_temperature_option.conf" 1>/dev/null 2>"$1_temperature_option_errors.txt"
+diff $1_temperature_option_seq1_test_output.ct multilign/multilign_temperature_option_seq1_OK.ct >& "$1_temperature_option_seq1_diff_output.txt"
+diff $1_temperature_option_seq2_test_output.ct multilign/multilign_temperature_option_seq2_OK.ct >& "$1_temperature_option_seq2_diff_output.txt"
+diff $1_temperature_option_seq3_test_output.ct multilign/multilign_temperature_option_seq3_OK.ct >& "$1_temperature_option_seq3_diff_output.txt"
+diff $1_temperature_option_alignment_test_output.ali multilign/multilign_temperature_option_alignment_OK.ali >& "$1_temperature_option_alignment_diff_output.txt"
+checkErrors "$1_temperature_option" "$1_temperature_option_errors.txt" "$1_temperature_option_seq1_diff_output.txt" "$1_temperature_option_seq2_diff_output.txt" "$1_temperature_option_seq3_diff_output.txt" "$1_temperature_option_alignment_diff_output.txt"
+echo "    $1_temperature_option testing finished."
+
+# Test multilign_window_size_alignment_option.
+echo "    $1_window_size_alignment_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_window_size_alignment_option.conf"
+echo "OutCT = {../tests/$1_window_size_alignment_option_seq1_test_output.ct;../tests/$1_window_size_alignment_option_seq2_test_output.ct;../tests/$1_window_size_alignment_option_seq3_test_output.ct;}" >> "$1_window_size_alignment_option.conf"
+echo "Alignment = $1_window_size_alignment_option_alignment_test_output.ali" >> "$1_window_size_alignment_option.conf"
+echo "WindowAlign = 5" >> "$1_window_size_alignment_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_window_size_alignment_option.conf"; fi;
+../exe/$1 "$1_window_size_alignment_option.conf" 1>/dev/null 2>"$1_window_size_alignment_option_errors.txt"
+diff $1_window_size_alignment_option_seq1_test_output.ct multilign/multilign_window_size_alignment_option_seq1_OK.ct >& "$1_window_size_alignment_option_seq1_diff_output.txt"
+diff $1_window_size_alignment_option_seq2_test_output.ct multilign/multilign_window_size_alignment_option_seq2_OK.ct >& "$1_window_size_alignment_option_seq2_diff_output.txt"
+diff $1_window_size_alignment_option_seq3_test_output.ct multilign/multilign_window_size_alignment_option_seq3_OK.ct >& "$1_window_size_alignment_option_seq3_diff_output.txt"
+diff $1_window_size_alignment_option_alignment_test_output.ali multilign/multilign_window_size_alignment_option_alignment_OK.ali >& "$1_window_size_alignment_option_alignment_diff_output.txt"
+checkErrors "$1_window_size_alignment_option" "$1_window_size_alignment_option_errors.txt" "$1_window_size_alignment_option_seq1_diff_output.txt" "$1_window_size_alignment_option_seq2_diff_output.txt" "$1_window_size_alignment_option_seq3_diff_output.txt" "$1_window_size_alignment_option_alignment_diff_output.txt"
+echo "    $1_window_size_alignment_option testing finished."
+
+# Test multilign_window_size_base_pair_option.
+echo "    $1_window_size_base_pair_option testing started..."
+echo "InSeq = {../tests/testFiles/testFile_RD0260.seq;../tests/testFiles/testFile_RD0500.seq;../tests/testFiles/testFile_RA7680.seq;}" > "$1_window_size_base_pair_option.conf"
+echo "OutCT = {../tests/$1_window_size_base_pair_option_seq1_test_output.ct;../tests/$1_window_size_base_pair_option_seq2_test_output.ct;../tests/$1_window_size_base_pair_option_seq3_test_output.ct;}" >> "$1_window_size_base_pair_option.conf"
+echo "Alignment = $1_window_size_base_pair_option_alignment_test_output.ali" >> "$1_window_size_base_pair_option.conf"
+echo "WindowBP = 4" >> "$1_window_size_base_pair_option.conf"
+if [[ $1 == multilign-smp ]]; then echo "Processors = 2" >> "$1_window_size_base_pair_option.conf"; fi;
+../exe/$1 "$1_window_size_base_pair_option.conf" 1>/dev/null 2>"$1_window_size_base_pair_option_errors.txt"
+diff $1_window_size_base_pair_option_seq1_test_output.ct multilign/multilign_window_size_base_pair_option_seq1_OK.ct >& "$1_window_size_base_pair_option_seq1_diff_output.txt"
+diff $1_window_size_base_pair_option_seq2_test_output.ct multilign/multilign_window_size_base_pair_option_seq2_OK.ct >& "$1_window_size_base_pair_option_seq2_diff_output.txt"
+diff $1_window_size_base_pair_option_seq3_test_output.ct multilign/multilign_window_size_base_pair_option_seq3_OK.ct >& "$1_window_size_base_pair_option_seq3_diff_output.txt"
+diff $1_window_size_base_pair_option_alignment_test_output.ali multilign/multilign_window_size_base_pair_option_alignment_OK.ali >& "$1_window_size_base_pair_option_alignment_diff_output.txt"
+checkErrors "$1_window_size_base_pair_option" "$1_window_size_base_pair_option_errors.txt" "$1_window_size_base_pair_option_seq1_diff_output.txt" "$1_window_size_base_pair_option_seq2_diff_output.txt" "$1_window_size_base_pair_option_seq3_diff_output.txt" "$1_window_size_base_pair_option_alignment_diff_output.txt"
+echo "    $1_window_size_base_pair_option testing finished."
+
+# Clean up any extra files made over the course of the multilign tests.
+echo "    Cleanup of $1 tests started..."
+echo '        Cleanup in progress...'
+rm -f $1_without_options*
+rm -f $1_constraint*
+rm -f $1_dna_option*
+rm -f $1_gap_option*
+rm -f $1_index_sequence_option*
+rm -f $1_inserts_deselected_option*
+rm -f $1_iterations_option*
+rm -f $1_keep_intermediate_option*
+rm -f *.aout *.dsv
+rm -f $1_local_folding_option*
+rm -f $1_max_dsv_change_option*
+rm -f $1_max_pairs_option*
+rm -f $1_max_structures_option*
+rm -f $1_percent_difference*
+rm -f $1_processors_option*
+rm -f $1_random_option*
+rm -f $1_separation_option*
+rm -f $1_shape*
+rm -f $1_temperature_option*
+rm -f $1_window_size*
+echo "    Cleanup of $1 tests finished."

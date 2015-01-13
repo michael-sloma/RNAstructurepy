@@ -1,0 +1,31 @@
+# Move to the RNAstructure main directory.
+cd ../../;
+
+# Copy the HTML files that expand Javadoc comments to their proper places and names so the Javadoc tool will use them.
+cp manual/javadoc/comments/Overview.html overview.html
+cp manual/javadoc/comments/DrawingSource.html RNAstructure_java_drawing/source/package.html
+cp manual/javadoc/comments/DrawingSourceDialogs.html RNAstructure_java_drawing/source/dialogs/package.html
+cp manual/javadoc/comments/DrawingSourceMenus.html RNAstructure_java_drawing/source/menus/package.html
+cp manual/javadoc/comments/DrawingSourceProxy.html RNAstructure_java_drawing/source/proxy/package.html
+cp manual/javadoc/comments/DrawingSourceRunners.html RNAstructure_java_drawing/source/runners/package.html
+cp manual/javadoc/comments/InterfaceSource.html RNAstructure_java_interface/source/package.html
+cp manual/javadoc/comments/InterfaceSourceMenus.html RNAstructure_java_interface/source/menus/package.html
+cp manual/javadoc/comments/InterfaceSourceStartup.html RNAstructure_java_interface/source/startup/package.html
+cp manual/javadoc/comments/InterfaceSourceWindows.html RNAstructure_java_interface/source/windows/package.html
+cp manual/javadoc/comments/Utilities.html RNAstructure_java_utilities/package.html
+
+# Run the javadoc command.
+javadoc -private -link http://download.oracle.com/javase/6/docs/api/ -nodeprecated -overview overview.html -sourcepath . -d manual/javadoc RNAstructure_java_drawing.source RNAstructure_java_drawing.source.dialogs RNAstructure_java_drawing.source.menus RNAstructure_java_drawing.source.proxy RNAstructure_java_drawing.source.runners RNAstructure_java_interface.source RNAstructure_java_interface.source.menus RNAstructure_java_interface.source.startup RNAstructure_java_interface.source.windows RNAstructure_java_utilities
+
+# Delete any copied files.
+rm -f overview.html
+rm -f RNAstructure_java_drawing/source/package.html
+rm -f RNAstructure_java_drawing/source/dialogs/package.html
+rm -f RNAstructure_java_drawing/source/menus/package.html
+rm -f RNAstructure_java_drawing/source/proxy/package.html
+rm -f RNAstructure_java_drawing/source/runners/package.html
+rm -f RNAstructure_java_interface/source/package.html
+rm -f RNAstructure_java_interface/source/menus/package.html
+rm -f RNAstructure_java_interface/source/startup/package.html
+rm -f RNAstructure_java_interface/source/windows/package.html
+rm -f RNAstructure_java_utilities/package.html

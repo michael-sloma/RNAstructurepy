@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# If the dynalign executable doesn't exist yet, make it.
+echo "    Preparation of $1 tests started..."
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/$1 ]]
+then
+cd ..; make $1 >& /dev/null; cd tests;
+fi
+echo "    Preparation of $1 tests finished."
+
+# Test dynalign with the general self-contained example given.
+echo "    $1 general testing started..."
+echo "inseq1 = ../tests/testFiles/testFile_RA1540.seq" > "$1_general_test_config.conf"
+echo "inseq2 = ../tests/testFiles/testFile_RL3280.seq" >> "$1_general_test_config.conf"
+echo "outct = ../tests/$1_general_test_seq1.ct" >> "$1_general_test_config.conf"
+echo "outct2 = ../tests/$1_general_test_seq2.ct" >> "$1_general_test_config.conf"
+echo "aout = ../tests/$1_general_test_alignment.ali" >> "$1_general_test_config.conf"
+if [[ $1 == dynalign_ii-smp ]]; then echo "num_processors = 2" >> "$1_general_test_config.conf"; fi
+
+../exe/$1 "$1_general_test_config.conf" 1>/dev/null 2>"$1_general_test_errors.txt"
+diff "$1_general_test_seq1.ct" dynalign_ii/dynalign_ii_seq1_OK.ct >& "$1_general_test_seq1_diff_output.txt"
+diff "$1_general_test_seq2.ct" dynalign_ii/dynalign_ii_seq2_OK.ct >& "$1_general_test_seq2_diff_output.txt"
+diff "$1_general_test_alignment.ali" dynalign_ii/dynalign_ii_alignment_OK.ali >& "$1_general_test_alignment_diff_output.txt"
+checkErrors "$1_general_test" "$1_general_test_errors.txt" "$1_general_test_seq1_diff_output.txt" "$1_general_test_seq2_diff_output.txt" "$1_general_test_alignment_diff_output.txt"
+echo "    $1 general testing finished."
+
+# Clean up any extra files made over the course of the dynalign tests.
+echo "    Cleanup of $1 tests started..."
+echo '        Cleanup in progress...'
+rm -f $1_general_test*
+echo "    Cleanup of $1 tests finished."

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# This file is meant for Linux and Macintosh machines only.
+
+export DATAPATH=../data_tables
+export LD_LIBRARY_PATH=.
+
+DOCK_OPTION='';
+NAME=`uname`
+if [[ $NAME = "Darwin" ]]; then
+    DOCK_OPTION='-Xdock:name=RNAstructure'
+fi
+
+java $DOCK_OPTION -jar RNAstructure.jar

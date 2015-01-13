@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# If the ct2dot executable doesn't exist yet, make it.
+echo '    Preparation of ct2dot tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/ct2dot ]]
+then
+cd ..; make ct2dot >& /dev/null; cd tests;
+fi
+echo '    Preparation of ct2dot tests finished.'
+
+# Test ct2dot with the general self-contained example given.
+echo '    ct2dot general testing started.'
+../exe/ct2dot ct2dot2ct/dot2ct_general_OK.ct 1 test.bracket 1> /dev/null 2>ct2dot_general_errors.txt
+diff -b test.bracket ct2dot2ct/ct2dot_general_OK.bracket >& ct2dot_general_diff_output.txt
+checkErrors ct2dot_general_test ct2dot_general_errors.txt ct2dot_general_diff_output.txt
+echo '    ct2dot general testing finished.'
+
+# Clean up any extra files made over the course of the ct2dot tests.
+echo '    Cleanup of ct2dot tests started...'
+echo '        Cleanup in progress...'
+rm -f test.bracket
+rm -f ct2dot_general_diff_output.txt
+rm -f ct2dot_general_errors.txt
+echo '    Cleanup of ct2dot tests finished.'

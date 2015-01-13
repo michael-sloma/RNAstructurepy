@@ -1,0 +1,116 @@
+#!/bin/bash
+
+# If the ProbabilityPlot executable doesn't exist yet, make it.
+# Also, make the ProbabilityPlot executable and create a save file from it.
+echo "    Preparation of ProbabilityPlot tests started..."
+echo "        Preparation in progress..."
+if [[ ! -f ../exe/ProbabilityPlot ]]
+then cd ..; make ProbabilityPlot >& /dev/null; cd tests; fi
+
+SAVEFILE=ProbabilityPlot_prep.pfs
+MINIMUM=3
+MAXIMUM=7
+if [[ ! -f ../exe/partition ]]; then cd ..; make partition >& /dev/null; cd tests; fi
+../exe/partition testFiles/testFile_RA7680.seq $SAVEFILE 1>/dev/null 2>ProbabilityPlot_prep_errors.txt
+if [[ -s ProbabilityPlot_prep_errors.txt ]]; then cp ProbabilityPlot_prep_errors.txt RNAstructure_error_tests/; fi
+echo "    Preparation of ProbabilityPlot tests finished."
+
+# Test ProbabilityPlot_ps_without_options.
+echo "    ProbabilityPlot_ps_without_options testing started..."
+../exe/ProbabilityPlot $SAVEFILE ProbabilityPlot_ps_without_options_test_output.ps 1>/dev/null 2>ProbabilityPlot_ps_without_options_errors.txt
+diff ProbabilityPlot_ps_without_options_test_output.ps ProbabilityPlot/ProbabilityPlot_ps_without_options_OK.ps >& ProbabilityPlot_ps_without_options_diff_output.txt
+checkErrors ProbabilityPlot_ps_without_options ProbabilityPlot_ps_without_options_errors.txt ProbabilityPlot_ps_without_options_diff_output.txt
+echo "    ProbabilityPlot_ps_without_options testing finished."
+
+# Test ProbabilityPlot_ps_entries_option.
+echo "    ProbabilityPlot_ps_entries_option testing started..."
+../exe/ProbabilityPlot $SAVEFILE ProbabilityPlot_ps_entries_option_test_output.ps -e 3 1>/dev/null 2>ProbabilityPlot_ps_entries_option_errors.txt
+diff ProbabilityPlot_ps_entries_option_test_output.ps ProbabilityPlot/ProbabilityPlot_ps_entries_option_OK.ps >& ProbabilityPlot_ps_entries_option_diff_output.txt
+checkErrors ProbabilityPlot_ps_entries_option ProbabilityPlot_ps_entries_option_errors.txt ProbabilityPlot_ps_entries_option_diff_output.txt
+echo "    ProbabilityPlot_ps_entries_option testing finished."
+
+# Test ProbabilityPlot_ps_log_option.
+echo "    ProbabilityPlot_ps_log_option testing started..."
+../exe/ProbabilityPlot ProbabilityPlot/ProbabilityPlot_text_option_OK.txt ProbabilityPlot_ps_log_option_test_output.ps --log10 1>/dev/null 2>ProbabilityPlot_ps_log_option_errors.txt
+diff ProbabilityPlot_ps_log_option_test_output.ps ProbabilityPlot/ProbabilityPlot_ps_log_option_OK.ps >& ProbabilityPlot_ps_log_option_diff_output.txt
+checkErrors ProbabilityPlot_ps_log_option ProbabilityPlot_ps_log_option_errors.txt ProbabilityPlot_ps_log_option_diff_output.txt
+echo "    ProbabilityPlot_ps_log_option testing finished."
+
+# Test ProbabilityPlot_ps_matrix_option.
+echo "    ProbabilityPlot_ps_matrix_option testing started..."
+../exe/ProbabilityPlot testFiles/testFile_matrix.txt ProbabilityPlot_ps_matrix_option_test_output.ps --matrix 1>/dev/null 2>ProbabilityPlot_ps_matrix_option_errors.txt
+diff ProbabilityPlot_ps_matrix_option_test_output.ps ProbabilityPlot/ProbabilityPlot_ps_matrix_option_OK.ps >& ProbabilityPlot_ps_matrix_option_diff_output.txt
+checkErrors ProbabilityPlot_ps_matrix_option ProbabilityPlot_ps_matrix_option_errors.txt ProbabilityPlot_ps_matrix_option_diff_output.txt
+echo "    ProbabilityPlot_ps_matrix_option testing finished."
+
+# Test ProbabilityPlot_ps_maximum_option.
+echo "    ProbabilityPlot_ps_maximum_option testing started..."
+../exe/ProbabilityPlot $SAVEFILE ProbabilityPlot_ps_maximum_option_test_output.ps -max $MAXIMUM 1>/dev/null 2>ProbabilityPlot_ps_maximum_option_errors.txt
+diff ProbabilityPlot_ps_maximum_option_test_output.ps ProbabilityPlot/ProbabilityPlot_ps_maximum_option_OK.ps >& ProbabilityPlot_ps_maximum_option_diff_output.txt
+checkErrors ProbabilityPlot_ps_maximum_option ProbabilityPlot_ps_maximum_option_errors.txt ProbabilityPlot_ps_maximum_option_diff_output.txt
+echo "    ProbabilityPlot_ps_maximum_option testing finished."
+
+# Test ProbabilityPlot_ps_minimum_option.
+echo "    ProbabilityPlot_ps_minimum_option testing started..."
+../exe/ProbabilityPlot $SAVEFILE ProbabilityPlot_ps_minimum_option_test_output.ps -min $MINIMUM 1>/dev/null 2>ProbabilityPlot_ps_minimum_option_errors.txt
+diff ProbabilityPlot_ps_minimum_option_test_output.ps ProbabilityPlot/ProbabilityPlot_ps_minimum_option_OK.ps >& ProbabilityPlot_ps_minimum_option_diff_output.txt
+checkErrors ProbabilityPlot_ps_minimum_option ProbabilityPlot_ps_minimum_option_errors.txt ProbabilityPlot_ps_minimum_option_diff_output.txt
+echo "    ProbabilityPlot_ps_minimum_option testing finished."
+
+# Test ProbabilityPlot_svg_without_options.
+echo "    ProbabilityPlot_svg_without_options testing started..."
+../exe/ProbabilityPlot $SAVEFILE ProbabilityPlot_svg_without_options_test_output.svg --svg 1>/dev/null 2>ProbabilityPlot_svg_without_options_errors.txt
+diff ProbabilityPlot_svg_without_options_test_output.svg ProbabilityPlot/ProbabilityPlot_svg_without_options_OK.svg >& ProbabilityPlot_svg_without_options_diff_output.txt
+checkErrors ProbabilityPlot_svg_without_options ProbabilityPlot_svg_without_options_errors.txt ProbabilityPlot_svg_without_options_diff_output.txt
+echo "    ProbabilityPlot_svg_without_options testing finished."
+
+# Test ProbabilityPlot_svg_entries_option.
+echo "    ProbabilityPlot_svg_entries_option testing started..."
+../exe/ProbabilityPlot $SAVEFILE ProbabilityPlot_svg_entries_option_test_output.svg -e 3 --svg 1>/dev/null 2>ProbabilityPlot_svg_entries_option_errors.txt
+diff ProbabilityPlot_svg_entries_option_test_output.svg ProbabilityPlot/ProbabilityPlot_svg_entries_option_OK.svg >& ProbabilityPlot_svg_entries_option_diff_output.txt
+checkErrors ProbabilityPlot_svg_entries_option ProbabilityPlot_svg_entries_option_errors.txt ProbabilityPlot_svg_entries_option_diff_output.txt
+echo "    ProbabilityPlot_svg_entries_option testing finished."
+
+# Test ProbabilityPlot_svg_log_option.
+echo "    ProbabilityPlot_svg_log_option testing started..."
+../exe/ProbabilityPlot ProbabilityPlot/ProbabilityPlot_text_option_OK.txt ProbabilityPlot_svg_log_option_test_output.svg --log10 --svg 1>/dev/null 2>ProbabilityPlot_svg_log_option_errors.txt
+diff ProbabilityPlot_svg_log_option_test_output.svg ProbabilityPlot/ProbabilityPlot_svg_log_option_OK.svg >& ProbabilityPlot_svg_log_option_diff_output.txt
+checkErrors ProbabilityPlot_svg_log_option ProbabilityPlot_svg_log_option_errors.txt ProbabilityPlot_svg_log_option_diff_output.txt
+echo "    ProbabilityPlot_svg_log_option testing finished."
+
+# Test ProbabilityPlot_svg_matrix_option.
+echo "    ProbabilityPlot_svg_matrix_option testing started..."
+../exe/ProbabilityPlot testFiles/testFile_matrix.txt ProbabilityPlot_svg_matrix_option_test_output.svg --matrix --svg 1>/dev/null 2>ProbabilityPlot_svg_matrix_option_errors.txt
+diff ProbabilityPlot_svg_matrix_option_test_output.svg ProbabilityPlot/ProbabilityPlot_svg_matrix_option_OK.svg >& ProbabilityPlot_svg_matrix_option_diff_output.txt
+checkErrors ProbabilityPlot_svg_matrix_option ProbabilityPlot_svg_matrix_option_errors.txt ProbabilityPlot_svg_matrix_option_diff_output.txt
+echo "    ProbabilityPlot_svg_matrix_option testing finished."
+
+# Test ProbabilityPlot_svg_maximum_option.
+echo "    ProbabilityPlot_svg_maximum_option testing started..."
+../exe/ProbabilityPlot $SAVEFILE ProbabilityPlot_svg_maximum_option_test_output.svg -max $MAXIMUM --svg 1>/dev/null 2>ProbabilityPlot_svg_maximum_option_errors.txt
+diff ProbabilityPlot_svg_maximum_option_test_output.svg ProbabilityPlot/ProbabilityPlot_svg_maximum_option_OK.svg >& ProbabilityPlot_svg_maximum_option_diff_output.txt
+checkErrors ProbabilityPlot_svg_maximum_option ProbabilityPlot_svg_maximum_option_errors.txt ProbabilityPlot_svg_maximum_option_diff_output.txt
+echo "    ProbabilityPlot_svg_maximum_option testing finished."
+
+# Test ProbabilityPlot_svg_minimum_option.
+echo "    ProbabilityPlot_svg_minimum_option testing started..."
+../exe/ProbabilityPlot $SAVEFILE ProbabilityPlot_svg_minimum_option_test_output.svg -min $MINIMUM --svg 1>/dev/null 2>ProbabilityPlot_svg_minimum_option_errors.txt
+diff ProbabilityPlot_svg_minimum_option_test_output.svg ProbabilityPlot/ProbabilityPlot_svg_minimum_option_OK.svg >& ProbabilityPlot_svg_minimum_option_diff_output.txt
+checkErrors ProbabilityPlot_svg_minimum_option ProbabilityPlot_svg_minimum_option_errors.txt ProbabilityPlot_svg_minimum_option_diff_output.txt
+echo "    ProbabilityPlot_svg_minimum_option testing finished."
+
+# Test ProbabilityPlot_text_option.
+echo "    ProbabilityPlot_text_option testing started..."
+../exe/ProbabilityPlot $SAVEFILE ProbabilityPlot_text_option_test_output.txt --text 1>/dev/null 2>ProbabilityPlot_text_option_errors.txt
+diff ProbabilityPlot_text_option_test_output.txt ProbabilityPlot/ProbabilityPlot_text_option_OK.txt >& ProbabilityPlot_text_option_diff_output.txt
+checkErrors ProbabilityPlot_text_option ProbabilityPlot_text_option_errors.txt ProbabilityPlot_text_option_diff_output.txt
+echo "    ProbabilityPlot_text_option testing finished."
+
+# Clean up any extra files made over the course of the ProbabilityPlot tests.
+echo "    Cleanup of ProbabilityPlot tests started..."
+echo '        Cleanup in progress...'
+rm -f ProbabilityPlot_prep*
+rm -f ProbabilityPlot_ps*
+rm -f ProbabilityPlot_svg*
+rm -f ProbabilityPlot_text*
+echo "    Cleanup of ProbabilityPlot tests finished."

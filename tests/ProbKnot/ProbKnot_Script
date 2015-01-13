@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# If the ProbKnot executable doesn't exist yet, make it.
+# Also, make the partition function save file necessary for testing.
+echo '    Preparation of ProbKnot tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/partition ]]
+then
+cd ..; make partition >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/ProbKnot ]]
+then
+cd ..; make ProbKnot >& /dev/null; cd tests;
+fi
+
+if [[ ! -f $SINGLEPFS2 ]]
+then
+../exe/partition $SINGLESEQ2 $SINGLEPFS2 1>/dev/null 2>ProbKnot_partitionFunction_prep_errors.txt
+if [[ -s ProbKnot_partitionFunction_prep_errors.txt ]]
+then
+cp ProbKnot_partitionFunction_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+echo '    Preparation of ProbKnot tests finished.'
+
+# Test ProbKnot_without_options.
+echo '    ProbKnot_without_options testing started...'
+../exe/ProbKnot $SINGLEPFS2 ProbKnot_without_options_test_output.ct 1>/dev/null 2>ProbKnot_without_options_errors.txt
+diff ProbKnot_without_options_test_output.ct ProbKnot/ProbKnot_without_options_OK.ct >& ProbKnot_without_options_diff_output.txt
+checkErrors ProbKnot_without_options ProbKnot_without_options_errors.txt ProbKnot_without_options_diff_output.txt
+echo '    ProbKnot_without_options testing finished.'
+
+# Test ProbKnot_dna_option.
+echo '    ProbKnot_dna_option testing started...'
+../exe/ProbKnot $SINGLESEQ2 ProbKnot_dna_option_test_output.ct --sequence -d 1>/dev/null 2>ProbKnot_dna_option_errors.txt
+diff ProbKnot_dna_option_test_output.ct ProbKnot/ProbKnot_dna_option_OK.ct >& ProbKnot_dna_option_diff_output.txt
+checkErrors ProbKnot_dna_option ProbKnot_dna_option_errors.txt ProbKnot_dna_option_diff_output.txt
+echo '    ProbKnot_dna_option testing finished.'
+
+# Test ProbKnot_ensemble_option.
+echo '    ProbKnot_ensemble_option testing started...'
+../exe/ProbKnot $ENSEMBLECT ProbKnot_ensemble_option_test_output.ct --ensemble 1>/dev/null 2>ProbKnot_ensemble_option_errors.txt
+diff ProbKnot_ensemble_option_test_output.ct ProbKnot/ProbKnot_ensemble_option_OK.ct >& ProbKnot_ensemble_option_diff_output.txt
+checkErrors ProbKnot_ensemble_option ProbKnot_ensemble_option_errors.txt ProbKnot_ensemble_option_diff_output.txt
+echo '    ProbKnot_ensemble_option testing finished.'
+
+# Test ProbKnot_iterations_option.
+echo '    ProbKnot_iterations_option testing started...'
+../exe/ProbKnot $SINGLEPFS2 ProbKnot_iterations_option_test_output.ct -i 2 1>/dev/null 2>ProbKnot_iterations_option_errors.txt
+diff ProbKnot_iterations_option_test_output.ct ProbKnot/ProbKnot_iterations_option_OK.ct >& ProbKnot_iterations_option_diff_output.txt
+checkErrors ProbKnot_iterations_option ProbKnot_iterations_option_errors.txt ProbKnot_iterations_option_diff_output.txt
+echo '    ProbKnot_iterations_option testing finished.'
+
+# Test ProbKnot_min_helix_option.
+echo '    ProbKnot_min_helix_option testing started...'
+../exe/ProbKnot $SINGLEPFS2 ProbKnot_min_helix_option_test_output.ct -m 2 1>/dev/null 2>ProbKnot_min_helix_option_errors.txt
+diff ProbKnot_min_helix_option_test_output.ct ProbKnot/ProbKnot_min_helix_option_OK.ct >& ProbKnot_min_helix_option_diff_output.txt
+checkErrors ProbKnot_min_helix_option ProbKnot_min_helix_option_errors.txt ProbKnot_min_helix_option_diff_output.txt
+echo '    ProbKnot_min_helix_option testing finished.'
+
+# Test ProbKnot_sequence_option.
+echo '    ProbKnot_sequence_option testing started...'
+../exe/ProbKnot $SINGLESEQ2 ProbKnot_sequence_option_test_output.ct --sequence 1>/dev/null 2>ProbKnot_sequence_option_errors.txt
+diff ProbKnot_sequence_option_test_output.ct ProbKnot/ProbKnot_without_options_OK.ct >& ProbKnot_sequence_option_diff_output.txt
+checkErrors ProbKnot_sequence_option ProbKnot_sequence_option_errors.txt ProbKnot_sequence_option_diff_output.txt
+echo '    ProbKnot_sequence_option testing finished.'
+
+# Clean up any extra files made over the course of the ProbKnot tests.
+echo '    Cleanup of ProbKnot tests started...'
+echo '        Cleanup in progress...'
+rm -f ProbKnot_partitionFunction_prep_errors.txt
+rm -f ProbKnot_without_options*
+rm -f ProbKnot_dna_option*
+rm -f ProbKnot_ensemble_option*
+rm -f ProbKnot_iterations_option*
+rm -f ProbKnot_min_helix_option*
+rm -f ProbKnot_sequence_option*
+rm -f $SINGLEPFS2
+echo '    Cleanup of ProbKnot tests finished.'

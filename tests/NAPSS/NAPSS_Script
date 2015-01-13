@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# If the NAPSS executable doesn't exist yet, make it.
+echo '    Preparation of NAPSS tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/NAPSS ]]
+then
+cd ..; make NAPSS >& /dev/null; cd tests;
+fi
+echo '    Preparation of NAPSS tests finished.'
+
+# Test NAPSS with the general self-contained example given.
+echo '    NAPSS general testing started.'
+echo "inseq=../tests/testFiles/testFile_bm.seq" > NAPSS_general_test_config.txt
+echo "indotplot=../tests/testFiles/testFile_bm.dp" >> NAPSS_general_test_config.txt
+echo "inconstraints=../tests/testFiles/testFile_bm.con" >> NAPSS_general_test_config.txt
+echo "outct=../tests/NAPSS_general_test_output.ct" >> NAPSS_general_test_config.txt
+echo "outpairs=../tests/testFiles/testFile_bm.pp" >> NAPSS_general_test_config.txt
+echo "maxtracebacks=1000" >> NAPSS_general_test_config.txt
+echo "percent=25" >> NAPSS_general_test_config.txt
+echo "windowsize=0" >> NAPSS_general_test_config.txt
+echo "cutoff=25" >> NAPSS_general_test_config.txt
+echo "y" | ../exe/NAPSS NAPSS_general_test_config.txt 1> /dev/null 2>NAPSS_general_test_errors.txt
+diff NAPSS_general_test_output.ct NAPSS/NAPSS_general_OK.ct >& NAPSS_general_test_diff_output.txt
+checkErrors NAPSS_general_test NAPSS_general_test_errors.txt NAPSS_general_test_diff_output.txt
+echo '    NAPSS general testing finished.'
+
+# Clean up any extra files made over the course of the NAPSS tests.
+echo '    Cleanup of NAPSS tests started...'
+echo '        Cleanup in progress...'
+rm -f NAPSS_general_test*
+echo '    Cleanup of NAPSS tests finished.'

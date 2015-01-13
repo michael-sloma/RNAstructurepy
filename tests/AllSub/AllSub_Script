@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# If the AllSub executable doesn't exist yet, make it.
+echo '    Preparation of AllSub tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/AllSub ]]
+then
+cd ..; make AllSub >& /dev/null; cd tests;
+fi
+echo '    Preparation of AllSub tests finished.'
+
+# Test AllSub_without_options.
+echo '    AllSub_without_options testing started...'
+../exe/AllSub $SINGLESEQ_SHORT AllSub_without_options_test_output.ct 1>/dev/null 2>AllSub_without_options_errors.txt
+diff AllSub_without_options_test_output.ct AllSub/AllSub_without_options_OK.ct >& AllSub_without_options_diff_output.txt
+checkErrors AllSub_without_options AllSub_without_options_errors.txt AllSub_without_options_diff_output.txt
+echo '    AllSub_without_options testing finished.'
+
+# Test AllSub_absolute_energy_difference_option.
+echo '    AllSub_absolute_energy_difference_option testing started...'
+../exe/AllSub $SINGLESEQ_SHORT AllSub_absolute_energy_difference_option_test_output.ct -a 1 1>/dev/null 2>AllSub_absolute_energy_difference_option_errors.txt
+diff AllSub_absolute_energy_difference_option_test_output.ct AllSub/AllSub_absolute_energy_difference_option_OK.ct >& AllSub_absolute_energy_difference_option_diff_output.txt
+checkErrors AllSub_absolute_energy_difference_option AllSub_absolute_energy_difference_option_errors.txt AllSub_absolute_energy_difference_option_diff_output.txt
+echo '    AllSub_absolute_energy_difference_option testing finished.'
+
+# Test AllSub_constraint_file_option.
+echo '    AllSub_constraint_file_option testing started...'
+../exe/AllSub $SINGLESEQ_SHORT AllSub_constraint_file_option_test_output.ct -c testFiles/testFile_folding5.con 1>/dev/null 2>AllSub_constraint_file_option_errors.txt
+diff AllSub_constraint_file_option_test_output.ct AllSub/AllSub_constraint_file_option_OK.ct >& AllSub_constraint_file_option_diff_output.txt
+checkErrors AllSub_constraint_file_option AllSub_constraint_file_option_errors.txt AllSub_constraint_file_option_diff_output.txt
+echo '    AllSub_constraint_file_option testing finished.'
+
+# Test AllSub_dna_option.
+echo '    AllSub_dna_option testing started...'
+../exe/AllSub $SINGLESEQ_SHORT AllSub_dna_option_test_output.ct -d -a 0.1 1>/dev/null 2>AllSub_dna_option_errors.txt
+diff AllSub_dna_option_test_output.ct AllSub/AllSub_dna_option_OK.ct >& AllSub_dna_option_diff_output.txt
+checkErrors AllSub_dna_option AllSub_dna_option_errors.txt AllSub_dna_option_diff_output.txt
+echo '    AllSub_dna_option testing finished.'
+
+# Test AllSub_percent_difference_option.
+echo '    AllSub_percent_difference_option testing started...'
+../exe/AllSub $SINGLESEQ_SHORT AllSub_percent_difference_option_test_output.ct -p 1 1>/dev/null 2>AllSub_percent_difference_option_errors.txt
+diff AllSub_percent_difference_option_test_output.ct AllSub/AllSub_percent_difference_option_OK.ct >& AllSub_percent_difference_option_diff_output.txt
+checkErrors AllSub_percent_difference_option AllSub_percent_difference_option_errors.txt AllSub_percent_difference_option_diff_output.txt
+echo '    AllSub_percent_difference_option testing finished.'
+
+# Test AllSub_temperature_option.
+echo '    AllSub_temperature_option testing started...'
+../exe/AllSub $SINGLESEQ_SHORT AllSub_temperature_option_test_output.ct -t 250 1>/dev/null 2>AllSub_temperature_option_errors.txt
+diff AllSub_temperature_option_test_output.ct AllSub/AllSub_temperature_option_OK.ct >& AllSub_temperature_option_diff_output.txt
+checkErrors AllSub_temperature_option AllSub_temperature_option_errors.txt AllSub_temperature_option_diff_output.txt
+echo '    AllSub_temperature_option testing finished.'
+
+# Clean up any extra files made over the course of the AllSub tests.
+echo '    Cleanup of AllSub tests started...'
+echo '        Cleanup in progress...'
+rm -f AllSub_without_options*
+rm -f AllSub_absolute_energy_difference_option*
+rm -f AllSub_constraint_file_option*
+rm -f AllSub_dna_option*
+rm -f AllSub_percent_difference_option*
+rm -f AllSub_temperature_option*
+echo '    Cleanup of AllSub tests finished.'

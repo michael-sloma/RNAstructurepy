@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+	<head>
+		<title>RNAstructure Command Line Help: Building the Interfaces</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<link href="Stylesheet.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+		<div class="bodydiv">
+			<table cellpadding="0" cellspacing="0" border="0" class="mainTable">
+				<tr class="headerRow">
+					<td class="headerBox"><img src="icon.jpg" alt="RNAstructure logo"></td>
+					<td class="headerLabel"><h2>RNAstructure Command Line Help<br>Building Instructions</h2></td>
+					<td class="headerBox2">
+						<ul id="navigator">
+							<li><h3 class="noMarginOrPad"><a href="index.html">Contents</a></h3></li>
+							<li><h3 class="noMarginOrPad"><a href="AlphabeticalIndex.html">Index</a></h3></li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td class="mainContent" colspan="3">
+						<h3 class="leftHeader">Do I need to build the package?</h3>
+						<p>RNAstructure is provided both as source code and as prebuilt executables. Prebuilt executables are currently available for 32-bit Linux, 64-bit Linux, Max OS-X (Leopard and higher), and 32-bit Windows. If you are using one of these operating systems, then you probably do not need to build the package. The available executables will work fine.</p>
+						<br>
+
+						<h3 class="leftHeader">Configuring the Build on Unix/Linux/OS-X</h3>
+						<p>The command line (text) interfaces for RNAstructure are built using the Makefile in the main directory (RNAstructure/). The definitions for compiler and flags are in RNAstructure/compiler.h. This file is provided with the defaults set for compiling on Linux using g++. To change the platform and/or compilers, this file should be manually edited. Example flags are provided for Linux, Mac, and Cygwin platforms. To change the operating system, simply remove the &quot;#&quot; symbol (which denotes comments) from the variable definitions under the target type. Also, add &quot;#&quot; in front of the Linux flags.</p>
+						<br>
+
+						<h3 class="leftHeader">Building on Unix/Linux/OS-X</h3>
+						<p>To build the package, use the command &quot;make all&quot; in RNAstructure/. The command line executables are built and placed in RNAstructure/exe/. You should probably then update your PATH variable to include this directory.</p>
+						<p>An optional &quot;make install&quot; command will copy all the executables to the /usr/local/RNAstructure/ directory. This is helpful in a shared computing environment. This command can only be executed as root.</p>
+						<br>
+
+						<h3 class="leftHeader">Building on DOS/Windows</h3>
+						<p>For DOS/Windows command line interfaces, Microsoft Visual Studio (2005 or later) AND the Intel C++ compiler are reqired. Use Visual Studio to open the solution called RNAstructure\RNAstructure_windows_text_interfaces\RNAstructure_windows_text_interfaces.sln. Then build using Visual Studio. The executables will be depositing in the RNAstructure\RNAstructure_windows_text_interfaces\Release folder.</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="footer" colspan="3">
+						<p>Visit <a href="http://rna.urmc.rochester.edu/RNAstructure.html">The Mathews Lab RNAstructure Page</a> for updates and latest information.</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

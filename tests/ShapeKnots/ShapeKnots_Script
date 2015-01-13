@@ -1,0 +1,133 @@
+#!/bin/bash
+
+# If the ShapeKnots executable doesn't exist yet, make it.
+echo '    Preparation of ShapeKnots tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/ShapeKnots ]]
+then
+cd ..; make ShapeKnots >& /dev/null; cd tests; 
+fi
+echo '    Preparation of ShapeKnots tests finished.'
+
+# Test ShapeKnots_shape_without_options.
+echo '    ShapeKnots_without_options testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_without_options_test_output.ct 1>/dev/null 2>ShapeKnots_without_options_errors.txt
+diff ShapeKnots_without_options_test_output.ct ShapeKnots/ShapeKnots_without_options_OK.ct >& ShapeKnots_without_options_diff_output.txt
+checkErrors ShapeKnots_without_option ShapeKnots_without_options_errors.txt ShapeKnots_without_options_diff_output.txt
+echo '    ShapeKnots_without_options_testing finished.'
+
+# Test ShapeKnots_shape_without_SHAPE_file.
+echo '    ShapeKnots_without_SHAPE_file testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq ShapeKnots_without_SHAPE_file_test_output.ct 1>/dev/null 2>ShapeKnots_without_SHAPE_file_errors.txt
+diff ShapeKnots_without_SHAPE_file_test_output.ct ShapeKnots/ShapeKnots_without_SHAPE_file_OK.ct >& ShapeKnots_without_SHAPE_file_diff_output.txt
+checkErrors ShapeKnots_without_SHAPE_file ShapeKnots_without_SHAPE_file_errors.txt ShapeKnots_without_SHAPE_file_diff_output.txt
+echo '    ShapeKnots_without_SHAPE_file_testing finished.'
+
+# Test ShapeKnots_intercept_option.
+echo '    ShapeKnots_intercept_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_intercept_option_test_output.ct -si -1.5 1>/dev/null 2>ShapeKnots_intercept_option_errors.txt
+diff ShapeKnots_intercept_option_test_output.ct ShapeKnots/ShapeKnots_intercept_option_OK.ct >& ShapeKnots_intercept_option_diff_output.txt
+checkErrors ShapeKnots_intercept_option ShapeKnots_intercept_option_errors.txt ShapeKnots_intercept_option_diff_output.txt
+echo '    ShapeKnots_intercept_option_testing finished.'
+
+# Test ShapeKnots_slope_option.
+echo '    ShapeKnots_slope_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_slope_option_test_output.ct -sm 2.8 1>/dev/null 2>ShapeKnots_slope_option_errors.txt
+diff ShapeKnots_slope_option_test_output.ct ShapeKnots/ShapeKnots_slope_option_OK.ct >& ShapeKnots_slope_option_diff_output.txt
+checkErrors ShapeKnots_slope_option ShapeKnots_slope_option_errors.txt ShapeKnots_slope_option_diff_output.txt
+echo '    ShapeKnots_slope_option_testing finished.'
+
+# Test ShapeKnots_P1_option.
+echo '    ShapeKnots_P1_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_P1_option_test_output.ct -p1 -3 1>/dev/null 2>ShapeKnots_P1_option_errors.txt
+diff ShapeKnots_P1_option_test_output.ct ShapeKnots/ShapeKnots_P1_option_OK.ct >& ShapeKnots_P1_option_diff_output.txt
+checkErrors ShapeKnots_P1_option ShapeKnots_P1_option_errors.txt ShapeKnots_P1_option_diff_output.txt
+echo '    ShapeKnots_P1_option_testing finished.'
+
+# Test ShapeKnots_P2_option.
+echo '    ShapeKnots_P2_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_P2_option_test_output.ct -p2 -3 1>/dev/null 2>ShapeKnots_P2_option_errors.txt
+diff ShapeKnots_P2_option_test_output.ct ShapeKnots/ShapeKnots_P2_option_OK.ct >& ShapeKnots_P2_option_diff_output.txt
+checkErrors ShapeKnots_P2_option ShapeKnots_P2_option_errors.txt ShapeKnots_P2_option_diff_output.txt
+echo '    ShapeKnots_P2_option_testing finished.'
+
+# Test ShapeKnots_single_stranded_offset_option.
+echo '    ShapeKnots_single_stranded_offset_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_single_stranded_offset_option_test_output.ct -sso testFiles/testFile_single_offset.txt 1>/dev/null 2>ShapeKnots_single_stranded_offset_option_errors.txt
+diff ShapeKnots_single_stranded_offset_option_test_output.ct ShapeKnots/ShapeKnots_single_stranded_offset_option_OK.ct >& ShapeKnots_single_stranded_offset_option_diff_output.txt
+checkErrors ShapeKnots_single_stranded_offset_option ShapeKnots_single_stranded_offset_option_errors.txt ShapeKnots_single_stranded_offset_option_diff_output.txt
+echo '    ShapeKnots_single_stranded_offset_option_testing finished.'
+
+# Test ShapeKnots_double_stranded_offset_option.
+echo '    ShapeKnots_double_stranded_offset_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_double_stranded_offset_option_test_output.ct -dso testFiles/testFile_double_offset_dummy.txt 1>/dev/null 2>ShapeKnots_double_stranded_offset_option_errors.txt
+diff ShapeKnots_double_stranded_offset_option_test_output.ct ShapeKnots/ShapeKnots_double_stranded_offset_option_OK.ct >& ShapeKnots_double_stranded_offset_option_diff_output.txt
+checkErrors ShapeKnots_double_stranded_offset_option ShapeKnots_double_stranded_offset_option_errors.txt ShapeKnots_double_stranded_offset_option_diff_output.txt
+echo '    ShapeKnots_double_stranded_offset_option_testing finished.'
+
+# Test ShapeKnots_max_structures_option.
+echo '    ShapeKnots_max_structures_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_max_structures_option_test_output.ct -m 2 1>/dev/null 2>ShapeKnots_max_structures_option_errors.txt
+diff ShapeKnots_max_structures_option_test_output.ct ShapeKnots/ShapeKnots_max_structures_option_OK.ct >& ShapeKnots_max_structures_option_diff_output.txt
+checkErrors ShapeKnots_max_structures_option ShapeKnots_max_structures_option_errors.txt ShapeKnots_max_structures_option_diff_output.txt
+echo '    ShapeKnots_max_structures_option_testing finished.'
+
+# Test ShapeKnots_percent_difference_option.
+echo '    ShapeKnots_percent_difference_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_percent_difference_option_test_output.ct -p 0 1>/dev/null 2>ShapeKnots_percent_difference_option_errors.txt
+diff ShapeKnots_percent_difference_option_test_output.ct ShapeKnots/ShapeKnots_percent_difference_option_OK.ct >& ShapeKnots_percent_difference_option_diff_output.txt
+checkErrors ShapeKnots_percent_difference_option ShapeKnots_percent_difference_option_errors.txt ShapeKnots_percent_difference_option_diff_output.txt
+echo '    ShapeKnots_percent_difference_option_testing finished.'
+
+# Test ShapeKnots_window_size_option.
+echo '    ShapeKnots_window_size_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_window_size_option_test_output.ct -w 0 1>/dev/null 2>ShapeKnots_window_size_option_errors.txt
+diff ShapeKnots_window_size_option_test_output.ct ShapeKnots/ShapeKnots_window_size_option_OK.ct >& ShapeKnots_window_size_option_diff_output.txt
+checkErrors ShapeKnots_window_size_option ShapeKnots_window_size_option_errors.txt ShapeKnots_window_size_option_diff_output.txt
+echo '    ShapeKnots_window_size_option_testing finished.'
+
+# Test ShapeKnots_internal_max_structures_option.
+echo '    ShapeKnots_internal_max_structures_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_internal_max_structures_option_test_output.ct -im 10 1>/dev/null 2>ShapeKnots_internal_max_structures_option_errors.txt
+diff ShapeKnots_internal_max_structures_option_test_output.ct ShapeKnots/ShapeKnots_internal_max_structures_option_OK.ct >& ShapeKnots_internal_max_structures_option_diff_output.txt
+checkErrors ShapeKnots_internal_max_structures_option ShapeKnots_internal_max_structures_option_errors.txt ShapeKnots_internal_max_structures_option_diff_output.txt
+echo '    ShapeKnots_internal_max_structures_option_testing finished.'
+
+# Test ShapeKnots_internal_percent_difference_option.
+echo '    ShapeKnots_internal_percent_difference_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_internal_percent_difference_option_test_output.ct -ip 0 1>/dev/null 2>ShapeKnots_internal_percent_difference_option_errors.txt
+diff ShapeKnots_internal_percent_difference_option_test_output.ct ShapeKnots/ShapeKnots_internal_percent_difference_option_OK.ct >& ShapeKnots_internal_percent_difference_option_diff_output.txt
+checkErrors ShapeKnots_internal_percent_difference_option ShapeKnots_internal_percent_difference_option_errors.txt ShapeKnots_internal_percent_difference_option_diff_output.txt
+echo '    ShapeKnots_internal_percent_difference_option_testing finished.'
+
+# Test ShapeKnots_internal_window_size_option.
+echo '    ShapeKnots_internal_window_size_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_internal_window_size_option_test_output.ct -iw 10 1>/dev/null 2>ShapeKnots_internal_window_size_option_errors.txt
+diff ShapeKnots_internal_window_size_option_test_output.ct ShapeKnots/ShapeKnots_internal_window_size_option_OK.ct >& ShapeKnots_internal_window_size_option_diff_output.txt
+checkErrors ShapeKnots_internal_window_size_option ShapeKnots_internal_window_size_option_errors.txt ShapeKnots_internal_window_size_option_diff_output.txt
+echo '    ShapeKnots_internal_window_size_option_testing finished.'
+
+# Test ShapeKnots_pseudoknotted_helices_option.
+echo '    ShapeKnots_pseudoknotted_helices_option testing started...'
+../exe/ShapeKnots testFiles/testFile_RD0260.seq -sh testFiles/testFile_tRNA.shape ShapeKnots_pseudoknotted_helices_option_test_output.ct -ph 5 1>/dev/null 2>ShapeKnots_pseudoknotted_helices_option_errors.txt
+diff ShapeKnots_pseudoknotted_helices_option_test_output.ct ShapeKnots/ShapeKnots_pseudoknotted_helices_option_OK.ct >& ShapeKnots_pseudoknotted_helices_option_diff_output.txt
+checkErrors ShapeKnots_pseudoknotted_helices_option ShapeKnots_pseudoknotted_helices_option_errors.txt ShapeKnots_pseudoknotted_helices_option_diff_output.txt
+echo '    ShapeKnots_pseudoknotted_helices_option_testing finished.'
+
+# Clean up any extra files made over the course of the ShapeKnots tests.
+echo '    Cleanup of ShapeKnots tests started...'
+echo '        Cleanup in progress...'
+rm -f ShapeKnots_without_options*
+rm -f ShapeKnots_without_SHAPE*
+rm -f ShapeKnots_double_stranded_offset_option*
+rm -f ShapeKnots_max*
+rm -f ShapeKnots_percent_difference_option*
+rm -f ShapeKnots_single_stranded_offset_option*
+rm -f ShapeKnots_window_size_option*
+rm -f ShapeKnots_internal*
+rm -f ShapeKnots_pseudoknotted_helices_option*
+rm -f ShapeKnots_intercept_option*
+rm -f ShapeKnots_slope_option*
+rm -f ShapeKnots_P1_option*
+rm -f ShapeKnots_P2_option*
+echo '    Cleanup of ShapeKnots tests finished.'

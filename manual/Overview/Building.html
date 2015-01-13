@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+	<head>
+		<title>RNAstructure Installation and Overview: Building the Repository</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<link href="Stylesheet.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+		<div class="bodydiv">
+			<table cellpadding="0" cellspacing="0" border="0" class="mainTable">
+				<tr class="headerRow">
+					<td class="headerBox"><img src="icon.jpg" alt="RNAstructure logo"></td>
+					<td class="headerLabel"><h2>RNAstructure Installation and Overview<br>Building Instructions</h2></td>
+					<td class="headerBox2">
+						<ul id="navigator">
+							<li><h3 class="noMarginOrPad"><a href="index.html">Contents</a></h3></li>
+							<li><h3 class="noMarginOrPad"><a href="AlphabeticalIndex.html">Index</a></h3></li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td class="mainContent" colspan="3">
+						<div>
+							<h2 class="leftHeader">General Build Information</h2>
+
+							<h3 class="leftHeader">Do I need to build the package?</h3>
+							<p>RNAstructure is provided both as source code and as prebuilt executables. Prebuilt executables are currently available for 32-bit Linux, 64-bit Linux, Max OS-X (Leopard and higher), 32-bit Windows, and 64-bit Windows. If you are using one of these operating systems, then you probably do not need to build the package. The available executables will work fine.</p>
+							<hr>
+						</div>
+
+						<div>
+							<a name="GUI"></a>
+							<h2 class="leftHeader">Building the GUI Interfaces</h2>
+
+							<h3 class="leftHeader">Building the RNAstructure JAVA GUI</h3>
+							<p>In the RNAstructure directory, open the file &quot;compiler.h&quot;. This file contains compiler flags and Java include paths that must be activated to match the current operating system. See the <a href="Building_Requirements.html">Building Requirements</a> page for details.</p>
+							<p>Then, in the RNAstructure/RNAstructure_java_interface directory, activate the Makefile by typing "make." When the JAVA GUI is built correctly, two new files will exist in the RNAstructure/exe directory: a single large dynamic RNAstructure library (whose name depends on the operating system), and a JAVA JAR archive, called RNAstructure.jar. See <a href="Running_Java_GUI.html">Running the RNAstructure JAVA GUI</a> for details on how to use these files.</p>
+
+							<h3 class="leftHeader">Building the RNAstructure Windows native GUI</h3>
+							<p>RNAstructure requires Microsoft Visual Studio 2012 (or later) AND the Intel C++ compiler for compilation.</p>
+							<p>Use the solution file, RNAstructure.sln, in RNAstructure/RNAstructure_windows_interface.</p>
+							<hr>
+						</div>
+
+						<div>
+							<a name="Command"></a>
+							<h2 class="leftHeader">Building the Command Line (Text) Interfaces</h2>
+
+							<h3 class="leftHeader">Configuring the Build on Unix/Linux/OS-X</h3>
+							<p>The command line (text) interfaces for RNAstructure are built using the Makefile in the main directory (RNAstructure/). The definitions for compiler and flags are in RNAstructure/compiler.h. This file is provided with the defaults set for compiling on Linux using g++. To change the platform and/or compilers, this file should be manually edited. Example flags are provided for Linux, Mac, and Cygwin platforms. To change the operating system to a non-Linux system, simply remove the &quot;#&quot; symbol (which denotes comments) from the variable definitions under the target type. Also, add &quot;#&quot; in front of the Linux flags.</p>
+							<p>Note also that flags for building with OpenMP can be set (CXXOPENMPFLAGS). The default flags will work for Linux and Mac using g++ and g++/LLVM, respectively. An example flag set is also provided for Intel compilers, and this will need to used if Intel compilers are being used.</p>
+
+							<h3 class="leftHeader">Building on Unix/Linux/OS-X</h3>
+						  <p>To build the package, use the command &quot;make all&quot; in RNAstructure/. The command line executables are built and placed in RNAstructure/exe/. You should probably then update your PATH variable to include this directory.</p>
+							<h3><a name="CUDA"></a><span class="leftHeader"></a>Building CUDA on Unix/Linux/OS-X</span></h3>
+							<p>In adition, if you have a CUDA compiler, you can build partition-cuda by typing &quot;make cuda&quot; in the RNAstructure directory. This can then be run if you have a CUDA-capable graphics card.</p>
+		          <p>An optional &quot;make install&quot; command will copy all the executables to the /usr/local/RNAstructure/ directory. This is helpful in a shared computing environment. This command can only be executed as root.</p>
+							<h3><span class="leftHeader"><a name="SMP"></a>Building Serial and SMP on Unix/Linux/OS-X</span></h3>
+							<p>Dynalign, Fold, Multilign, and TurboFold can be built in SMP form, which allows them to delegate their workload across multiple processors at once in a shared memory environment.</p>
+                            <p>By default, &quot;make all&quot; will build the serial programs and their SMP counteparts. To build only the serial programs, for example if the compiler does not have OpenMP support, &quot;make serial&quot; can be used with the Makefile in the main directory (RNAstructure/). To build only the SMP programs, use the &quot;make SMP&quot; target.</p>
+                          <h3>Building Multifind</h3>
+                            <p>Multifind is built separately from the rest of the package. <a href="Building_Requirements.html">After setting the INCLUDESVM variable</a>, it can be built with the command make Multifind or make Multifind-smp.</p>
+<h3 class="leftHeader">Building on DOS/Windows</h3>
+							<p>For DOS/Windows command line (text) interfaces, Microsoft Visual Studio (2010) AND the Intel C++ compiler are required. Use Visual Studio to open the solution called RNAstructure\RNAstructure_windows_text_interfaces\RNAstructure_windows_text_interfaces.sln. Then build using Visual Studio. The executables will be depositing in the RNAstructure\RNAstructure_windows_text_interfaces\Release folder.</p>
+							<hr>
+						</div>
+
+						<div></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="footer" colspan="3">
+						<p>Visit <a href="http://rna.urmc.rochester.edu/RNAstructure.html">The Mathews Lab RNAstructure Page</a> for updates and latest information.</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

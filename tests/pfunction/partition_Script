@@ -1,0 +1,144 @@
+#!/bin/bash
+
+# If the partition executable doesn't exist yet, make it.
+# Also, make the ProbabilityPlot executable so the save files can be checked, if it
+# doesn't exist yet.
+echo '    Preparation of partition tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/partition ]]
+then
+cd ..; make partition >& /dev/null; cd tests; 
+fi
+
+if [[ ! -f ../exe/ProbabilityPlot ]]
+then
+cd ..; make ProbabilityPlot >& /dev/null; cd tests;
+fi
+echo '    Preparation of partition tests finished.'
+
+# Test partition_without_options.
+echo '    partition_without_options testing started...'
+../exe/partition $SINGLESEQ partition_without_options_test.pfs 1>/dev/null 2>partition_without_options_errors.txt
+../exe/ProbabilityPlot partition_without_options_test.pfs partition_without_options_test_output.ps 1>/dev/null 2>partition_without_options_plot_errors.txt
+diff partition_without_options_test_output.ps pfunction/partition_without_options_OK.ps >& partition_without_options_diff_output.txt
+checkErrors partition_without_options partition_without_options_errors.txt partition_without_options_plot_errors.txt partition_without_options_diff_output.txt
+echo '    partition_without_options testing finished.'
+
+# Test partition_without_options_alternate.
+# This alternate test will be used to test experimental pair bonuses later.
+echo '    partition_without_options_alternate testing started...'
+../exe/partition testFiles/testFile_5SRNA_tail2.seq partition_without_options_alternate_test.pfs 1>/dev/null 2>partition_without_options_alternate_errors.txt
+../exe/ProbabilityPlot partition_without_options_alternate_test.pfs partition_without_options_alternate_test_output.ps 1>/dev/null 2>partition_without_options_alternate_plot_errors.txt
+diff partition_without_options_alternate_test_output.ps pfunction/partition_without_options_alternate_OK.ps >& partition_without_options_alternate_diff_output.txt
+checkErrors partition_without_options_alternate partition_without_options_alternate_errors.txt partition_without_options_alternate_diff_output.txt
+echo '    partition_without_options_alternate testing finished.'
+
+# Test partition_without_options_alternate_2.
+# This alternate test will be used to test double stranded offsets later.
+echo '    partition_without_options_alternate_2 testing started...'
+../exe/partition testFiles/testFile_U1a.seq partition_without_options_alternate_2_test.pfs 1>/dev/null 2>partition_without_options_alternate_2_errors.txt
+../exe/ProbabilityPlot partition_without_options_alternate_2_test.pfs partition_without_options_alternate_2_test_output.ps 1>/dev/null 2>partition_without_options_alternate_2_plot_errors.txt
+diff partition_without_options_alternate_2_test_output.ps pfunction/partition_without_options_alternate_2_OK.ps >& partition_without_options_alternate_2_diff_output.txt
+checkErrors partition_without_options_alternate_2 partition_without_options_alternate_2_errors.txt partition_without_options_alternate_2_plot_errors.txt partition_without_options_alternate_2_diff_output.txt
+echo '    partition_without_options_alternate_2 testing finished.'
+
+# Test partition_constraint_file_option.
+echo '    partition_constraint_file_option testing started...'
+../exe/partition $SINGLESEQ partition_constraint_file_option_test.pfs -c testFiles/testFile_folding3.con 1>/dev/null 2>partition_constraint_file_option_errors.txt
+../exe/ProbabilityPlot partition_constraint_file_option_test.pfs partition_constraint_file_option_test_output.ps 1>/dev/null 2>partition_constraint_file_option_plot_errors.txt
+diff partition_constraint_file_option_test_output.ps pfunction/partition_constraint_file_option_OK.ps >& partition_constraint_file_option_diff_output.txt
+checkErrors partition_constraint_file_option partition_constraint_file_option_errors.txt partition_constraint_file_option_plot_errors.txt partition_constraint_file_option_diff_output.txt
+echo '    partition_constraint_file_option testing finished.'
+
+# Test partition_dna_option.
+echo '    partition_dna_option testing started...'
+../exe/partition $SINGLESEQ partition_dna_option_test.pfs -d 1>/dev/null 2>partition_dna_option_errors.txt
+../exe/ProbabilityPlot partition_dna_option_test.pfs partition_dna_option_test_output.ps 1>/dev/null 2>partition_dna_option_plot_errors.txt
+diff partition_dna_option_test_output.ps pfunction/partition_dna_option_OK.ps >& partition_dna_option_diff_output.txt
+checkErrors partition_dna_option partition_dna_option_errors.txt partition_dna_option_plot_errors.txt partition_dna_option_diff_output.txt
+echo '    partition_dna_option testing finished.'
+
+# Test partition_double_stranded_offset_option.
+echo '    partition_double_stranded_offset_option testing started...'
+../exe/partition testFiles/testFile_U1a.seq partition_double_stranded_offset_option_test.pfs -dso testFiles/testFile_double_offset_dummy.txt 1>/dev/null 2>partition_double_stranded_offset_option_errors.txt
+../exe/ProbabilityPlot partition_double_stranded_offset_option_test.pfs partition_double_stranded_offset_option_test_output.ps 1>/dev/null 2>partition_double_stranded_offset_option_plot_errors.txt
+diff partition_double_stranded_offset_option_test_output.ps pfunction/partition_double_stranded_offset_option_OK.ps >& partition_double_stranded_offset_option_diff_output.txt
+checkErrors partition_double_stranded_offset_option partition_double_stranded_offset_option_errors.txt partition_double_stranded_offset_option_plot_errors.txt partition_double_stranded_offset_option_diff_output.txt
+echo '    partition_double_stranded_offset_option testing finished.'
+
+# Test partition_experimental_pair_bonus_option.
+echo '    partition_experimental_pair_bonus_option testing started...'
+../exe/partition testFiles/testFile_5SRNA_tail2.seq partition_experimental_pair_bonus_option_test.pfs -X testFiles/testFile_bonus_matrix.txt 1>/dev/null 2>partition_experimental_pair_bonus_option_errors.txt
+../exe/ProbabilityPlot partition_experimental_pair_bonus_option_test.pfs partition_experimental_pair_bonus_option_test_output.ps 1>/dev/null 2>partition_experimental_pair_bonus_option_plot_errors.txt
+diff partition_experimental_pair_bonus_option_test_output.ps pfunction/partition_experimental_pair_bonus_option_OK.ps >& partition_experimental_pair_bonus_option_diff_output.txt
+checkErrors partition_experimental_pair_bonus_option partition_experimental_pair_bonus_option_errors.txt partition_experimental_pair_bonus_option_diff_output.txt
+echo '    partition_experimental_pair_bonus_option testing finished.'
+
+# Test partition_experimental_pair_bonus_offset_option.
+echo '    partition_experimental_pair_bonus_offset_option testing started...'
+../exe/partition testFiles/testFile_5SRNA_tail2.seq partition_experimental_pair_bonus_offset_option_test.pfs -X testFiles/testFile_bonus_matrix.txt -xo 10 1>/dev/null 2>partition_experimental_pair_bonus_offset_option_errors.txt
+../exe/ProbabilityPlot partition_experimental_pair_bonus_offset_option_test.pfs partition_experimental_pair_bonus_offset_option_test_output.ps 1>/dev/null 2>partition_experimental_pair_bonus_offset_option_plot_errors.txt
+diff partition_experimental_pair_bonus_offset_option_test_output.ps pfunction/partition_experimental_pair_bonus_offset_option_OK.ps >& partition_experimental_pair_bonus_offset_option_diff_output.txt
+checkErrors partition_experimental_pair_bonus_offset_option partition_experimental_pair_bonus_offset_option_errors.txt partition_experimental_pair_bonus_offset_option_diff_output.txt
+echo '    partition_experimental_pair_bonus_offset_option testing finished.'
+
+# Test partition_experimental_pair_bonus_scaling_option.
+echo '    partition_experimental_pair_bonus_scaling_option testing started...'
+../exe/partition testFiles/testFile_5SRNA_tail2.seq partition_experimental_pair_bonus_scaling_option_test.pfs -X testFiles/testFile_bonus_matrix.txt -xs 0.99 1>/dev/null 2>partition_experimental_pair_bonus_scaling_option_errors.txt
+../exe/ProbabilityPlot partition_experimental_pair_bonus_scaling_option_test.pfs partition_experimental_pair_bonus_scaling_option_test_output.ps 1>/dev/null 2>partition_experimental_pair_bonus_scaling_option_plot_errors.txt
+diff partition_experimental_pair_bonus_scaling_option_test_output.ps pfunction/partition_experimental_pair_bonus_scaling_option_OK.ps >& partition_experimental_pair_bonus_scaling_option_diff_output.txt
+checkErrors partition_experimental_pair_bonus_scaling_option partition_experimental_pair_bonus_scaling_option_errors.txt partition_experimental_pair_bonus_scaling_option_diff_output.txt
+echo '    partition_experimental_pair_bonus_scaling_option testing finished.'
+
+# Test partition_max_distance_option.
+echo '    partition_max_distance_option testing started...'
+../exe/partition $SINGLESEQ partition_max_distance_option_test.pfs -md 15 1>/dev/null 2>partition_max_distance_option_errors.txt
+../exe/ProbabilityPlot partition_max_distance_option_test.pfs partition_max_distance_option_test_output.ps 1>/dev/null 2>partition_max_distance_option_plot_errors.txt
+diff partition_max_distance_option_test_output.ps pfunction/partition_max_distance_option_OK.ps >& partition_max_distance_option_diff_output.txt
+checkErrors partition_max_distance_option partition_max_distance_option_errors.txt partition_max_distance_option_plot_errors.txt partition_max_distance_option_diff_output.txt
+echo '    partition_max_distance_option testing finished.'
+
+# Test partition_shape_option.
+echo '    partition_shape_option testing started...'
+../exe/partition $SINGLESEQ partition_shape_option_test.pfs -sh testFiles/testFile_tRNA.shape 1>/dev/null 2>partition_shape_option_errors.txt
+../exe/ProbabilityPlot partition_shape_option_test.pfs partition_shape_option_test_output.ps 1>/dev/null 2>partition_shape_option_plot_errors.txt
+diff partition_shape_option_test_output.ps pfunction/partition_shape_option_OK.ps >& partition_shape_option_diff_output.txt
+checkErrors partition_shape_option partition_shape_option_errors.txt partition_shape_option_plot_errors.txt partition_shape_option_diff_output.txt
+echo '    partition_shape_option_testing finished.'
+
+# Test partition_shape_intercept_option.
+echo '    partition_shape_intercept_option testing started...'
+../exe/partition $SINGLESEQ partition_shape_intercept_option_test.pfs -sh testFiles/testFile_tRNA.shape -si 0.9 1>/dev/null 2>partition_shape_intercept_option_errors.txt
+../exe/ProbabilityPlot partition_shape_intercept_option_test.pfs partition_shape_intercept_option_test_output.ps 1>/dev/null 2>partition_shape_intercept_option_plot_errors.txt
+diff partition_shape_intercept_option_test_output.ps pfunction/partition_shape_intercept_option_OK.ps >& partition_shape_intercept_option_diff_output.txt
+checkErrors partition_shape_intercept_option partition_shape_intercept_option_errors.txt partition_shape_intercept_option_plot_errors.txt partition_shape_intercept_option_diff_output.txt
+echo '    partition_shape_intercept_option_testing finished.'
+
+# Test partition_shape_slope_option.
+echo '    partition_shape_slope_option testing started...'
+../exe/partition $SINGLESEQ partition_shape_slope_option_test.pfs -sh testFiles/testFile_tRNA.shape -sm 0.2 1>/dev/null 2>partition_shape_slope_option_errors.txt
+../exe/ProbabilityPlot partition_shape_slope_option_test.pfs partition_shape_slope_option_test_output.ps 1>/dev/null 2>partition_shape_slope_option_plot_errors.txt
+diff partition_shape_slope_option_test_output.ps pfunction/partition_shape_slope_option_OK.ps >& partition_shape_slope_option_diff_output.txt
+checkErrors partition_shape_slope_option partition_shape_slope_option_errors.txt partition_shape_slope_option_plot_errors.txt partition_shape_slope_option_diff_output.txt
+echo '    partition_shape_slope_option_testing finished.'
+
+# Test partition_temperature_option.
+echo '    partition_temperature_option testing started...'
+../exe/partition $SINGLESEQ partition_temperature_option_test.pfs -t 150 1>/dev/null 2>partition_temperature_option_errors.txt
+../exe/ProbabilityPlot partition_temperature_option_test.pfs partition_temperature_option_test_output.ps 1>/dev/null 2>partition_temperature_option_plot_errors.txt
+diff partition_temperature_option_test_output.ps pfunction/partition_temperature_option_OK.ps >& partition_temperature_option_diff_output.txt
+checkErrors partition_temperature_option partition_temperature_option_errors.txt partition_temperature_option_diff_output.txt
+echo '    partition_temperature_option testing finished.'
+
+# Clean up any extra files made over the course of the partition tests.
+echo '    Cleanup of partition tests started...'
+echo '        Cleanup in progress...'
+rm -f partition_without_options*
+rm -f partition_constraint_file_option*
+rm -f partition_dna_option*
+rm -f partition_double_stranded_offset_option*
+rm -f partition_experimental_pair_bonus*
+rm -f partition_max_distance_option*
+rm -f partition_shape*
+rm -f partition_temperature_option*
+echo '    Cleanup of partition tests finished.'

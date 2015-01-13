@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>RNAstructure GUI Help -- Sequence Editor</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<link href="Stylesheet.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+		<div class="bodydiv">
+			<table cellpadding="0" cellspacing="0" border="0" class="mainTable">
+				<tr class="headerRow">
+					<td class="headerBox"><img src="../images/icon.jpg" alt="RNAstructure logo"></td>
+					<td class="headerLabel"><h2>RNAstructure GUI Help<br>Sequence Editor</h2></td>
+					<td class="headerBox2">
+						<ul id="navigator">
+							<li><h3 class="noMarginOrPad"><a href="Contents.html">Contents</a></h3></li>
+							<li><h3 class="noMarginOrPad"><a href="Index.html">Index</a></h3></li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td class="mainContent" colspan="3">
+						<div>
+							<p><b>How to <a name="CreateEdit" id="CreateEdit">Create and Edit</a> an RNA or DNA Sequence</b></p>
+							<p>For a new sequence, select &quot;File -&gt; New Sequence&quot; from the menu. This brings up an empty sequence editor window. Type a title into the title box, if desired. Then, click the comment box with your mouse. Here, you may type a comment of any number of lines, if you wish. Finally, move to the sequence box and type in your sequence 5' to 3'.</p>
+							<p>You may also use X to represent a gap or unknown base. Before exiting, select &quot;File -&gt; Save Sequence&quot; or &quot;File -&gt; Save Sequence As...&quot; to save the sequence. All sequences are saved in the SEQ format.</p>
+							<p><a name="Warning" id="Warning">WARNING</a>: Type in most of the sequence with CAPITAL letters. When sequences are folded, any <b>lowercase bases are not allowed to base pair</b>. You may use T's, U's, or both. The RNA folding algorithm assumes the sequence is RNA and will interpret a T as a U. The DNA folding module will likewise assume DNA and interpret U as T.</p>
+
+							<ul>
+								<li><pre>Right: ACCGGAUUCAGAUAG</pre></li>
+								<li><pre>Wrong: accggauucagauag</pre></li>
+							</ul>
+							<hr>
+						</div>
+
+						<div>
+							<p><b><a name="Load" id="Load">Loading Sequences</a></b></p>
+							<p>To load a sequence, select &quot;File -&gt; Open Sequence.&quot; Three types of files can be loaded: sequence (SEQ) files, Genbank files, and simple text files. Sequence files follow a specific sequence format (See &quot;<a href="Appendix_of_File_Formats.html">Appendix A: File Formats</a>&quot;), Genbank files follow the Genbank format, and simple text files contain a sequence of bases with nothing else.</p>
+							<hr>
+						</div>
+
+						<div>
+							<p><b>Editor Features</b></p>
+							<p>For ease of entering a sequence, the RNAstructure editor can give <a name="Audio" id="Audio">audio</a> feedback as a sequence is entered. If your computer has sound capabilities, there are two different ways by which a structure can be read out loud. If the &quot;<a name="ReadTyping" id="ReadTyping">Read While Typing</a>&quot; checkbox under the &quot;Read&quot; menu is selected, bases will be read out loud as they are typed into the editor. and the &quot;Read While Typing&quot; checkbox is selected, you will hear the sequence being read as it is typed into the editor. If the &quot;Read Sequence&quot; button is pressed, the sequence will be read from the beginning in its entirety. The &quot;Stop Reading&quot; button will stop this automatic reading at any time. When the &quot;Read Sequence&quot; button is pressed again, reading restarts at the beginning of the sequence.</p>
+							<p>The editor can <a name="Format" id="Format">format</a> a sequence into a Genbank-like format. Pressing the &quot;Format&quot; button will divide a sequence into lines of 50 bases, with spaces after every 5.</p>
+							<p>The &quot;Fold RNA&quot; and &quot;Fold DNA&quot; buttons will input the sequence directly into the &quot;<a href="Fold.html">Fold</a>&quot; module, with the appropriate nucleic acid type selected. RNAstructure will request that the sequence be saved as a sequence file first, if the sequence has not been saved.</p>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="footer" colspan="3">
+						<p>Visit <a href="http://rna.urmc.rochester.edu/RNAstructure.html">The Mathews Lab RNAstructure Page</a> for updates and latest information.</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

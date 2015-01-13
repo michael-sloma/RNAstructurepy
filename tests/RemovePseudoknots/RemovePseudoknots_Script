@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# If the RemovePseudoknots executable doesn't exist yet, make it.
+echo '    Preparation of RemovePseudoknots tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/RemovePseudoknots ]]
+then
+cd ..; make RemovePseudoknots >& /dev/null; cd tests;
+fi
+echo '    Preparation of RemovePseudoknots tests finished.'
+
+# Test RemovePseudoknots_without_options.
+echo '    RemovePseudoknots_without_options testing started...'
+../exe/RemovePseudoknots $KNOTSCT RemovePseudoknots_without_options_test_output.ct 1>/dev/null 2>RemovePseudoknots_without_options_errors.txt
+diff RemovePseudoknots_without_options_test_output.ct RemovePseudoknots/RemovePseudoknots_without_options_OK.ct >& RemovePseudoknots_without_options_diff_output.txt
+checkErrors RemovePseudoknots_without_options RemovePseudoknots_without_options_errors.txt RemovePseudoknots_without_options_diff_output.txt
+echo '    RemovePseudoknots_without_options testing finished.'
+
+# Test RemovePseudoknots_dna_option.
+echo '    RemovePseudoknots_dna_option testing started...'
+../exe/RemovePseudoknots $KNOTSCT RemovePseudoknots_dna_option_test_output.ct -d 1>/dev/null 2>RemovePseudoknots_dna_option_errors.txt
+diff RemovePseudoknots_dna_option_test_output.ct RemovePseudoknots/RemovePseudoknots_dna_option_OK.ct >& RemovePseudoknots_dna_option_diff_output.txt
+checkErrors RemovePseudoknots_dna_option RemovePseudoknots_dna_option_errors.txt RemovePseudoknots_dna_option_diff_output.txt
+echo '    RemovePseudoknots_dna_option testing finished.'
+
+# Test RemovePseudoknots_maximize_option.
+echo '    RemovePseudoknots_maximize_option testing started...'
+../exe/RemovePseudoknots $KNOTSCT RemovePseudoknots_maximize_option_test_output.ct -m 1>/dev/null 2>RemovePseudoknots_maximize_option_errors.txt
+diff RemovePseudoknots_maximize_option_test_output.ct RemovePseudoknots/RemovePseudoknots_maximize_option_OK.ct >& RemovePseudoknots_maximize_option_diff_output.txt
+checkErrors RemovePseudoknots_maximize_option RemovePseudoknots_maximize_option_errors.txt RemovePseudoknots_maximize_option_diff_output.txt
+echo '    RemovePseudoknots_maximize_option testing finished.'
+
+# Test RemovePseudoknots_temperature_option.
+echo '    RemovePseudoknots_temperature_option testing started...'
+../exe/RemovePseudoknots $KNOTSCT RemovePseudoknots_temperature_option_test_output.ct -t 150 1>/dev/null 2>RemovePseudoknots_temperature_option_errors.txt
+diff RemovePseudoknots_temperature_option_test_output.ct RemovePseudoknots/RemovePseudoknots_temperature_option_OK.ct >& RemovePseudoknots_temperature_option_diff_output.txt
+checkErrors RemovePseudoknots_temperature_option RemovePseudoknots_temperature_option_errors.txt RemovePseudoknots_temperature_option_diff_output.txt
+echo '    RemovePseudoknots_temperature_option testing finished.'
+
+# Clean up any extra files made over the course of the RemovePseudoknots tests.
+echo '    Cleanup of RemovePseudoknots tests started...'
+echo '        Cleanup in progress...'
+rm -f RemovePseudoknots_without_options*
+rm -f RemovePseudoknots_dna_option*
+rm -f RemovePseudoknots_maximize_option*
+rm -f RemovePseudoknots_temperature_option*
+echo '    Cleanup of RemovePseudoknots tests finished.'

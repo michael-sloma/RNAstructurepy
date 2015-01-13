@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# If the ProbablePair executable doesn't exist yet, make it.
+# Also, make the partition function save file necessary for testing.
+echo '    Preparation of ProbablePair tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/partition ]]
+then
+cd ..; make partition >& /dev/null; cd tests;
+fi
+
+if [[ ! -f ../exe/ProbablePair ]]
+then
+cd ..; make ProbablePair >& /dev/null; cd tests;
+fi
+
+if [[ ! -f $SINGLEPFS ]]
+then
+../exe/partition $SINGLESEQ $SINGLEPFS 1>/dev/null 2>ProbablePair_partitionFunction_prep_errors.txt
+if [[ -s ProbablePair_partitionFunction_prep_errors.txt ]]
+then
+cp ProbablePair_partitionFunction_prep_errors.txt RNAstructure_error_tests/
+fi
+fi
+echo '    Preparation of ProbablePair tests finished.'
+
+# Test ProbablePair_without_options.
+echo '    ProbablePair_without_options testing started...'
+../exe/ProbablePair $SINGLEPFS ProbablePair_without_options_test.ct 1>/dev/null 2>ProbablePair_without_options_errors.txt
+diff ProbablePair_without_options_test.ct ProbablePair/ProbablePair_without_options_OK.ct >& ProbablePair_without_options_diff_output.txt
+checkErrors ProbablePair_without_options ProbablePair_without_options_errors.txt ProbablePair_without_options_diff_output.txt
+echo '    ProbablePair_without_options testing finished.'
+
+# Test ProbablePair_dna_option.
+echo '    ProbablePair_dna_option testing started...'
+../exe/ProbablePair $SINGLESEQ ProbablePair_dna_option_test_output.ct --sequence -d 1>/dev/null 2>ProbablePair_dna_option_errors.txt
+diff ProbablePair_dna_option_test_output.ct ProbablePair/ProbablePair_dna_option_OK.ct >& ProbablePair_dna_option_diff_output.txt
+checkErrors ProbablePair_dna_option ProbablePair_dna_option_errors.txt ProbablePair_dna_option_diff_output.txt
+echo '    ProbablePair_dna_option testing finished.'
+
+# Test ProbablePair_sequence_option.
+echo '    ProbablePair_sequence_option testing started...'
+../exe/ProbablePair $SINGLESEQ ProbablePair_sequence_option_test_output.ct --sequence 1>/dev/null 2>ProbablePair_sequence_option_errors.txt
+diff ProbablePair_sequence_option_test_output.ct ProbablePair/ProbablePair_without_options_OK.ct >& ProbablePair_sequence_option_diff_output.txt
+checkErrors ProbablePair_sequence_option ProbablePair_sequence_option_errors.txt ProbablePair_sequence_option_diff_output.txt
+echo '    ProbablePair_sequence_option testing finished.'
+
+# Test ProbablePair_threshold_option.
+echo '    ProbablePair_threshold_option testing started...'
+../exe/ProbablePair $SINGLEPFS ProbablePair_threshold_option_test.ct -t 0.92 1>/dev/null 2>ProbablePair_threshold_option_errors.txt
+diff ProbablePair_threshold_option_test.ct ProbablePair/ProbablePair_threshold_option_OK.ct >& ProbablePair_threshold_option_diff_output.txt
+checkErrors ProbablePair_threshold_option ProbablePair_threshold_option_errors.txt ProbablePair_threshold_option_diff_output.txt
+echo '    ProbablePair_threshold_option testing finished.'
+
+# Clean up any extra files made over the course of the ProbablePair tests.
+echo '    Cleanup of ProbablePair tests started...'
+echo '        Cleanup in progress...'
+rm -f ProbablePair_partitionFunction_prep_errors.txt
+rm -f ProbablePair_without_options*
+rm -f ProbablePair_dna_option*
+rm -f ProbablePair_sequence_option*
+rm -f ProbablePair_threshold_option*
+rm -f $SINGLEPFS
+echo '    Cleanup of ProbablePair tests completed.'

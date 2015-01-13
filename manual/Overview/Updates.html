@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+	<head>
+		<title>RNAstructure Installation and Overview: Repository Updates and History</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<link href="Stylesheet.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+		<div class="bodydiv">
+			<table cellpadding="0" cellspacing="0" border="0" class="mainTable">
+				<tr class="headerRow">
+					<td class="headerBox"><img src="icon.jpg" alt="RNAstructure logo"></td>
+					<td class="headerLabel"><h2>RNAstructure Installation and Overview<br>Package Updates and History</h2></td>
+					<td class="headerBox2">
+						<ul id="navigator">
+							<li><h3 class="noMarginOrPad"><a href="index.html">Contents</a></h3></li>
+							<li><h3 class="noMarginOrPad"><a href="AlphabeticalIndex.html">Index</a></h3></li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td class="mainContent" colspan="3">
+						<div>
+							<p><strong>RNAstructure 5.7 (12/4/2014)</strong></p>
+							<ol>
+							  <li>Added <a href="../Text/dynalign.html">Dynalign II</a>.</li>
+							  <li>Added <a href="../Text/accessfold.html">AccessFold</a>.</li>
+							  <li>Added <a href="../Text/phmm.html">phmm</a>, a pairwise Hidden Markov Model for RNA sequence alignment. This is in the back ends to Dynalign, Dynalign II, PARTS, and TurboFold. This is a new front end for sequence alignment.</li>
+							  <li>Added new help page that provides <a href="../Text/pathways.html">pathways</a> for using the command line interfaces.</li>
+							  <li>Added a flag (--simple) to <a href="../Text/efn2.html">efn2</a> so that the energies can be calculated for structures using the same rules as the dynamic programming algorithms.</li>
+							  <li>Fixed a bug where specifying a constraint file (in any program or OS) was removing prior unpairing constraints specified in a sequence file.</li>
+                              <li>Fixed a bug in ShapeKnots. While filling in dangle or double mismatches it created new non-canonical pairs, which led to giving large positive energies to those structures.</li>
+                              <li>Improved ShapeKnots speed by removing boundaries checking in vectors.</li>
+							  <li>Fixed a bug in the Windows GUI for bimolecular folding where internal loops were intermittently being forbidden.</li>
+							  <li>Change the Macintosh compiler flags to match new Clang compiler. Also, revised code to match the fact that OpenMP is absent from Clang.</li>
+					      </ol>
+							<p><strong>RNAstructure 5.6 (7/31/2013)</strong></p>
+                            <ol>
+							<li>Added Multifind to package (Linux and mac only).</li>
+							<li>Added parallel processing (SMP) versions of bifold, bipartition, efn2, Fold, MaxExpect, oligoscreen, partition, and stochastic. These programs take advantage of multicore computing environments.</li>
+							<li>The Windows GUI now runs in parallel on multicore computers for predicting lowest free energy structures, calculating partition functions, calculating free energy changes, oligoscreen calculations, and stochastic sampling.</li>
+							<li>Fixed bug where command line programs were not recognizing long flags without associated parameters. This also affected the web servers.							</li>
+							<li>Fixed a bug with reading HMM alignment parameters for Dynalign calculations in the Windows GUI. This was causing the program to crash for Dynalign calculations.</li>
+							<li>Fixed a bug where bootstraped restraints were not being correctly calculated in Fold.</li>
+                            </ol>
+                <p><strong>RNAstrucure 5.5 Update (5/16/2013)</strong></p>
+                            <ol>
+                              <li>Uploaded a new version of the Windows 64-bit graphical interface. This fixes problems with launching the program from the start menu.							</li>
+                            </ol>
+                            <p><strong>Online Documentation Update (4/16/2013)</strong></p>
+                            <ol>
+							<li>Added instructions for using Windows 8.</li>
+                            </ol>
+							<p><strong>RNAstructure 5.5 (4/5/2013)</strong></p>
+							<ul>
+					      <li>New Programs</li>
+								<ol>
+								  <li>Added ShapeKnots as text interface.</li>
+								  <li>Added GPU version of partition function (partition-cuda) as text interface. </li>
+								</ol>
+								<li>
+									Algorithms
+									<ol>
+										<li>Fixed minor memory access issues in NAPSS program.</li>
+										<li>Fixed an error in Multilign where SHAPE intercept and SHAPE slope weren't being set properly.</li>
+									</ol>
+								</li>
+								<li>JAVA GUI</li>
+								 <ol>
+						<li>Fixed bug in JAVA GUI where opening .seq files from disk would sometimes fail.						</li>
+						</ol>
+								<li>Code Base
+  <ol>
+    <li>Updated Makefiles to build more efficiently and standardized their formats.</li>
+    <li>Simplified text interface parsing machinery and made all flags case-insensitive.</li>
+    <li>Cleaned up format, comments, and organization in all text interfaces that use the standard parsing machinery.</li>
+  </ol>
+							  </li>
+								<li>
+									Data tables/thermodynamics/parameters
+									  <ol>
+										<li>Updated dnacoaxstack.dat. Fixed problem where a subset of mismatch-mediated coaxial stacks were missed in DNA.</li>
+										<li>Fixed bug where not all special DNA tetraloops were being read from disk.</li>
+										<li>Updated default SHAPE slope and intercept for all programs.</li>
+										<li>Changed thresholds for SHAPE color annotations.</li>
+                                        <li>Added support for knowledge-based free energy terms for stacking restraints in Fold.</li>
+							        </ol>
+						    </li>
+								<li>
+									Drawing Framework
+									<ol>
+										<li>Reduced the size of dot plot labels so they didn't run together in certain instances.</li>
+										<li>Made a small change to dot plot layout so dots at the first nucleotide index always fall on the first grid line.</li>
+										<li>Fixed a bug where sometimes plot bounds weren't set right, so some dots weren't shown.</li>
+										<li>Fixed a bug where sometimes the drawing windows wouldn't resize properly when dragged.</li>
+										<li>Added the ability to draw structures with their backbone stretched out in a straight line.</li>
+										<li>Improved drawing of structures so large structures are drawn faster, and move and zoom more efficiently.</li>
+										<li>Fixed a glitch in CircleCompare where sometimes the probability annotation for the accepted structure was being shown for all structures, not for each predicted structure.</li>
+										<li>Fixed a glitch in CircleCompare where probability annotation was not always consistent in pairs.</li>
+										<li>Added distinct flags to CircleCompare so the user can annotation with either predicted or accepted structure probabilities.</li>
+										<li>Added the ability for structure drawing programs to read probability information from dot plot text files as -log10(Probability).</li>
+										<li>Added the ability for ProbabilityPlot to read dot data from a standard dot plot file.</li>
+									</ol>
+								</li>
+                                <li>
+                                	Documentation
+                                    <ol>
+                                    <li>Fixed mistake in TurboFold documentation where the SHAPEslope and SHAPEintercept default values were reversed.  This reversal was only in the documentation.</li>
+                                    </ol>
+                                </li>
+							</ul>
+						</div>
+                        
+						<div>
+							<p><strong>Windows Text Interface Executables Update for RNAstructure 5.4 (09/05/2012)</strong></p>
+							<ol>
+								<li>Posted a new version of .zip files (both 32- and 64-bit), which fixes an error with ProbabilityPlot, EnergyPlot, and DynalignDotPlot where these programs would not work on all Windows Computers.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>Web Servers (08/28/2012)</strong></p>
+							<ol>
+								<li>Improved CT file reading by making it more robust to differences in format.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>Mac OS X Executables Update for RNAstructure 5.4 (08/23/2012)</strong></p>
+							<ol>
+								<li>Fixed a bug where the Java GUI didn't always run properly. Current executables run on Snow Leopard, Lion, and Mountain Lion.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>Web Servers (08/13/2012)</strong></p>
+							<ol>
+								<li>Fixed bug where pasted sequences without new lines at the end sometimes caused calculation errors.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>Web Servers (08/10/2012)</strong></p>
+							<ol>
+								<li>Fixed bug in multiple sequence servers where a FASTA file wasn't being uploaded and split into multiple sequences properly.</li>
+								<li>Changed wall time of run scripts from one hour to one day.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>Web Servers (08/09/2012)</strong></p>
+							<ol>
+								<li>Clarified error message that occurs when no sequence input at all is given to a web server that takes sequence input.</li>
+								<li>Fixed a bug in the Predict a Secondary Structure server where the calculated partition function save file wasn't being used for all calculations.</li>
+								<li>Fixed a bug in the Multilign and TurboFold servers where the proper error page wasn't being shown if too few or too many sequences were given.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>Web Servers (08/08/2012)</strong></p>
+							<ol>
+								<li>Fixed broken links and style sheet references on page that shows up if structures have no pairs.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>RNAstructure 5.4 (08/02/2012)</strong></p>
+							<ol>
+								<li>Added webservers for all programs.</li>
+								<li>TurboKnot added to GUI as an option in TurboFold.</li>
+								<li>Breakage of DNA pseudoknots, as well as pseudoknot breakage options, added to JAVA GUI.</li>
+								<li>Added 64-bit executables as downloads for Windows.</li>
+								<li>Revised Windows GUI to conform with Windows 7 standards. This also fixes issues with drawing dot plots from text files and issues with showing oligonucleotide self-structure from the OligoWalk interface.</li>
+								<li>Fixed a bug in the Windows GUI, where pressing the F1 key resulted in a &quot;Failed to Launch Help&quot; window in Windows XP and later.</li>
+								<li>Fixed command line bug in bifold interface where the intramolecular flag did not always forbid intramolecular pairs as it should have.</li>
+								<li>Fixed command line bug in text interfaces where whole numbers specified with zeros after a decimal point were sometimes rejected as non-numeric. Negative numbers were also sometimes rejected as non-numeric.</li>
+								<li>Corrected the documentation for the Dynalign text interface, where the default &quot;DNA = false&quot; should have been written as &quot;DNA = 0.&quot; Also, to set DNA folding, the user should specify &quot;DNA = 1.&quot;</li>
+								<li>Fixed a typo in miscloop.dat and dnamiscloop.dat tables in data_tables directory. The file stated &quot;miscloop asym,&quot; but now states &quot;multiloop asym.&quot; This value is the multibranch loop asymmetry penalty that is used by efn2. This did not affect structure prediction or energy calculations, and the change was made to simply clarify what thermodynamic parameter this is.</li>
+								<li>Corrected bug in JAVA GUI where the partition function bimolecular module sometimes overwrote its second input sequence file, rather than using the desired output name.</li>
+								<li>Corrected bug in JAVA GUI where file chooser extension sanity checks sometimes failed.</li>
+								<li>Added an RNAstructure_java_utilities folder to facilitate expansions in JAVA capabilities.</li>
+								<li>Re-implemented internal workings of the JAVA GUI to aid in organization and comprehension.</li>
+								<li>Fixed a bug in Dynalign, where conserved 3' dangling ends on helices at exterior loops were not allowed.</li>
+								<li>Fixed a bug in extrapolation of free energies to temperatures other than 37 degrees C.</li>
+								<li>Fixed a dot plots bug where dots at the boundaries of color ranges sometimes showed up as the wrong color or disappeared.</li>
+								<li>Reorganized Makefiles to build more efficiently and include explicit dependencies.</li>
+								<li>Standardized Postscript and SVG structure drawing so their default is always clockwise orientation.</li>
+								<li>Added a redone JAVA drawing framework, which includes the ability to create self-contained JAVA drawing programs for structures and dot plots.</li>
+								<li>Simplified the controls in the JAVA drawing framework so only the structure currently drawn can be exported to Postscript.</li>
+								<li>Added items where necessary to the JAVA drawing framework so structures and dot plots can be exported as both Postscript and SVG.</li>
+								<li>Fixed a bug in JAVA drawing framework where the default for structures wasn't clockwise orientation.</li>
+								<li>Removed &quot;New Window&quot; and &quot;Arrange Icons&quot; options, which did nothing, from the menus of the Windows GUI.</li>
+								<li>Added ability to switch between structures and zoom in the drawing framework using the command key (on Mac) as well as the control key.</li>
+								<li>Fixed the description of MAP mode in the PARTS text interface manual.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>RNAstructure 5.3 (05/10/2011)</strong></p>
+							<ol>
+								<li>Added TurboFold to the package.</li>
+								<li>Fixed a bug where drawing suboptimal structures did not always work in the JAVA GUI for Mac and Linux.</li>
+								<li>Fixed a bug where bimolecular partition functions were missing some states (single dangling ends and no dangling ends) at helix ends.</li>
+								<li>Added the ability to include SHAPE data when calculating folding free energy changes with efn2 program.</li>
+								<li>Added the ability to apply folding restraints for the formation of specified base pairs.</li>
+								<li>Corrected Windows and JAVA graphical interfaces for OligoWalk to show the correct temperature of folding free energy changes when a user adjusts the temperature of the calculation. (Prior to this, free energies' changes were always listed as being at 37 degrees C.)</li>
+								<li>Added the Overview help pages to the manual.</li>
+								<li>Corrected bug in JAVA GUI where the message bar at the bottom of the screen didn't always update when a temperature menu was clicked.</li>
+								<li>Corrected bug in JAVA GUI in OligoScreen where file names were being refreshed incorrectly. Also switched oligomer type default to DNA, rather than RNA.</li>
+								<li>Corrected bug in JAVA GUI of OligoWalk where oligonucleotides were always RNA, even when DNA was selected.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>RNAstructure 5.2 (11/17/2010)</strong></p>
+							<ol>
+								<li>Added Multilign to the package.</li>
+								<li>Fixed an issue when breaking pseudoknots, but leaving the maximum non-pseudoknotted pairs, where non-canonical pairs in the input structure were mistakenly broken. This was also an issue with the count of pseudoknotted pairs in the CircleCompare program.</li>
+								<li>Added support for writing ct files for long sequences (>9,999 nucleotides).</li>
+								<li>Removed GAIL rule from dnamiscloop.dat and dnamiscloop.dh.</li>
+								<li>Made the internal loop asymmetry penalty a single constant for DNA folding. This fixed an occassional bug with folding by DNA rules.</li>
+								<li>In Windows GUI only, changed default value for the minimum helix length in ProbKnot from 2 to 3, which is the preferred value.</li>
+								<li>Added color-annotation for single-stranded nucleotides in drawing programs.</li>
+								<li>Added the ability to use DNA parameters to the Dynalign command line interface.</li>
+								<li>Added the ability to change the folding temperature in the Dynalign command line interface.</li>
+								<li>In the Windows GUI, set the default file choice to .ALI when clicking the "Alignment File" button.</li>
+								<li>In Dynalign, revised the model for using alignment data to limit the extent of calculation. This can lead to a different set of suboptimal structures than previous versions. This also fixes a traceback error encountered in rare circumstances.</li>
+								<li>Added the EnsembleEnergy program to the command line interface programs.</li>
+								<li>Improved the font in the html help for the GUI.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>RNAstructure 5.1 (06/30/2010)</strong></p>
+							<ol>
+								<li>Changed the thermodynamic parameter for adding an additional helix to a multibranch loop ("helix penalty" in miscloop.dat). The value is now set to -0.6 kcal/mol, which is the value determined by a linear regression fit to experimental data. This value provides slighly higher average accuracy for maximum expected accuracy structure prediction (MaxExpect and ProbKnot programs). This change means that predicted structures might be different than those predicted by previous version of RNAstructure. Base pair probabilities, however, should be highly similar to predictions from previous versions of the program.</li>
+								<li>Added ProbKnot program to text interfaces and GUIs.</li>
+								<li>Added online help for text (command line interfaces).</li>
+								<li>Restructured downloads so that the text interface binaries now also come with complete repository, including help and examples.</li>
+								<li>Added circular drawings to GUIs for drawing structures that contain pseudoknots.</li>
+								<li>Added the ability to read FASTA-formatted sequence files.</li>
+								<li>Updated online help for GUIs to better reflect the current state of the software.</li>
+								<li>Fixed problems with Dynalign dot plots.</li>
+								<li>Fixed problem reading SHAPE data in JAVA GUI.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>RNAstructure 5.03 (03/22/2010)</strong></p>
+							<ol>
+								<li>Added the automatic generation of a title for new sequences in the GUIs (both Windows and JAVA). This fixes a problem where RNAstructure fails to recognize a sequence because it contained no title.</li>
+								<li>Added CircleCompare (comparision of two secondary structures, including pseudoknots).</li>
+								<li>Fixed the grayed "forbid unimolecular pairs" menu option when performing bimolecular folding with the Windows GUI.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>RNAstructure 5.02 (01/22/2010)</strong><p> 
+							<ol>
+								<li>Revised PARTS to make it more user friendly.</li>
+								<li>Fixed problem where precompiled text interfaces could not find the shared library on some machines and therefore not run.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>RNAstructure 5.01 (12/30/2009)</strong><p> 
+							<ol>
+								<li>Added the ability to read FASTA-formatted sequences to text interfaces.</li>
+								<li>Added the Dynalign Intel C++ project for Microsoft Visual Studio to download.</li>
+								<li>Added the Fold Intel C++ project for Microsoft Visual Studio to download.</li>
+								<li>Changed the default parameters for SHAPE data pseudo energies to match best practices.</li>
+								<li>Cosmetic changes made to a number of the text interfaces.</li>
+								<li>Fixed a problem where text interfaces on Linux and Mac could not find the shared library and therefore did not run.</li>
+							</ol>
+						</div>
+
+						<div>
+							<p><strong>RNAstructure 5.0</strong></p>
+							<ol>
+								<li>09/30/2009: New major update of RNAstructure. This version has a graphical user interface in JAVA for use on Mac and Linux machines. Text interfaces are now available for DOS, Linux, and Mac OS X. A class library is available for programmers. All source code is available for download.</li>
+								<li>10/03/2009: New Windows text interface binaries posted. This fixes the problem that manifests with the error "This application has failed to start because the application configuration is incorrect," which appeared on some computers.</li>
+							</ol>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="footer" colspan="3">
+						<p>Visit <a href="http://rna.urmc.rochester.edu/RNAstructure.html">The Mathews Lab RNAstructure Page</a> for updates and latest information.</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

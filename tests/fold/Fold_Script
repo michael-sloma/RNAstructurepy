@@ -1,0 +1,222 @@
+#!/bin/bash
+
+# If the Fold executable doesn't exist yet, make it.
+# Also, make the EnergyPlot executable so the save file can be checked, if it
+# doesn't exist yet.
+echo '    Preparation of Fold tests started...'
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/Fold ]]
+then
+cd ..; make Fold >& /dev/null; cd tests; 
+fi
+
+if [[ ! -f ../exe/EnergyPlot ]]
+then
+cd ..; make EnergyPlot >& /dev/null; cd tests;
+fi
+echo '    Preparation of Fold tests finished.'
+
+# Test Fold_without_options.
+echo '    Fold_without_options testing started...'
+../exe/Fold $SINGLESEQ2 Fold_without_options_test_output.ct 1>/dev/null 2>Fold_without_options_errors.txt
+diff Fold_without_options_test_output.ct fold/Fold_without_options_OK.ct >& Fold_without_options_diff_output.txt
+checkErrors Fold_without_options Fold_without_options_errors.txt Fold_without_options_diff_output.txt
+echo '    Fold_without_options testing finished.'
+
+# Test Fold_without_options_alternate.
+# This alternate test will be used to test single and double stranded offsets later.
+echo '    Fold_without_options_alternate testing started...'
+../exe/Fold testFiles/testFile_U1a.seq Fold_without_options_alternate_test_output.ct 1>/dev/null 2>Fold_without_options_alternate_errors.txt
+diff Fold_without_options_alternate_test_output.ct fold/Fold_without_options_alternate_OK.ct >& Fold_without_options_alternate_diff_output.txt
+checkErrors Fold_without_options_alternate Fold_without_options_alternate_errors.txt Fold_without_options_alternate_diff_output.txt
+echo '    Fold_without_options_alternate testing finished.'
+
+# Test Fold_without_options_alternate_2.
+# This second alternate test will be used to test experimental pair bonuses later.
+echo '    Fold_without_options_alternate_2 testing started...'
+../exe/Fold testFiles/testFile_5SRNA_tail2.seq Fold_without_options_alternate_2_test_output.ct 1>/dev/null 2>Fold_without_options_alternate_2_errors.txt
+diff Fold_without_options_alternate_2_test_output.ct fold/Fold_without_options_alternate_2_OK.ct >& Fold_without_options_alternate_2_diff_output.txt
+checkErrors Fold_without_options_alternate_2 Fold_without_options_alternate_2_errors.txt Fold_without_options_alternate_2_diff_output.txt
+echo '    Fold_without_options_alternate_2 testing finished.'
+
+# Test Fold_without_options_fasta_input.
+echo '    Fold_without_options_fasta_input testing started...'
+../exe/Fold $SINGLESEQ2_FASTA Fold_without_options_fasta_input_test_output.ct 1>/dev/null 2>Fold_without_options_fasta_input_errors.txt
+diff Fold_without_options_fasta_input_test_output.ct fold/Fold_without_options_OK.ct >& Fold_without_options_fasta_input_diff_output.txt
+checkErrors Fold_without_options_fasta_input Fold_without_options_fasta_input_errors.txt Fold_without_options_fasta_input_diff_output.txt
+echo '    Fold_without_options_fasta_input testing finished.'
+
+# Test Fold_constraint_file_option.
+echo '    Fold_constraint_file_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_constraint_file_option_test_output.ct -c testFiles/testFile_folding2.con 1>/dev/null 2>Fold_constraint_file_option_errors.txt
+diff Fold_constraint_file_option_test_output.ct fold/Fold_constraint_file_option_OK.ct >& Fold_constraint_file_option_diff_output.txt
+checkErrors Fold_constraint_file_option Fold_constraint_file_option_errors.txt Fold_constraint_file_option_diff_output.txt
+echo '    Fold_constraint_file_option testing finished.'
+
+# Test Fold_dna_option.
+echo '    Fold_dna_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_dna_option_test_output.ct -d 1>/dev/null 2>Fold_dna_option_errors.txt
+diff Fold_dna_option_test_output.ct fold/Fold_dna_option_OK.ct >& Fold_dna_option_diff_output.txt
+checkErrors Fold_dna_option Fold_dna_option_errors.txt Fold_dna_option_diff_output.txt
+echo '    Fold_dna_option testing finished.'
+
+# Test Fold_dna_option_fasta_input.
+echo '    Fold_dna_option_fasta_input testing started...'
+../exe/Fold $SINGLESEQ2_FASTA Fold_dna_option_fasta_input_test_output.ct -d 1>/dev/null 2>Fold_dna_option_fasta_input_errors.txt
+diff Fold_dna_option_fasta_input_test_output.ct fold/Fold_dna_option_OK.ct >& Fold_dna_option_fasta_input_diff_output.txt
+checkErrors Fold_dna_option_fasta_input Fold_dna_option_fasta_input_errors.txt Fold_dna_option_fasta_input_diff_output.txt
+echo '    Fold_dna_option_fasta_input testing finished.'
+
+# Test Fold_double_stranded_offset_option.
+echo '    Fold_double_stranded_offset_option testing started...'
+../exe/Fold testFiles/testFile_U1a.seq Fold_double_stranded_offset_option_test_output.ct -dso testFiles/testFile_double_offset_dummy.txt 1>/dev/null 2>Fold_double_stranded_offset_option_errors.txt
+diff Fold_double_stranded_offset_option_test_output.ct fold/Fold_double_stranded_offset_option_OK.ct >& Fold_double_stranded_offset_option_diff_output.txt
+checkErrors Fold_double_stranded_offset_option Fold_double_stranded_offset_option_errors.txt Fold_double_stranded_offset_option_diff_output.txt
+echo '    Fold_double_stranded_offset_option testing finished.'
+
+# Test Fold_experimental_pair_bonus_option.
+echo '    Fold_experimental_pair_bonus_option testing started...'
+../exe/Fold testFiles/testFile_5SRNA_tail2.seq Fold_experimental_pair_bonus_option_test_output.ct -X testFiles/testFile_bonus_matrix.txt 1>/dev/null 2>Fold_experimental_pair_bonus_option_errors.txt
+diff Fold_experimental_pair_bonus_option_test_output.ct fold/Fold_experimental_pair_bonus_option_OK.ct >& Fold_experimental_pair_bonus_option_diff_output.txt
+checkErrors Fold_experimental_pair_bonus_option Fold_experimental_pair_bonus_option_errors.txt Fold_experimental_pair_bonus_option_diff_output.txt
+echo '    Fold_experimental_pair_bonus_option testing finished.'
+
+# Test Fold_experimental_pair_bonus_offset_option.
+echo '    Fold_experimental_pair_bonus_offset_option testing started...'
+../exe/Fold testFiles/testFile_5SRNA_tail2.seq Fold_experimental_pair_bonus_offset_option_test_output.ct -X testFiles/testFile_bonus_matrix.txt -xo 10 1>/dev/null 2>Fold_experimental_pair_bonus_offset_option_errors.txt
+diff Fold_experimental_pair_bonus_offset_option_test_output.ct fold/Fold_experimental_pair_bonus_offset_option_OK.ct >& Fold_experimental_pair_bonus_offset_option_diff_output.txt
+checkErrors Fold_experimental_pair_bonus_offset_option Fold_experimental_pair_bonus_offset_option_errors.txt Fold_experimental_pair_bonus_offset_option_diff_output.txt
+echo '    Fold_experimental_pair_bonus_offset_option testing finished.'
+
+# Test Fold_experimental_pair_bonus_scaling_option.
+echo '    Fold_experimental_pair_bonus_scaling_option testing started...'
+../exe/Fold testFiles/testFile_5SRNA_tail2.seq Fold_experimental_pair_bonus_scaling_option_test_output.ct -X testFiles/testFile_bonus_matrix.txt -xs 10 1>/dev/null 2>Fold_experimental_pair_bonus_scaling_option_errors.txt
+diff Fold_experimental_pair_bonus_scaling_option_test_output.ct fold/Fold_experimental_pair_bonus_scaling_option_OK.ct >& Fold_experimental_pair_bonus_scaling_option_diff_output.txt
+checkErrors Fold_experimental_pair_bonus_scaling_option Fold_experimental_pair_bonus_scaling_option_errors.txt Fold_experimental_pair_bonus_scaling_option_diff_output.txt
+echo '    Fold_experimental_pair_bonus_scaling_option testing finished.'
+
+# Test Fold_loop_option.
+echo '    Fold_loop_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_loop_option_test_output.ct -l 0 1>/dev/null 2>Fold_loop_option_errors.txt
+diff Fold_loop_option_test_output.ct fold/Fold_loop_option_OK.ct >& Fold_loop_option_diff_output.txt
+checkErrors Fold_loop_option Fold_loop_option_errors.txt Fold_loop_option_diff_output.txt
+echo '    Fold_loop_option testing finished.'
+
+# Test Fold_max_distance_option.
+echo '    Fold_max_distance_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_max_distance_option_test_output.ct -md 25 1>/dev/null 2>Fold_max_distance_option_errors.txt
+diff Fold_max_distance_option_test_output.ct fold/Fold_max_distance_option_OK.ct >& Fold_max_distance_option_diff_output.txt
+checkErrors Fold_max_distance_option Fold_max_distance_option_errors.txt Fold_max_distance_option_diff_output.txt
+echo '    Fold_max_distance_option testing finished.'
+
+# Test Fold_max_structures_option.
+echo '    Fold_max_structures_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_max_structures_option_test_output.ct -m 2 1>/dev/null 2>Fold_max_structures_option_errors.txt
+diff Fold_max_structures_option_test_output.ct fold/Fold_max_structures_option_OK.ct >& Fold_max_structures_option_diff_output.txt
+checkErrors Fold_max_structures_option Fold_max_structures_option_errors.txt Fold_max_structures_option_diff_output.txt
+echo '    Fold_max_structures_option testing finished.'
+
+# Test Fold_percent_difference_option.
+echo '    Fold_percent_difference_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_percent_difference_option_test_output.ct -p 5 1>/dev/null 2>Fold_percent_difference_option_errors.txt
+diff Fold_percent_difference_option_test_output.ct fold/Fold_percent_difference_option_OK.ct >& Fold_percent_difference_option_diff_output.txt
+checkErrors Fold_percent_difference_option Fold_percent_difference_option_errors.txt Fold_percent_difference_option_diff_output.txt
+echo '    Fold_percent_difference_option testing finished.'
+
+# Test Fold_minimum_free_energy_difference_option.
+echo '    Fold_minimum_free_energy_option testing started...'
+../exe/Fold $SINGLESEQ Fold_minimum_free_energy_option_test_output.ct -mfe 1>/dev/null 2>Fold_minimum_free_energy_option_errors.txt
+diff Fold_minimum_free_energy_option_test_output.ct fold/Fold_minimum_free_energy_option_OK.ct >& Fold_minimum_free_energy_option_diff_output.txt
+checkErrors Fold_minimum_free_energy_option Fold_minimum_free_energy_option_errors.txt Fold_minimum_free_energy_option_diff_output.txt
+echo '    Fold_minimum_free_energy_option testing finished.'
+
+# Test Fold_save_file_option.
+echo '    Fold_save_file_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_save_file_option_test_output.ct -s fold_save_file.sav 1>/dev/null 2>Fold_save_file_option_errors.txt
+diff Fold_save_file_option_test_output.ct fold/Fold_without_options_OK.ct >& Fold_save_file_option_diff_output.txt
+checkErrors Fold_save_file_option Fold_save_file_option_errors.txt Fold_save_file_option_diff_output.txt
+echo '    Fold_save_file_option_testing finished.'
+
+# Test Fold_sav_plot (The save plot generated by the save file option).
+echo '    Fold_sav_plot testing started...'
+../exe/EnergyPlot fold_save_file.sav Fold_sav_plot_test_output.ps 1>/dev/null 2>Fold_sav_plot_errors.txt
+diff Fold_sav_plot_test_output.ps fold/Fold_sav_plot.ps >& Fold_sav_plot_diff_output.txt
+checkErrors Fold_sav_plot Fold_sav_plot_errors.txt Fold_sav_plot_diff_output.txt
+echo '    Fold_sav_plot testing finished.'
+
+# Test Fold_shape_option.
+echo '    Fold_shape_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_shape_option_test_output.ct -sh testFiles/testFile_tRNA.shape 1>/dev/null 2>Fold_shape_option_errors.txt
+diff Fold_shape_option_test_output.ct fold/Fold_shape_option_OK.ct >& Fold_shape_option_diff_output.txt
+checkErrors Fold_shape_option Fold_shape_option_errors.txt Fold_shape_option_diff_output.txt
+echo '    Fold_shape_option_testing finished.'
+
+# Test Fold_shape_intercept_option.
+echo '    Fold_shape_intercept_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_shape_intercept_option_test_output.ct -sh testFiles/testFile_tRNA.shape -si 0.9 1>/dev/null 2>Fold_shape_intercept_option_errors.txt
+diff Fold_shape_intercept_option_test_output.ct fold/Fold_shape_intercept_option_OK.ct >& Fold_shape_intercept_option_diff_output.txt
+checkErrors Fold_shape_intercept_option Fold_shape_intercept_option_errors.txt Fold_shape_intercept_option_diff_output.txt
+echo '    Fold_shape_intercept_option_testing finished.'
+
+# Test Fold_shape_slope_option.
+echo '    Fold_shape_slope_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_shape_slope_option_test_output.ct -sh testFiles/testFile_tRNA.shape -sm -0.2 1>/dev/null 2>Fold_shape_slope_option_errors.txt
+diff Fold_shape_slope_option_test_output.ct fold/Fold_shape_slope_option_OK.ct >& Fold_shape_slope_option_diff_output.txt
+checkErrors Fold_shape_slope_option Fold_shape_slope_option_errors.txt Fold_shape_slope_option_diff_output.txt
+echo '    Fold_shape_slope_option_testing finished.'
+
+# Test Fold_single_stranded_offset_option.
+echo '    Fold_single_stranded_offset_option testing started...'
+../exe/Fold testFiles/testFile_U1a.seq Fold_single_stranded_offset_option_test_output.ct -sso testFiles/testFile_single_offset.txt 1>/dev/null 2>Fold_single_stranded_offset_option_errors.txt
+diff Fold_single_stranded_offset_option_test_output.ct fold/Fold_single_stranded_offset_option_OK.ct >& Fold_single_stranded_offset_option_diff_output.txt
+checkErrors Fold_single_stranded_offset_option Fold_single_stranded_offset_option_errors.txt Fold_single_stranded_offset_option_diff_output.txt
+echo '    Fold_single_stranded_offset_option testing finished.'
+
+# Test Fold_temperature_option.
+echo '    Fold_temperature_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_temperature_option_test_output.ct -t 150 1>/dev/null 2>Fold_temperature_option_errors.txt
+diff Fold_temperature_option_test_output.ct fold/Fold_temperature_option_OK.ct >& Fold_temperature_option_diff_output.txt
+checkErrors Fold_temperature_option Fold_temperature_option_errors.txt Fold_temperature_option_diff_output.txt
+echo '    Fold_temperature_option testing finished.'
+
+# Test Fold_unpaired_shape_intercept_option.
+echo '    Fold_unpaired_shape_intercept_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_unpaired_shape_intercept_option_test_output.ct -sh testFiles/testFile_tRNA.shape -usi 0.9 1>/dev/null 2>Fold_unpaired_shape_intercept_option_errors.txt
+diff Fold_unpaired_shape_intercept_option_test_output.ct fold/Fold_unpaired_shape_intercept_option_OK.ct >& Fold_unpaired_shape_intercept_option_diff_output.txt
+checkErrors Fold_unpaired_shape_intercept_option Fold_unpaired_shape_intercept_option_errors.txt Fold_unpaired_shape_intercept_option_diff_output.txt
+echo '    Fold_unpaired_shape_intercept_option_testing finished.'
+
+# Test Fold_unpaired_shape_slope_option.
+echo '    Fold_unpaired_shape_slope_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_unpaired_shape_slope_option_test_output.ct -sh testFiles/testFile_tRNA.shape -usm -0.2 1>/dev/null 2>Fold_unpaired_shape_slope_option_errors.txt
+diff Fold_unpaired_shape_slope_option_test_output.ct fold/Fold_unpaired_shape_slope_option_OK.ct >& Fold_unpaired_shape_slope_option_diff_output.txt
+checkErrors Fold_unpaired_shape_slope_option Fold_unpaired_shape_slope_option_errors.txt Fold_unpaired_shape_slope_option_diff_output.txt
+echo '    Fold_unpaired_shape_slope_option_testing finished.'
+
+# Test Fold_window_size_option.
+echo '    Fold_window_size_option testing started...'
+../exe/Fold $SINGLESEQ2 Fold_window_size_option_test_output.ct -w 15 1>/dev/null 2>Fold_window_size_option_errors.txt
+diff Fold_window_size_option_test_output.ct fold/Fold_window_size_option_OK.ct >& Fold_window_size_option_diff_output.txt
+checkErrors Fold_window_size_option Fold_window_size_option_errors.txt Fold_window_size_option_diff_output.txt
+echo '    Fold_window_size_option_testing finished.'
+
+# Clean up any extra files made over the course of the Fold tests.
+echo '    Cleanup of Fold tests started...'
+echo '        Cleanup in progress...'
+rm -f Fold_without_options*
+rm -f Fold_constraint_file_option*
+rm -f Fold_dna_option*
+rm -f Fold_double_stranded_offset_option*
+rm -f Fold_experimental_pair_bonus*
+rm -f Fold_loop_option*
+rm -f Fold_max*
+rm -f Fold_percent_difference_option*
+rm -f Fold_minimum_free_energy_option*
+rm -f Fold_sav*
+rm -f Fold_shape*
+rm -f Fold_single_stranded_offset_option*
+rm -f Fold_unpaired_shape*
+rm -f Fold_temperature_option*
+rm -f Fold_window_size_option*
+rm -f fold_save_file.sav
+echo '    Cleanup of Fold tests finished.'

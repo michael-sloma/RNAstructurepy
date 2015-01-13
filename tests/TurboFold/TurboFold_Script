@@ -1,0 +1,444 @@
+#!/bin/bash
+
+# If the executable doesn't exist yet, make it.
+echo "    Preparation of $1 tests started..."
+echo '        Preparation in progress...'
+if [[ ! -f ../exe/$1 ]]
+then
+cd ..; make $1 >& /dev/null; cd tests;
+fi
+echo "    Preparation of $1 tests finished."
+
+# Test TurboFold_without_options_singly.
+# Note that the general test has a mode specified of MEA; MEA is the default mode.
+echo "    $1_general_without_options_singly testing started..."
+echo "Seq1 = ../tests/testFiles/testFile_ec5s.seq" > "$1_general_without_options_singly.conf"
+echo "Seq2 = ../tests/testFiles/testFile_ca5s.seq" >> "$1_general_without_options_singly.conf"
+echo "Seq3 = ../tests/testFiles/testFile_5s_8.seq" >> "$1_general_without_options_singly.conf"
+echo "CT1 = $1_general_without_options_singly_seq1_test_output.ct" >> "$1_general_without_options_singly.conf"
+echo "CT2 = $1_general_without_options_singly_seq2_test_output.ct" >> "$1_general_without_options_singly.conf"
+echo "CT3 = $1_general_without_options_singly_seq3_test_output.ct" >> "$1_general_without_options_singly.conf"
+echo "SequenceNumber = 3" >> "$1_general_without_options_singly.conf"
+echo "Mode = MEA" >> "$1_general_without_options_singly.conf"
+if [[ $1 == TurboFold-smp ]]; then echo "Processors = 2" >> "$1_general_without_options_singly.conf"; fi;
+../exe/$1 "$1_general_without_options_singly.conf" 1>/dev/null 2>"$1_general_without_options_singly_errors.txt"
+diff $1_general_without_options_singly_seq1_test_output.ct TurboFold/TurboFold_general_without_options_seq1_OK.ct >& "$1_general_without_options_singly_seq1_diff_output.txt"
+diff $1_general_without_options_singly_seq2_test_output.ct TurboFold/TurboFold_general_without_options_seq2_OK.ct >& "$1_general_without_options_singly_seq2_diff_output.txt"
+diff $1_general_without_options_singly_seq3_test_output.ct TurboFold/TurboFold_general_without_options_seq3_OK.ct >& "$1_general_without_options_singly_seq3_diff_output.txt"
+checkErrors "$1_general_without_options_singly" "$1_general_without_options_singly_errors.txt" "$1_general_without_options_singly_seq1_diff_output.txt" "$1_general_without_options_singly_seq2_diff_output.txt" "$1_general_without_options_singly_seq3_diff_output.txt" "$1_general_without_options_singly_alignment_diff_output.txt"
+echo "    $1_general_without_options_singly testing finished."
+
+# Test TurboFold_without_options_groups.
+# Note that the general test has a mode specified of MEA; MEA is the default mode.
+echo "    $1_general_without_options_groups testing started..."
+echo "InSeq = {../tests/testFiles/testFile_ec5s.seq;../tests/testFiles/testFile_ca5s.seq;../tests/testFiles/testFile_5s_8.seq;}" > "$1_general_without_options_groups.conf"
+echo "OutCT = {$1_general_without_options_groups_seq1_test_output.ct;$1_general_without_options_groups_seq2_test_output.ct;$1_general_without_options_groups_seq3_test_output.ct;}" >> "$1_general_without_options_groups.conf"
+echo "Mode = MEA" >> "$1_general_without_options_groups.conf"
+if [[ $1 == TurboFold-smp ]]; then echo "Processors = 2" >> "$1_general_without_options_groups.conf"; fi;
+../exe/$1 "$1_general_without_options_groups.conf" 1>/dev/null 2>"$1_general_without_options_groups_errors.txt"
+diff $1_general_without_options_groups_seq1_test_output.ct TurboFold/TurboFold_general_without_options_seq1_OK.ct >& "$1_general_without_options_groups_seq1_diff_output.txt"
+diff $1_general_without_options_groups_seq2_test_output.ct TurboFold/TurboFold_general_without_options_seq2_OK.ct >& "$1_general_without_options_groups_seq2_diff_output.txt"
+diff $1_general_without_options_groups_seq3_test_output.ct TurboFold/TurboFold_general_without_options_seq3_OK.ct >& "$1_general_without_options_groups_seq3_diff_output.txt"
+checkErrors "$1_general_without_options_groups" "$1_general_without_options_groups_errors.txt" "$1_general_without_options_groups_seq1_diff_output.txt" "$1_general_without_options_groups_seq2_diff_output.txt" "$1_general_without_options_groups_seq3_diff_output.txt" "$1_general_without_options_groups_alignment_diff_output.txt"
+echo "    $1_general_without_options_groups testing finished."
+
+# Test an alternate TurboFold_general_without_options.
+# Note that the general test has a mode specified of MEA; MEA is the default mode.
+# Note also that these alternate test files are used to test ProbKnot mode only.
+# This alternate test is needed to ensure that the ProbKnot_without_options test is different from a default test where ProbKnot mode isn't specified.
+echo "    $1_general_without_options_alternate testing started..."
+echo "Seq1 = testFiles/testFile_met-vol.seq" > "$1_general_without_options_alternate.conf"
+echo "Seq2 = testFiles/testFile_met-fer.seq" >> "$1_general_without_options_alternate.conf"
+echo "Seq3 = testFiles/testFile_met-the.seq" >> "$1_general_without_options_alternate.conf"
+echo "CT1 = $1_general_without_options_alternate_seq1_test_output.ct" >> "$1_general_without_options_alternate.conf"
+echo "CT2 = $1_general_without_options_alternate_seq2_test_output.ct" >> "$1_general_without_options_alternate.conf"
+echo "CT3 = $1_general_without_options_alternate_seq3_test_output.ct" >> "$1_general_without_options_alternate.conf"
+echo "SequenceNumber = 3" >> "$1_general_without_options_alternate.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_general_without_options_alternate.conf"; fi
+echo "Mode = MEA" >> "$1_general_without_options_alternate.conf"
+../exe/$1 "$1_general_without_options_alternate.conf" 1>/dev/null 2>"$1_general_without_options_alternate_errors.txt"
+diff "$1_general_without_options_alternate_seq1_test_output.ct" "TurboFold/TurboFold_general_without_options_alternate_seq1_OK.ct" >& "$1_general_without_options_alternate_seq1_diff_output.txt"
+diff "$1_general_without_options_alternate_seq2_test_output.ct" "TurboFold/TurboFold_general_without_options_alternate_seq2_OK.ct" >& "$1_general_without_options_alternate_seq2_diff_output.txt"
+diff "$1_general_without_options_alternate_seq3_test_output.ct" "TurboFold/TurboFold_general_without_options_alternate_seq3_OK.ct" >& "$1_general_without_options_alternate_seq3_diff_output.txt"
+checkErrors "$1_general_without_options_alternate" "$1_general_without_options_alternate_errors.txt" "$1_general_without_options_alternate_seq1_diff_output.txt" "$1_general_without_options_alternate_seq2_diff_output.txt" "$1_general_without_options_alternate_seq3_diff_output.txt"
+echo "    $1_general_without_options_alternate testing finished."
+
+# Test TurboFold_general_gamma_option.
+# Note that the general test has a mode specified of MEA; MEA is the default mode.
+echo "    $1_general_gamma_option testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "$1_general_gamma_option.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "$1_general_gamma_option.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "$1_general_gamma_option.conf"
+echo "CT1 = $1_general_gamma_option_seq1_test_output.ct" >> "$1_general_gamma_option.conf"
+echo "CT2 = $1_general_gamma_option_seq2_test_output.ct" >> "$1_general_gamma_option.conf"
+echo "CT3 = $1_general_gamma_option_seq3_test_output.ct" >> "$1_general_gamma_option.conf"
+echo "SequenceNumber = 3" >> "$1_general_gamma_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_general_gamma_option.conf"; fi
+echo "Mode = MEA" >> "$1_general_gamma_option.conf"
+echo "Gamma = 0.9" >> "$1_general_gamma_option.conf"
+../exe/$1 "$1_general_gamma_option.conf" 1>/dev/null 2>"$1_general_gamma_option_errors.txt"
+diff "$1_general_gamma_option_seq1_test_output.ct" "TurboFold/TurboFold_general_gamma_option_seq1_OK.ct" >& "$1_general_gamma_option_seq1_diff_output.txt"
+diff "$1_general_gamma_option_seq2_test_output.ct" "TurboFold/TurboFold_general_gamma_option_seq2_OK.ct" >& "$1_general_gamma_option_seq2_diff_output.txt"
+diff "$1_general_gamma_option_seq3_test_output.ct" "TurboFold/TurboFold_general_gamma_option_seq3_OK.ct" >& "$1_general_gamma_option_seq3_diff_output.txt"
+checkErrors "$1_general_gamma_option" "$1_general_gamma_option_errors.txt" "$1_general_gamma_option_seq1_diff_output.txt" "$1_general_gamma_option_seq2_diff_output.txt" "$1_general_gamma_option_seq3_diff_output.txt"
+echo "    $1_general_gamma_option testing finished."
+
+# Test TurboFold_general_iterations_option.
+# Note that the general test has a mode specified of MEA; MEA is the default mode.
+echo "    $1_general_iterations_option testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "$1_general_iterations_option.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "$1_general_iterations_option.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "$1_general_iterations_option.conf"
+echo "CT1 = $1_general_iterations_option_seq1_test_output.ct" >> "$1_general_iterations_option.conf"
+echo "CT2 = $1_general_iterations_option_seq2_test_output.ct" >> "$1_general_iterations_option.conf"
+echo "CT3 = $1_general_iterations_option_seq3_test_output.ct" >> "$1_general_iterations_option.conf"
+echo "SequenceNumber = 3" >> "$1_general_iterations_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_general_iterations_option.conf"; fi
+echo "Mode = MEA" >> "$1_general_iterations_option.conf"
+echo "Iterations = 1" >> "$1_general_iterations_option.conf"
+../exe/$1 "$1_general_iterations_option.conf" 1>/dev/null 2>"$1_general_iterations_option_errors.txt"
+diff "$1_general_iterations_option_seq1_test_output.ct" "TurboFold/TurboFold_general_iterations_option_seq1_OK.ct" >& "$1_general_iterations_option_seq1_diff_output.txt"
+diff "$1_general_iterations_option_seq2_test_output.ct" "TurboFold/TurboFold_general_iterations_option_seq2_OK.ct" >& "$1_general_iterations_option_seq2_diff_output.txt"
+diff "$1_general_iterations_option_seq3_test_output.ct" "TurboFold/TurboFold_general_iterations_option_seq3_OK.ct" >& "$1_general_iterations_option_seq3_diff_output.txt"
+checkErrors "$1_general_iterations_option" "$1_general_iterations_option_errors.txt" "$1_general_iterations_option_seq1_diff_output.txt" "$1_general_iterations_option_seq2_diff_output.txt" "$1_general_iterations_option_seq3_diff_output.txt"
+echo "    $1_general_iterations_option testing finished."
+
+# Test TurboFold_general_shape_option.
+# Note that the general test has a mode specified of MEA; MEA is the default mode.
+echo "    $1_general_shape_option testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "$1_general_shape_option.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "$1_general_shape_option.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "$1_general_shape_option.conf"
+echo "CT1 = $1_general_shape_option_seq1_test_output.ct" >> "$1_general_shape_option.conf"
+echo "CT2 = $1_general_shape_option_seq2_test_output.ct" >> "$1_general_shape_option.conf"
+echo "CT3 = $1_general_shape_option_seq3_test_output.ct" >> "$1_general_shape_option.conf"
+echo "SequenceNumber = 3" >> "$1_general_shape_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_general_shape_option.conf"; fi
+echo "Mode = MEA" >> "$1_general_shape_option.conf"
+echo "SHAPE1 = testFiles/testFile_random_dummy.shape" >> "$1_general_shape_option.conf"
+echo "SHAPE2 = testFiles/testFile_random_dummy.shape" >> "$1_general_shape_option.conf"
+echo "SHAPE3 = testFiles/testFile_random_dummy.shape" >> "$1_general_shape_option.conf"
+../exe/$1 "$1_general_shape_option.conf" 1>/dev/null 2>"$1_general_shape_option_errors.txt"
+diff "$1_general_shape_option_seq1_test_output.ct" "TurboFold/TurboFold_general_shape_option_seq1_OK.ct" >& "$1_general_shape_option_seq1_diff_output.txt"
+diff "$1_general_shape_option_seq2_test_output.ct" "TurboFold/TurboFold_general_shape_option_seq2_OK.ct" >& "$1_general_shape_option_seq2_diff_output.txt"
+diff "$1_general_shape_option_seq3_test_output.ct" "TurboFold/TurboFold_general_shape_option_seq3_OK.ct" >& "$1_general_shape_option_seq3_diff_output.txt"
+checkErrors "$1_general_shape_option" "$1_general_shape_option_errors.txt" "$1_general_shape_option_seq1_diff_output.txt" "$1_general_shape_option_seq2_diff_output.txt" "$1_general_shape_option_seq3_diff_output.txt"
+echo "    $1_general_shape_option testing finished."
+
+# Test TurboFold_general_shape_intercept_option.
+# Note that the general test has a mode specified of MEA; MEA is the default mode.
+echo "    $1_general_shape_intercept_option testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "$1_general_shape_intercept_option.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "$1_general_shape_intercept_option.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "$1_general_shape_intercept_option.conf"
+echo "CT1 = $1_general_shape_intercept_option_seq1_test_output.ct" >> "$1_general_shape_intercept_option.conf"
+echo "CT2 = $1_general_shape_intercept_option_seq2_test_output.ct" >> "$1_general_shape_intercept_option.conf"
+echo "CT3 = $1_general_shape_intercept_option_seq3_test_output.ct" >> "$1_general_shape_intercept_option.conf"
+echo "SequenceNumber = 3" >> "$1_general_shape_intercept_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_general_shape_intercept_option.conf"; fi
+echo "Mode = MEA" >> "$1_general_shape_intercept_option.conf"
+echo "SHAPE1 = testFiles/testFile_random_dummy.shape" >> "$1_general_shape_intercept_option.conf"
+echo "SHAPE2 = testFiles/testFile_random_dummy.shape" >> "$1_general_shape_intercept_option.conf"
+echo "SHAPE3 = testFiles/testFile_random_dummy.shape" >> "$1_general_shape_intercept_option.conf"
+echo "SHAPEintercept = 0.1" >> "$1_general_shape_intercept_option.conf"
+../exe/$1 "$1_general_shape_intercept_option.conf" 1>/dev/null 2>"$1_general_shape_intercept_option_errors.txt"
+diff "$1_general_shape_intercept_option_seq1_test_output.ct" "TurboFold/TurboFold_general_shape_intercept_option_seq1_OK.ct" >& "$1_general_shape_intercept_option_seq1_diff_output.txt"
+diff "$1_general_shape_intercept_option_seq2_test_output.ct" "TurboFold/TurboFold_general_shape_intercept_option_seq2_OK.ct" >& "$1_general_shape_intercept_option_seq2_diff_output.txt"
+diff "$1_general_shape_intercept_option_seq3_test_output.ct" "TurboFold/TurboFold_general_shape_intercept_option_seq3_OK.ct" >& "$1_general_shape_intercept_option_seq3_diff_output.txt"
+checkErrors "$1_general_shape_intercept_option" "$1_general_shape_intercept_option_errors.txt" "$1_general_shape_intercept_option_seq1_diff_output.txt" "$1_general_shape_intercept_option_seq2_diff_output.txt" "$1_general_shape_intercept_option_seq3_diff_output.txt"
+echo "    $1_general_shape_intercept_option testing finished."
+
+# Test TurboFold_general_shape_slope_option.
+# Note that the general test has a mode specified of MEA; MEA is the default mode.
+echo "    $1_general_shape_slope_option testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "$1_general_shape_slope_option.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "$1_general_shape_slope_option.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "$1_general_shape_slope_option.conf"
+echo "CT1 = $1_general_shape_slope_option_seq1_test_output.ct" >> "$1_general_shape_slope_option.conf"
+echo "CT2 = $1_general_shape_slope_option_seq2_test_output.ct" >> "$1_general_shape_slope_option.conf"
+echo "CT3 = $1_general_shape_slope_option_seq3_test_output.ct" >> "$1_general_shape_slope_option.conf"
+echo "SequenceNumber = 3" >> "$1_general_shape_slope_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_general_shape_slope_option.conf"; fi
+echo "Mode = MEA" >> "$1_general_shape_slope_option.conf"
+echo "SHAPE1 = testFiles/testFile_random_dummy.shape" >> "$1_general_shape_slope_option.conf"
+echo "SHAPE2 = testFiles/testFile_random_dummy.shape" >> "$1_general_shape_slope_option.conf"
+echo "SHAPE3 = testFiles/testFile_random_dummy.shape" >> "$1_general_shape_slope_option.conf"
+echo "SHAPEslope = 0.1" >> "$1_general_shape_slope_option.conf"
+../exe/$1 "$1_general_shape_slope_option.conf" 1>/dev/null 2>"$1_general_shape_slope_option_errors.txt"
+diff "$1_general_shape_slope_option_seq1_test_output.ct" "TurboFold/TurboFold_general_shape_slope_option_seq1_OK.ct" >& "$1_general_shape_slope_option_seq1_diff_output.txt"
+diff "$1_general_shape_slope_option_seq2_test_output.ct" "TurboFold/TurboFold_general_shape_slope_option_seq2_OK.ct" >& "$1_general_shape_slope_option_seq2_diff_output.txt"
+diff "$1_general_shape_slope_option_seq3_test_output.ct" "TurboFold/TurboFold_general_shape_slope_option_seq3_OK.ct" >& "$1_general_shape_slope_option_seq3_diff_output.txt"
+checkErrors "$1_general_shape_slope_option" "$1_general_shape_slope_option_errors.txt" "$1_general_shape_slope_option_seq1_diff_output.txt" "$1_general_shape_slope_option_seq2_diff_output.txt" "$1_general_shape_slope_option_seq3_diff_output.txt"
+echo "    $1_general_shape_slope_option testing finished."
+
+# Test TurboFold_general_temperature_option.
+# Note that the general test has a mode specified of MEA; MEA is the default mode.
+echo "    $1_general_temperature_option testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "$1_general_temperature_option.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "$1_general_temperature_option.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "$1_general_temperature_option.conf"
+echo "CT1 = $1_general_temperature_option_seq1_test_output.ct" >> "$1_general_temperature_option.conf"
+echo "CT2 = $1_general_temperature_option_seq2_test_output.ct" >> "$1_general_temperature_option.conf"
+echo "CT3 = $1_general_temperature_option_seq3_test_output.ct" >> "$1_general_temperature_option.conf"
+echo "SequenceNumber = 3" >> "$1_general_temperature_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_general_temperature_option.conf"; fi
+echo "Mode = MEA" >> "$1_general_temperature_option.conf"
+echo "Temperature = 330" >> "$1_general_temperature_option.conf"
+../exe/$1 "$1_general_temperature_option.conf" 1>/dev/null 2>"$1_general_temperature_option_errors.txt"
+diff "$1_general_temperature_option_seq1_test_output.ct" "TurboFold/TurboFold_general_temperature_option_seq1_OK.ct" >& "$1_general_temperature_option_seq1_diff_output.txt"
+diff "$1_general_temperature_option_seq2_test_output.ct" "TurboFold/TurboFold_general_temperature_option_seq2_OK.ct" >& "$1_general_temperature_option_seq2_diff_output.txt"
+diff "$1_general_temperature_option_seq3_test_output.ct" "TurboFold/TurboFold_general_temperature_option_seq3_OK.ct" >& "$1_general_temperature_option_seq3_diff_output.txt"
+checkErrors "$1_general_temperature_option" "$1_general_temperature_option_errors.txt" "$1_general_temperature_option_seq1_diff_output.txt" "$1_general_temperature_option_seq2_diff_output.txt" "$1_general_temperature_option_seq3_diff_output.txt"
+echo "    $1_general_temperature_option testing finished."
+
+# If the executable is SMP, test the processors option.
+if [[ $1 == TurboFold-smp ]]; then
+echo "    TurboFold-smp_processors_option testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "TurboFold-smp_processors_option.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "TurboFold-smp_processors_option.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "TurboFold-smp_processors_option.conf"
+echo "CT1 = TurboFold-smp_processors_option_seq1_test_output.ct" >> "TurboFold-smp_processors_option.conf"
+echo "CT2 = TurboFold-smp_processors_option_seq2_test_output.ct" >> "TurboFold-smp_processors_option.conf"
+echo "CT3 = TurboFold-smp_processors_option_seq3_test_output.ct" >> "TurboFold-smp_processors_option.conf"
+echo "SequenceNumber = 3" >> "TurboFold-smp_processors_option.conf"
+echo "Processors = 3" >> "TurboFold-smp_processors_option.conf";
+echo "Mode = MEA" >> "TurboFold-smp_processors_option.conf"
+../exe/$1 "TurboFold-smp_processors_option.conf" 1>/dev/null 2>"TurboFold-smp_processors_option_errors.txt"
+diff "TurboFold-smp_processors_option_seq1_test_output.ct" "TurboFold/TurboFold_general_without_options_seq1_OK.ct" >& "TurboFold-smp_processors_option_seq1_diff_output.txt"
+diff "TurboFold-smp_processors_option_seq2_test_output.ct" "TurboFold/TurboFold_general_without_options_seq2_OK.ct" >& "TurboFold-smp_processors_option_seq2_diff_output.txt"
+diff "TurboFold-smp_processors_option_seq3_test_output.ct" "TurboFold/TurboFold_general_without_options_seq3_OK.ct" >& "TurboFold-smp_processors_option_seq3_diff_output.txt"
+checkErrors "TurboFold-smp_processors_option" "TurboFold-smp_processors_option_errors.txt" "TurboFold-smp_processors_option_seq1_diff_output.txt" "TurboFold-smp_processors_option_seq2_diff_output.txt" "TurboFold-smp_processors_option_seq3_diff_output.txt"
+echo "    TurboFold-smp_processors_option testing finished."
+fi
+
+# Test TurboFold_MEA-mode_without_options.
+echo "    $1_MEA-mode_without_options testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "$1_MEA-mode_without_options.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "$1_MEA-mode_without_options.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "$1_MEA-mode_without_options.conf"
+echo "CT1 = $1_MEA-mode_without_options_seq1_test_output.ct" >> "$1_MEA-mode_without_options.conf"
+echo "CT2 = $1_MEA-mode_without_options_seq2_test_output.ct" >> "$1_MEA-mode_without_options.conf"
+echo "CT3 = $1_MEA-mode_without_options_seq3_test_output.ct" >> "$1_MEA-mode_without_options.conf"
+echo "SequenceNumber = 3" >> "$1_MEA-mode_without_options.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_MEA-mode_without_options.conf"; fi
+echo "Mode = MEA" >> "$1_MEA-mode_without_options.conf"
+../exe/$1 "$1_MEA-mode_without_options.conf" 1>/dev/null 2>"$1_MEA-mode_without_options_errors.txt"
+diff "$1_MEA-mode_without_options_seq1_test_output.ct" "TurboFold/TurboFold_general_without_options_seq1_OK.ct" >& "$1_MEA-mode_without_options_seq1_diff_output.txt"
+diff "$1_MEA-mode_without_options_seq2_test_output.ct" "TurboFold/TurboFold_general_without_options_seq2_OK.ct" >& "$1_MEA-mode_without_options_seq2_diff_output.txt"
+diff "$1_MEA-mode_without_options_seq3_test_output.ct" "TurboFold/TurboFold_general_without_options_seq3_OK.ct" >& "$1_MEA-mode_without_options_seq3_diff_output.txt"
+checkErrors "$1_MEA-mode_without_options" "$1_MEA-mode_without_options_errors.txt" "$1_MEA-mode_without_options_seq1_diff_output.txt" "$1_MEA-mode_without_options_seq2_diff_output.txt" "$1_MEA-mode_without_options_seq3_diff_output.txt"
+echo "    $1_MEA-mode_without_options testing finished."
+
+# Test an alternate TurboFold_MEA-mode_without_options.
+# These test files are not used for all MEA mode tests, just max structures, percent difference, and window size.
+echo "    $1_MEA-mode_without_options_alternate testing started..."
+echo "Seq1 = testFiles/testFile_RA7680.seq" > "$1_MEA-mode_without_options_alternate.conf"
+echo "Seq2 = testFiles/testFile_RD0260.seq" >> "$1_MEA-mode_without_options_alternate.conf"
+echo "Seq3 = testFiles/testFile_RD0500.seq" >> "$1_MEA-mode_without_options_alternate.conf"
+echo "CT1 = $1_MEA-mode_without_options_alternate_seq1_test_output.ct" >> "$1_MEA-mode_without_options_alternate.conf"
+echo "CT2 = $1_MEA-mode_without_options_alternate_seq2_test_output.ct" >> "$1_MEA-mode_without_options_alternate.conf"
+echo "CT3 = $1_MEA-mode_without_options_alternate_seq3_test_output.ct" >> "$1_MEA-mode_without_options_alternate.conf"
+echo "SequenceNumber = 3" >> "$1_MEA-mode_without_options_alternate.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_MEA-mode_without_options_alternate.conf"; fi
+echo "Mode = MEA" >> "$1_MEA-mode_without_options_alternate.conf"
+../exe/$1 "$1_MEA-mode_without_options_alternate.conf" 1>/dev/null 2>"$1_MEA-mode_without_options_alternate_errors.txt"
+diff "$1_MEA-mode_without_options_alternate_seq1_test_output.ct" "TurboFold/TurboFold_MEA-mode_without_options_alternate_seq1_OK.ct" >& "$1_MEA-mode_without_options_alternate_seq1_diff_output.txt"
+diff "$1_MEA-mode_without_options_alternate_seq2_test_output.ct" "TurboFold/TurboFold_MEA-mode_without_options_alternate_seq2_OK.ct" >& "$1_MEA-mode_without_options_alternate_seq2_diff_output.txt"
+diff "$1_MEA-mode_without_options_alternate_seq3_test_output.ct" "TurboFold/TurboFold_MEA-mode_without_options_alternate_seq3_OK.ct" >& "$1_MEA-mode_without_options_alternate_seq3_diff_output.txt"
+checkErrors "$1_MEA-mode_without_options_alternate" "$1_MEA-mode_without_options_alternate_errors.txt" "$1_MEA-mode_without_options_alternate_seq1_diff_output.txt" "$1_MEA-mode_without_options_alternate_seq2_diff_output.txt" "$1_MEA-mode_without_options_alternate_seq3_diff_output.txt"
+echo "    $1_MEA-mode_without_options_alternate testing finished."
+
+# Test TurboFold_MEA-mode_gamma_option.
+echo "    $1_MEA-mode_gamma_option testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "$1_MEA-mode_gamma_option.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "$1_MEA-mode_gamma_option.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "$1_MEA-mode_gamma_option.conf"
+echo "CT1 = $1_MEA-mode_gamma_option_seq1_test_output.ct" >> "$1_MEA-mode_gamma_option.conf"
+echo "CT2 = $1_MEA-mode_gamma_option_seq2_test_output.ct" >> "$1_MEA-mode_gamma_option.conf"
+echo "CT3 = $1_MEA-mode_gamma_option_seq3_test_output.ct" >> "$1_MEA-mode_gamma_option.conf"
+echo "SequenceNumber = 3" >> "$1_MEA-mode_gamma_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_MEA-mode_gamma_option.conf"; fi
+echo "Mode = MEA" >> "$1_MEA-mode_gamma_option.conf"
+echo "MeaGamma = 0.2" >> "$1_MEA-mode_gamma_option.conf"
+../exe/$1 "$1_MEA-mode_gamma_option.conf" 1>/dev/null 2>"$1_MEA-mode_gamma_option_errors.txt"
+diff "$1_MEA-mode_gamma_option_seq1_test_output.ct" "TurboFold/TurboFold_MEA-mode_gamma_option_seq1_OK.ct" >& "$1_MEA-mode_gamma_option_seq1_diff_output.txt"
+diff "$1_MEA-mode_gamma_option_seq2_test_output.ct" "TurboFold/TurboFold_MEA-mode_gamma_option_seq2_OK.ct" >& "$1_MEA-mode_gamma_option_seq2_diff_output.txt"
+diff "$1_MEA-mode_gamma_option_seq3_test_output.ct" "TurboFold/TurboFold_MEA-mode_gamma_option_seq3_OK.ct" >& "$1_MEA-mode_gamma_option_seq3_diff_output.txt"
+checkErrors "$1_MEA-mode_gamma_option" "$1_MEA-mode_gamma_option_errors.txt" "$1_MEA-mode_gamma_option_seq1_diff_output.txt" "$1_MEA-mode_gamma_option_seq2_diff_output.txt" "$1_MEA-mode_gamma_option_seq3_diff_output.txt"
+echo "    $1_MEA-mode_gamma_option testing finished."
+
+# Test TurboFold_MEA-mode_max_structures_option.
+echo "    $1_MEA-mode_max_structures_option testing started..."
+echo "Seq1 = testFiles/testFile_RA7680.seq" > "$1_MEA-mode_max_structures_option.conf"
+echo "Seq2 = testFiles/testFile_RD0260.seq" >> "$1_MEA-mode_max_structures_option.conf"
+echo "Seq3 = testFiles/testFile_RD0500.seq" >> "$1_MEA-mode_max_structures_option.conf"
+echo "CT1 = $1_MEA-mode_max_structures_option_seq1_test_output.ct" >> "$1_MEA-mode_max_structures_option.conf"
+echo "CT2 = $1_MEA-mode_max_structures_option_seq2_test_output.ct" >> "$1_MEA-mode_max_structures_option.conf"
+echo "CT3 = $1_MEA-mode_max_structures_option_seq3_test_output.ct" >> "$1_MEA-mode_max_structures_option.conf"
+echo "SequenceNumber = 3" >> "$1_MEA-mode_max_structures_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_MEA-mode_max_structures_option.conf"; fi
+echo "Mode = MEA" >> "$1_MEA-mode_max_structures_option.conf"
+echo "MaxStructures = 5" >> "$1_MEA-mode_max_structures_option.conf"
+echo "Window = 0" >> "$1_MEA-mode_max_structures_option.conf"
+../exe/$1 "$1_MEA-mode_max_structures_option.conf" 1>/dev/null 2>"$1_MEA-mode_max_structures_option_errors.txt"
+diff "$1_MEA-mode_max_structures_option_seq1_test_output.ct" "TurboFold/TurboFold_MEA-mode_max_structures_option_seq1_OK.ct" >& "$1_MEA-mode_max_structures_option_seq1_diff_output.txt"
+diff "$1_MEA-mode_max_structures_option_seq2_test_output.ct" "TurboFold/TurboFold_MEA-mode_max_structures_option_seq2_OK.ct" >& "$1_MEA-mode_max_structures_option_seq2_diff_output.txt"
+diff "$1_MEA-mode_max_structures_option_seq3_test_output.ct" "TurboFold/TurboFold_MEA-mode_max_structures_option_seq3_OK.ct" >& "$1_MEA-mode_max_structures_option_seq3_diff_output.txt"
+checkErrors "$1_MEA-mode_max_structures_option" "$1_MEA-mode_max_structures_option_errors.txt" "$1_MEA-mode_max_structures_option_seq1_diff_output.txt" "$1_MEA-mode_max_structures_option_seq2_diff_output.txt"\
+ "$1_MEA-mode_max_structures_option_seq3_diff_output.txt"
+echo "    $1_MEA-mode_max_structures_option testing finished."
+
+# Test TurboFold_MEA-mode_percent_difference_option.
+echo "    $1_MEA-mode_percent_difference_option testing started..."
+echo "Seq1 = testFiles/testFile_RA7680.seq" > "$1_MEA-mode_percent_difference_option.conf"
+echo "Seq2 = testFiles/testFile_RD0260.seq" >> "$1_MEA-mode_percent_difference_option.conf"
+echo "Seq3 = testFiles/testFile_RD0500.seq" >> "$1_MEA-mode_percent_difference_option.conf"
+echo "CT1 = $1_MEA-mode_percent_difference_option_seq1_test_output.ct" >> "$1_MEA-mode_percent_difference_option.conf"
+echo "CT2 = $1_MEA-mode_percent_difference_option_seq2_test_output.ct" >> "$1_MEA-mode_percent_difference_option.conf"
+echo "CT3 = $1_MEA-mode_percent_difference_option_seq3_test_output.ct" >> "$1_MEA-mode_percent_difference_option.conf"
+echo "SequenceNumber = 3" >> "$1_MEA-mode_percent_difference_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_MEA-mode_percent_difference_option.conf"; fi
+echo "Mode = MEA" >> "$1_MEA-mode_percent_difference_option.conf"
+echo "MaxPercent = 4" >> "$1_MEA-mode_percent_difference_option.conf"
+echo "Window = 0" >> "$1_MEA-mode_percent_difference_option.conf"
+../exe/$1 "$1_MEA-mode_percent_difference_option.conf" 1>/dev/null 2>"$1_MEA-mode_percent_difference_option_errors.txt"
+diff "$1_MEA-mode_percent_difference_option_seq1_test_output.ct" "TurboFold/TurboFold_MEA-mode_percent_difference_option_seq1_OK.ct" >& "$1_MEA-mode_percent_difference_option_seq1_diff_output.txt"
+diff "$1_MEA-mode_percent_difference_option_seq2_test_output.ct" "TurboFold/TurboFold_MEA-mode_percent_difference_option_seq2_OK.ct" >& "$1_MEA-mode_percent_difference_option_seq2_diff_output.txt"
+diff "$1_MEA-mode_percent_difference_option_seq3_test_output.ct" "TurboFold/TurboFold_MEA-mode_percent_difference_option_seq3_OK.ct" >& "$1_MEA-mode_percent_difference_option_seq3_diff_output.txt"
+checkErrors "$1_MEA-mode_percent_difference_option" "$1_MEA-mode_percent_difference_option_errors.txt" "$1_MEA-mode_percent_difference_option_seq1_diff_output.txt" "$1_MEA-mode_percent_difference_option_seq2_diff_output.txt" "$1_MEA-mode_percent_difference_option_seq3_diff_output.txt"
+echo "    $1_MEA-mode_percent_difference_option testing finished."
+
+# Test TurboFold_MEA-mode_window_size_option.
+echo "    $1_MEA-mode_window_size_option testing started..."
+echo "Seq1 = testFiles/testFile_RA7680.seq" > "$1_MEA-mode_window_size_option.conf"
+echo "Seq2 = testFiles/testFile_RD0260.seq" >> "$1_MEA-mode_window_size_option.conf"
+echo "Seq3 = testFiles/testFile_RD0500.seq" >> "$1_MEA-mode_window_size_option.conf"
+echo "CT1 = $1_MEA-mode_window_size_option_seq1_test_output.ct" >> "$1_MEA-mode_window_size_option.conf"
+echo "CT2 = $1_MEA-mode_window_size_option_seq2_test_output.ct" >> "$1_MEA-mode_window_size_option.conf"
+echo "CT3 = $1_MEA-mode_window_size_option_seq3_test_output.ct" >> "$1_MEA-mode_window_size_option.conf"
+echo "SequenceNumber = 3" >> "$1_MEA-mode_window_size_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_MEA-mode_window_size_option.conf"; fi
+echo "Mode = MEA" >> "$1_MEA-mode_window_size_option.conf"
+echo "Window = 0" >> "$1_MEA-mode_window_size_option.conf"
+../exe/$1 "$1_MEA-mode_window_size_option.conf" 1>/dev/null 2>"$1_MEA-mode_window_size_option_errors.txt"
+diff "$1_MEA-mode_window_size_option_seq1_test_output.ct" "TurboFold/TurboFold_MEA-mode_window_size_option_seq1_OK.ct" >& "$1_MEA-mode_window_size_option_seq1_diff_output.txt"
+diff "$1_MEA-mode_window_size_option_seq2_test_output.ct" "TurboFold/TurboFold_MEA-mode_window_size_option_seq2_OK.ct" >& "$1_MEA-mode_window_size_option_seq2_diff_output.txt"
+diff "$1_MEA-mode_window_size_option_seq3_test_output.ct" "TurboFold/TurboFold_MEA-mode_window_size_option_seq3_OK.ct" >& "$1_MEA-mode_window_size_option_seq3_diff_output.txt"
+checkErrors "$1_MEA-mode_window_size_option" "$1_MEA-mode_window_size_option_errors.txt" "$1_MEA-mode_window_size_option_seq1_diff_output.txt" "$1_MEA-mode_window_size_option_seq2_diff_output.txt" "$1_MEA-mode_window_size_option_seq3_diff_output.txt"
+echo "    $1_MEA-mode_window_size_option testing finished."
+
+# Test TurboFold_ProbKnot-mode_without_options.
+echo "    $1_ProbKnot-mode_without_options testing started..."
+echo "Seq1 = testFiles/testFile_met-vol.seq" > "$1_ProbKnot-mode_without_options.conf"
+echo "Seq2 = testFiles/testFile_met-fer.seq" >> "$1_ProbKnot-mode_without_options.conf"
+echo "Seq3 = testFiles/testFile_met-the.seq" >> "$1_ProbKnot-mode_without_options.conf"
+echo "CT1 = $1_ProbKnot-mode_without_options_seq1_test_output.ct" >> "$1_ProbKnot-mode_without_options.conf"
+echo "CT2 = $1_ProbKnot-mode_without_options_seq2_test_output.ct" >> "$1_ProbKnot-mode_without_options.conf"
+echo "CT3 = $1_ProbKnot-mode_without_options_seq3_test_output.ct" >> "$1_ProbKnot-mode_without_options.conf"
+echo "SequenceNumber = 3" >> "$1_ProbKnot-mode_without_options.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_ProbKnot-mode_without_options.conf"; fi
+echo "Mode = ProbKnot" >> "$1_ProbKnot-mode_without_options.conf"
+../exe/$1 "$1_ProbKnot-mode_without_options.conf" 1>/dev/null 2>"$1_ProbKnot-mode_without_options_errors.txt"
+diff "$1_ProbKnot-mode_without_options_seq1_test_output.ct" "TurboFold/TurboFold_ProbKnot-mode_without_options_seq1_OK.ct" >& "$1_ProbKnot-mode_without_options_seq1_diff_output.txt"
+diff "$1_ProbKnot-mode_without_options_seq2_test_output.ct" "TurboFold/TurboFold_ProbKnot-mode_without_options_seq2_OK.ct" >& "$1_ProbKnot-mode_without_options_seq2_diff_output.txt"
+diff "$1_ProbKnot-mode_without_options_seq3_test_output.ct" "TurboFold/TurboFold_ProbKnot-mode_without_options_seq3_OK.ct" >& "$1_ProbKnot-mode_without_options_seq3_diff_output.txt"
+checkErrors "$1_ProbKnot-mode_without_options" "$1_ProbKnot-mode_without_options_errors.txt" "$1_ProbKnot-mode_without_options_seq1_diff_output.txt" "$1_ProbKnot-mode_without_options_seq2_diff_output.txt" "$1_ProbKnot-mode_without_options_seq3_diff_output.txt"
+echo "    $1_ProbKnot-mode_without_options testing finished."
+
+# Test TurboFold_ProbKnot-mode_iterations_option.
+echo "    $1_ProbKnot-mode_iterations_option testing started..."
+echo "Seq1 = testFiles/testFile_met-vol.seq" > "$1_ProbKnot-mode_iterations_option.conf"
+echo "Seq2 = testFiles/testFile_met-fer.seq" >> "$1_ProbKnot-mode_iterations_option.conf"
+echo "Seq3 = testFiles/testFile_met-the.seq" >> "$1_ProbKnot-mode_iterations_option.conf"
+echo "CT1 = $1_ProbKnot-mode_iterations_option_seq1_test_output.ct" >> "$1_ProbKnot-mode_iterations_option.conf"
+echo "CT2 = $1_ProbKnot-mode_iterations_option_seq2_test_output.ct" >> "$1_ProbKnot-mode_iterations_option.conf"
+echo "CT3 = $1_ProbKnot-mode_iterations_option_seq3_test_output.ct" >> "$1_ProbKnot-mode_iterations_option.conf"
+echo "SequenceNumber = 3" >> "$1_ProbKnot-mode_iterations_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_ProbKnot-mode_iterations_option.conf"; fi
+echo "Mode = ProbKnot" >> "$1_ProbKnot-mode_iterations_option.conf"
+echo "PkIterations = 10" >> "$1_ProbKnot-mode_iterations_option.conf"
+../exe/$1 "$1_ProbKnot-mode_iterations_option.conf" 1>/dev/null 2>"$1_ProbKnot-mode_iterations_option_errors.txt"
+diff "$1_ProbKnot-mode_iterations_option_seq1_test_output.ct" "TurboFold/TurboFold_ProbKnot-mode_iterations_option_seq1_OK.ct" >& "$1_ProbKnot-mode_iterations_option_seq1_diff_output.txt"
+diff "$1_ProbKnot-mode_iterations_option_seq2_test_output.ct" "TurboFold/TurboFold_ProbKnot-mode_iterations_option_seq2_OK.ct" >& "$1_ProbKnot-mode_iterations_option_seq2_diff_output.txt"
+diff "$1_ProbKnot-mode_iterations_option_seq3_test_output.ct" "TurboFold/TurboFold_ProbKnot-mode_iterations_option_seq3_OK.ct" >& "$1_ProbKnot-mode_iterations_option_seq3_diff_output.txt"
+checkErrors "$1_ProbKnot-mode_iterations_option" "$1_ProbKnot-mode_iterations_option_errors.txt" "$1_ProbKnot-mode_iterations_option_seq1_diff_output.txt" "$1_ProbKnot-mode_iterations_option_seq2_diff_output.txt"\
+ "$1_ProbKnot-mode_iterations_option_seq3_diff_output.txt"
+echo "    $1_ProbKnot-mode_iterations_option testing finished."
+
+# Test TurboFold_ProbKnot-mode_min_helix_length_option.
+echo "    $1_ProbKnot-mode_min_helix_length_option testing started..."
+echo "Seq1 = testFiles/testFile_met-vol.seq" > "$1_ProbKnot-mode_min_helix_length_option.conf"
+echo "Seq2 = testFiles/testFile_met-fer.seq" >> "$1_ProbKnot-mode_min_helix_length_option.conf"
+echo "Seq3 = testFiles/testFile_met-the.seq" >> "$1_ProbKnot-mode_min_helix_length_option.conf"
+echo "CT1 = $1_ProbKnot-mode_min_helix_length_option_seq1_test_output.ct" >> "$1_ProbKnot-mode_min_helix_length_option.conf"
+echo "CT2 = $1_ProbKnot-mode_min_helix_length_option_seq2_test_output.ct" >> "$1_ProbKnot-mode_min_helix_length_option.conf"
+echo "CT3 = $1_ProbKnot-mode_min_helix_length_option_seq3_test_output.ct" >> "$1_ProbKnot-mode_min_helix_length_option.conf"
+echo "SequenceNumber = 3" >> "$1_ProbKnot-mode_min_helix_length_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_ProbKnot-mode_min_helix_length_option.conf"; fi
+echo "Mode = ProbKnot" >> "$1_ProbKnot-mode_min_helix_length_option.conf"
+echo "MinHelixLength = 1" >> "$1_ProbKnot-mode_min_helix_length_option.conf"
+../exe/$1 "$1_ProbKnot-mode_min_helix_length_option.conf" 1>/dev/null 2>"$1_ProbKnot-mode_min_helix_length_option_errors.txt"
+diff "$1_ProbKnot-mode_min_helix_length_option_seq1_test_output.ct" "TurboFold/TurboFold_ProbKnot-mode_min_helix_length_option_seq1_OK.ct" >& "$1_ProbKnot-mode_min_helix_length_option_seq1_diff_output.txt"
+diff "$1_ProbKnot-mode_min_helix_length_option_seq2_test_output.ct" "TurboFold/TurboFold_ProbKnot-mode_min_helix_length_option_seq2_OK.ct" >& "$1_ProbKnot-mode_min_helix_length_option_seq2_diff_output.txt"
+diff "$1_ProbKnot-mode_min_helix_length_option_seq3_test_output.ct" "TurboFold/TurboFold_ProbKnot-mode_min_helix_length_option_seq3_OK.ct" >& "$1_ProbKnot-mode_min_helix_length_option_seq3_diff_output.txt"
+checkErrors "$1_ProbKnot-mode_min_helix_length_option" "$1_ProbKnot-mode_min_helix_length_option_errors.txt" "$1_ProbKnot-mode_min_helix_length_option_seq1_diff_output.txt" "$1_ProbKnot-mode_min_helix_length_option_seq2_diff_output.txt" "$1_ProbKnot-mode_min_helix_length_option_seq3_diff_output.txt"
+echo "    $1_ProbKnot-mode_min_helix_length_option testing finished."
+
+# Test TurboFold_Threshold-mode_without_options.
+echo "    $1_Threshold-mode_without_options testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "$1_Threshold-mode_without_options.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "$1_Threshold-mode_without_options.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "$1_Threshold-mode_without_options.conf"
+echo "CT1 = $1_Threshold-mode_without_options_seq1_test_output.ct" >> "$1_Threshold-mode_without_options.conf"
+echo "CT2 = $1_Threshold-mode_without_options_seq2_test_output.ct" >> "$1_Threshold-mode_without_options.conf"
+echo "CT3 = $1_Threshold-mode_without_options_seq3_test_output.ct" >> "$1_Threshold-mode_without_options.conf"
+echo "SequenceNumber = 3" >> "$1_Threshold-mode_without_options.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_Threshold-mode_without_options.conf"; fi
+echo "Mode = Threshold" >> "$1_Threshold-mode_without_options.conf"
+../exe/$1 "$1_Threshold-mode_without_options.conf" 1>/dev/null 2>"$1_Threshold-mode_without_options_errors.txt"
+diff "$1_Threshold-mode_without_options_seq1_test_output.ct" "TurboFold/TurboFold_Threshold-mode_without_options_seq1_OK.ct" >& "$1_Threshold-mode_without_options_seq1_diff_output.txt"
+diff "$1_Threshold-mode_without_options_seq2_test_output.ct" "TurboFold/TurboFold_Threshold-mode_without_options_seq2_OK.ct" >& "$1_Threshold-mode_without_options_seq2_diff_output.txt"
+diff "$1_Threshold-mode_without_options_seq3_test_output.ct" "TurboFold/TurboFold_Threshold-mode_without_options_seq3_OK.ct" >& "$1_Threshold-mode_without_options_seq3_diff_output.txt"
+checkErrors "$1_Threshold-mode_without_options" "$1_Threshold-mode_without_options_errors.txt" "$1_Threshold-mode_without_options_seq1_diff_output.txt" "$1_Threshold-mode_without_options_seq2_diff_output.txt" "$1_Threshold-mode_without_options_seq3_diff_output.txt"
+echo "    $1_Threshold-mode_without_options testing finished."
+
+# Test TurboFold_Threshold-mode_threshold_option.
+echo "    $1_Threshold-mode_threshold_option testing started..."
+echo "Seq1 = testFiles/testFile_ec5s.seq" > "$1_Threshold-mode_threshold_option.conf"
+echo "Seq2 = testFiles/testFile_ca5s.seq" >> "$1_Threshold-mode_threshold_option.conf"
+echo "Seq3 = testFiles/testFile_5s_8.seq" >> "$1_Threshold-mode_threshold_option.conf"
+echo "CT1 = $1_Threshold-mode_threshold_option_seq1_test_output.ct" >> "$1_Threshold-mode_threshold_option.conf"
+echo "CT2 = $1_Threshold-mode_threshold_option_seq2_test_output.ct" >> "$1_Threshold-mode_threshold_option.conf"
+echo "CT3 = $1_Threshold-mode_threshold_option_seq3_test_output.ct" >> "$1_Threshold-mode_threshold_option.conf"
+echo "SequenceNumber = 3" >> "$1_Threshold-mode_threshold_option.conf"
+if [[ $1 = "TurboFold-smp" ]]; then echo "Processors = 2" >> "TurboFold-smp_Threshold-mode_threshold_option.conf"; fi
+echo "Mode = Threshold" >> "$1_Threshold-mode_threshold_option.conf"
+echo "Threshold = 0.92" >> "$1_Threshold-mode_threshold_option.conf"
+../exe/$1 "$1_Threshold-mode_threshold_option.conf" 1>/dev/null 2>"$1_Threshold-mode_threshold_option_errors.txt"
+diff "$1_Threshold-mode_threshold_option_seq1_test_output.ct" "TurboFold/TurboFold_Threshold-mode_threshold_option_seq1_OK.ct" >& "$1_Threshold-mode_threshold_option_seq1_diff_output.txt"
+diff "$1_Threshold-mode_threshold_option_seq2_test_output.ct" "TurboFold/TurboFold_Threshold-mode_threshold_option_seq2_OK.ct" >& "$1_Threshold-mode_threshold_option_seq2_diff_output.txt"
+diff "$1_Threshold-mode_threshold_option_seq3_test_output.ct" "TurboFold/TurboFold_Threshold-mode_threshold_option_seq3_OK.ct" >& "$1_Threshold-mode_threshold_option_seq3_diff_output.txt"
+checkErrors "$1_Threshold-mode_threshold_option" "$1_Threshold-mode_threshold_option_errors.txt" "$1_Threshold-mode_threshold_option_seq1_diff_output.txt" "$1_Threshold-mode_threshold_option_seq2_diff_output.txt"\
+ "$1_Threshold-mode_threshold_option_seq3_diff_output.txt"
+echo "    $1_Threshold-mode_threshold_option testing finished."
+
+# Clean up any extra files made over the course of the TurboFold tests.
+echo "    Cleanup of $1 tests started..."
+echo '        Cleanup in progress...'
+rm -f $1_general_without_options*
+rm -f $1_general_gamma_option*
+rm -f $1_general_iterations_option*
+rm -f $1_general_shape*
+rm -f $1_general_temperature_option*
+rm -f TurboFold-smp_processors_option*
+rm -f $1_MEA-mode_without_options*
+rm -f $1_MEA-mode_gamma_option*
+rm -f $1_MEA-mode_max_structures_option*
+rm -f $1_MEA-mode_percent_difference_option*
+rm -f $1_MEA-mode_window_size_option*
+rm -f $1_ProbKnot-mode_without_options*
+rm -f $1_ProbKnot-mode_iterations_option*
+rm -f $1_ProbKnot-mode_min_helix_length_option*
+rm -f $1_Threshold-mode_without_options*
+rm -f $1_Threshold-mode_threshold_option*
+echo "    Cleanup of $1 tests finished."
